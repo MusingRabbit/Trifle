@@ -59,6 +59,11 @@ class VoxelGrid
 
     void Initialise(unsigned int gridSize);
 
+    VoxelGridCell* GetCell(GridPoint& point);
+
+    unsigned int GetGridSize();
+    unsigned int GetTotalSize();
+
     void Clear();
 };
 
