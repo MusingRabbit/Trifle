@@ -18,5 +18,6 @@ message(STATUS "ENGINE_NAME = ${ENGINE_NAME}")
 
 add_executable(${GAME_NAME} ${SOURCE_FILES})
 target_include_directories(${GAME_NAME} PUBLIC ${OPENGL_INCLUDE_DIR})
-target_link_libraries(${GAME_NAME} ${ENGINE_NAME})
 target_link_libraries(${GAME_NAME} ${LIBS})
+target_link_libraries(${GAME_NAME} ${ENGINE_NAME})
+

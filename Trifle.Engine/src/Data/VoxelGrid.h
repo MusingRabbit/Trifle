@@ -1,31 +1,16 @@
-#ifndef VOXELCELL_H
-#define VOXELCELL_H
+#ifndef VOXELGRID_H
+#define VOXELGRID_H
 
 #include <glm/glm.hpp>
+#include <vector>
 
-struct GridPoint
+#include "../Util/VoxelGridHelper.h"
+#include "GridPoint.h"
+
+namespace trifle
 {
-    unsigned int X;
-    unsigned int Y;
-    unsigned int Z;
-    
-    GridPoint()
-    {
-        X = 0;
-        Y = 0;
-        Z = 0;
-    }
 
-    GridPoint(unsigned int x, unsigned int y, unsigned int z)
-    {
-        X = x;
-        Y = y;
-        Z = z;
-    }
-};
-
-
-struct VoxelGridCell 
+struct VoxelGridCell
 {
     unsigned int Id;
     GridPoint Position;
@@ -33,40 +18,85 @@ struct VoxelGridCell
 
     VoxelGridCell()
     {
-        
+        Id = 0;
+        Position = GridPoint(0, 0, 0);
+        Colour = glm::vec4(0, 0, 0, 0);
     }
 };
 
-class VoxelGrid 
+class VoxelGrid
 {
-    private:
+  private:
     unsigned int m_id;
     GridPoint m_position;
     unsigned int m_size;
     unsigned int m_totalDataSize;
-    VoxelGridCell* m_data;
+    std::vector<VoxelGridCell> m_data;
 
-    GridPoint GetGridPointByIndex(unsigned int index);
-    unsigned int GetIndexByGridPoint(GridPoint& point);
+    unsigned int GetIndexByGridPoint(const GridPoint& point)
+    {
+        return VoxelGridHelper::GetIndexByGridPoint(point, m_size, m_size, m_size);
+    }
 
-    protected:
-    public:
+  protected:
+  public:
     /// @brief Constructor
-    VoxelGrid();
-    
+    VoxelGrid()
+    {
+    }
+
     /// @brief Destructor
-    ~VoxelGrid();
+    ~VoxelGrid()
+    {
+    }
 
-    void Initialise(unsigned int gridSize);
+    void Initialise(unsigned int gridSize)
+    {
+        Clear();
 
-    VoxelGridCell* GetCell(GridPoint& point);
+        m_size = gridSize;
+        m_totalDataSize = m_size * m_size * m_size;
 
-    unsigned int GetGridSize();
-    unsigned int GetTotalSize();
+        m_data.resize(m_totalDataSize);
 
-    void Clear();
+        for (unsigned int z = 0; z < m_size; z++)
+        {
+            for (unsigned int y = 0; y < m_size; y++)
+            {
+                for (unsigned int x = 0; x < m_size; x++)
+                {
+                    GridPoint point(x, y, z);
+                    unsigned int idx = GetIndexByGridPoint(point);
+
+                    VoxelGridCell* cell = &m_data[idx];
+                    cell->Id = idx;
+                    cell->Position = point;
+                }
+            }
+        }
+    }
+
+    VoxelGridCell* GetCell(const GridPoint& point)
+    {
+        return &m_data[GetIndexByGridPoint(point)];
+    }
+
+    unsigned int GetGridSize()
+    {
+        return m_size;
+    }
+
+    unsigned int GetTotalSize()
+    {
+        return m_totalDataSize;
+    }
+
+    void Clear()
+    {
+        m_data.clear();
+    }
 };
 
+} // namespace trifle
 
-#endif // !VOXELCELL_H
-
+#endif // !VOXELGRID_H

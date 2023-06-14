@@ -2,14 +2,16 @@
 #define MATRIXHELPER_H
 
 #include <glm/glm.hpp>
-#include<glm/gtc/quaternion.hpp>
-#include<glm/common.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/common.hpp>
 
 #include "QuatHelper.h"
 
-class MatrixHelper
+namespace trifle
 {
-    public :
+    class MatrixHelper
+    {
+    public:
         static glm::mat4 CreateTranslationMatrix(glm::vec3 vector)
         {
             glm::mat4 result;
@@ -33,6 +35,6 @@ class MatrixHelper
             glm::quat qRot = QuatHelper::CreateFromYawPitchRoll(vector.x, vector.y, vector.z);
             return glm::mat4_cast(qRot);
         }
-};
-
+    };
+}
 #endif // !MATRIXHELPER_H

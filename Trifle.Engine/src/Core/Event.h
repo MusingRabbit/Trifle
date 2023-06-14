@@ -5,40 +5,38 @@
 #include <any>
 #include <unordered_map>
 
+namespace trifle
+{
 class Event
 {
-private:
-	EventId m_type;
-	std::unordered_map<EventId, std::any> m_data;
+  private:
+    EventId m_type;
+    std::unordered_map<EventId, std::any> m_data;
 
-public:
-	Event() = delete;
+  public:
+    Event() = delete;
 
-	explicit Event(EventId type)
-		: m_type(type)
-	{
-		
-	}
+    explicit Event(EventId type) : m_type(type)
+    {
+        m_data = {};
+    }
 
-	template<typename T>
-	void SetParam(EventId id, T value)
-	{
-		m_data[id] = value;
-	}
+    template <typename T> void SetParam(EventId id, T value)
+    {
+        m_data[id] = value;
+    }
 
-	template<typename T>
-	T GetParam(EventId id)
-	{
-		return std::any_cast<T>(m_data[id]);
-	}
+    template <typename T> T GetParam(EventId id)
+    {
+        return std::any_cast<T>(m_data[id]);
+    }
 
-	EventId GetType() const
-	{
-		return m_type;
-	}
-
-
+    EventId GetType() const
+    {
+        return m_type;
+    }
 };
 
+} // namespace trifle
 
 #endif // DEBUG

@@ -1,8 +1,14 @@
 #include "EntityManager.h"
 #include "Types.h"
 
+namespace trifle
+{
 EntityManager::EntityManager()
 {
+    m_availableEntityIds = {};
+    m_signatures = {};
+    m_liveEntityIdCount = 0;
+
     for (unsigned int i = 0; i < MAX_ENTITIES; i++)
     {
         m_availableEntityIds.push(i);
@@ -27,7 +33,7 @@ unsigned int EntityManager::CreateEntity()
 }
 
 void EntityManager::DestroyEntity(unsigned int entityId)
-{   
+{
     assert(entityId < MAX_ENTITIES && "Entity Id out of range.");
 
     m_signatures[entityId].reset();
@@ -44,7 +50,12 @@ void EntityManager::SetSignature(unsigned int entityId, Signature signature)
 
 Signature EntityManager::GetSignature(unsigned int entityId)
 {
-	assert(entityId < MAX_ENTITIES && "Entity Id out of range.");
+    assert(entityId < MAX_ENTITIES && "Entity Id out of range.");
 
     return m_signatures[entityId];
 }
+unsigned int EntityManager::GetCount()
+{
+    return m_liveEntityIdCount;
+}
+} // namespace trifle

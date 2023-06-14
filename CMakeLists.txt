@@ -22,6 +22,8 @@ message(STATUS "Found GLM in ${GLM_INCLUDE_DIR}")
 find_package(GTest REQUIRED)
 message(STATUS "Found GTest in ${GTEST_INCLUDE_DIRS}")
 
+find_package (Threads)
+
 if(WIN32)
 set(LIBS opengl32 glfw glm)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)

@@ -1,18 +1,22 @@
 #ifndef ENTITYMANAGER_H
 #define ENTITYMANAGER_H
 
+#include "Types.h"
 #include <array>
 #include <cassert>
 #include <queue>
-#include "Types.h"
+
+namespace trifle
+{
 
 class EntityManager
 {
-private:
+  private:
     std::queue<unsigned int> m_availableEntityIds;
     std::array<Signature, MAX_ENTITIES> m_signatures;
     unsigned int m_liveEntityIdCount;
-public:
+
+  public:
     EntityManager();
 
     ~EntityManager();
@@ -21,7 +25,10 @@ public:
     void DestroyEntity(unsigned int entityId);
     void SetSignature(unsigned int entityId, Signature signature);
     Signature GetSignature(unsigned int entityId);
+
+    unsigned int GetCount();
 };
 
+} // namespace trifle
 
 #endif // !ENTITYMANAGER_H

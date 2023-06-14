@@ -3,7 +3,7 @@
 
 #include <bitset>
 
-// ECS 
+// ECS
 using EventId = unsigned int;
 using ParamId = unsigned int;
 
@@ -11,5 +11,7 @@ const unsigned int MAX_COMPONENTS = 32;
 const unsigned int MAX_ENTITIES = 5000;
 
 using Signature = std::bitset<MAX_COMPONENTS>;
+
+using ComponentType = std::uint8_t;
 
 #endif // !TYPES_H
