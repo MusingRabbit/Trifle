@@ -18,6 +18,7 @@ ${TEST_DIR}/*.hpp
 
 add_executable(a.out ${TEST_SRC_FILES})
 
+target_link_libraries(a.out glfw ${GLFW_LIBRARIES} GLEW)
 target_link_libraries(a.out ${ENGINE_NAME})
 target_link_libraries(a.out ${GTEST_LIBRARIES})
 target_link_libraries(a.out ${LIBS})

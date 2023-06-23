@@ -1,0 +1,7 @@
+BasedOnStyle: Microsoft
+AlignAfterOpenBracket: Align
+AlwaysBreakTemplateDeclarations: 'Yes'
+PointerAlignment: Left
+BreakStringLiterals : 'false' 
+SortIncludes : 'false'
+ColumnLimit: 150

@@ -3,46 +3,78 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include "Core/Types.h"
 
 #include "../Util/VoxelGridHelper.h"
-#include "GridPoint.h"
+#include "UIntPoint3.h"
 
 namespace trifle
 {
 
-struct VoxelGridCell
+class VoxelGridCell
 {
-    unsigned int Id;
-    GridPoint Position;
-    glm::vec4 Colour;
+  private:
+    unsigned int m_id;
+    UIntPoint3 m_pos;
+    Colour m_colour;
+
+  public:
+    unsigned int GetId()
+    {
+        return m_id;
+    }
+
+    void SetId(unsigned int value)
+    {
+        m_id = value;
+    }
+
+    UIntPoint3 GetPosition()
+    {
+        return m_pos;
+    }
+
+    void SetPosition(UIntPoint3 value)
+    {
+        m_pos = value;
+    }
+
+    Colour GetColour()
+    {
+        return m_colour;
+    }
+
+    void SetColour(Colour value)
+    {
+        m_colour = value;
+    }
 
     VoxelGridCell()
     {
-        Id = 0;
-        Position = GridPoint(0, 0, 0);
-        Colour = glm::vec4(0, 0, 0, 0);
+        m_id = 0;
+        m_pos = UIntPoint3{0, 0, 0};
+        m_colour = glm::vec4(0, 0, 0, 0);
     }
 };
 
+template <typename T>
 class VoxelGrid
 {
   private:
     unsigned int m_id;
-    GridPoint m_position;
+    UIntPoint3 m_position;
     unsigned int m_size;
-    unsigned int m_totalDataSize;
-    std::vector<VoxelGridCell> m_data;
 
-    unsigned int GetIndexByGridPoint(const GridPoint& point)
-    {
-        return VoxelGridHelper::GetIndexByGridPoint(point, m_size, m_size, m_size);
-    }
+    unsigned int m_width, m_height, m_depth;
+
+    std::vector<T> m_data;
 
   protected:
   public:
     /// @brief Constructor
     VoxelGrid()
     {
+        static_assert(std::is_base_of<VoxelGridCell, T>::value, "type parameter of this method must be of type <trifle::VoxelGridCell>");
     }
 
     /// @brief Destructor
@@ -50,45 +82,57 @@ class VoxelGrid
     {
     }
 
-    void Initialise(unsigned int gridSize)
+    void Initialise(unsigned int width, unsigned int height, unsigned int depth)
     {
         Clear();
 
-        m_size = gridSize;
-        m_totalDataSize = m_size * m_size * m_size;
+        m_width = width;
+        m_height = height;
+        m_depth = depth;
 
-        m_data.resize(m_totalDataSize);
+        m_size = m_width * m_height * m_depth;
 
-        for (unsigned int z = 0; z < m_size; z++)
+        m_data.resize(m_size);
+
+        for (unsigned int i = 0; i < m_data.size(); i++)
         {
-            for (unsigned int y = 0; y < m_size; y++)
-            {
-                for (unsigned int x = 0; x < m_size; x++)
-                {
-                    GridPoint point(x, y, z);
-                    unsigned int idx = GetIndexByGridPoint(point);
+            UIntPoint3 point = VoxelGridHelper::GetUIntPoint3ByIndex(i, m_width, m_height, m_depth);
 
-                    VoxelGridCell* cell = &m_data[idx];
-                    cell->Id = idx;
-                    cell->Position = point;
-                }
-            }
+            VoxelGridCell* cell = (VoxelGridCell*)&m_data[i];
+            cell->SetId(i);
+            cell->SetPosition(point);
         }
+
+        /*         for (unsigned int z = 0; z < m_size; z++)
+                {
+                    for (unsigned int y = 0; y < m_size; y++)
+                    {
+                        for (unsigned int x = 0; x < m_size; x++)
+                        {
+                            UIntPoint3 point{x, y, z};
+                            unsigned int idx = GetIndexByUIntPoint3(point);
+
+                            VoxelGridCell* cell = (VoxelGridCell*)&m_data[idx];
+                            cell->Id = idx;
+                            cell->Position = point;
+                        }
+                    }
+                } */
     }
 
-    VoxelGridCell* GetCell(const GridPoint& point)
+    T* GetCell(const UIntPoint3& point)
     {
-        return &m_data[GetIndexByGridPoint(point)];
+        return &m_data[VoxelGridHelper::GetIndexByUIntPoint3(point, m_width, m_height, m_depth)];
     }
 
-    unsigned int GetGridSize()
+    unsigned int GetSize()
     {
         return m_size;
     }
 
-    unsigned int GetTotalSize()
+    unsigned int GetMemorySize()
     {
-        return m_totalDataSize;
+        return (m_size * sizeof(T)) + sizeof(*this);
     }
 
     void Clear()

@@ -2,11 +2,12 @@
 
 #include <Util/VoxelGridHelper.h>
 #include <gtest/gtest.h>
+#include "../../GTestHelper.h"
 #include <string>
 
 using namespace trifle;
 
-TEST(TrifleTest, GetIndexByGridPoint_Test)
+TEST(TrifleTest, GetIndexByPoint_Test)
 {
     // SETUP : Create test data
     unsigned int width = 5;
@@ -24,10 +25,10 @@ TEST(TrifleTest, GetIndexByGridPoint_Test)
             for (unsigned int x = 0; x < width; x++)
             {
                 // Create new point
-                GridPoint point = GridPoint(x, y, z);
+                UIntPoint3 point = UIntPoint3{x, y, z};
 
                 // Get index result
-                unsigned int result = VoxelGridHelper::GetIndexByGridPoint(point, width, height, depth);
+                unsigned int result = VoxelGridHelper::GetIndexByUIntPoint3(point, width, height, depth);
 
                 if (result >= size)
                 {
@@ -63,5 +64,41 @@ TEST(TrifleTest, GetIndexByGridPoint_Test)
     for (unsigned int i = 0; i < size; i++)
     {
         ASSERT_TRUE(indexFlags[i]);
+    }
+}
+
+TEST(TrifleTest, GetPointByIndex_Test)
+{
+    // SETUP : Create test data
+    unsigned int width = 10;
+    unsigned int height = 30;
+    unsigned int depth = 12;
+    unsigned int size = width * height * depth;
+
+    unsigned int indices[size]{false}; // An bool array to ensure that the same index isn't hit twice.
+
+    // Itterate through all dimensions
+    for (unsigned int z = 0; z < depth; z++)
+    {
+        for (unsigned int y = 0; y < height; y++)
+        {
+            for (unsigned int x = 0; x < width; x++)
+            {
+                // Create new point
+                UIntPoint3 point = UIntPoint3{x, y, z};
+                unsigned int index = VoxelGridHelper::GetIndexByUIntPoint3(point, width, height, depth);
+                UIntPoint3 newPoint = VoxelGridHelper::GetUIntPoint3ByIndex(index, width, height, depth);
+
+                bool isMatch = newPoint.IsEqual(point);
+
+                if (!isMatch)
+                {
+                    std::cout << COUT_GTEST_MGT << "Point mismatch @ [" << x << "," << y << "," << z << "]" << ANSI_TXT_MGT << std::endl;
+                    newPoint = VoxelGridHelper::GetUIntPoint3ByIndex(index, width, height, depth);
+                }
+
+                ASSERT_TRUE(isMatch);
+            }
+        }
     }
 }

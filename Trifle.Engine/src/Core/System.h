@@ -12,13 +12,14 @@ class System
 
   protected:
     std::set<unsigned int> GetEntities();
+    double m_totalElapsedTime;
 
   public:
     System();
     ~System();
 
     virtual void Init() = 0;
-    virtual void Update(float dt) = 0;
+    virtual void Update(float dt);
 
     void AddEntity(unsigned int entityId);
     void RemoveEntity(unsigned int entityId);

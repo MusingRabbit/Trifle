@@ -13,6 +13,11 @@ System::~System()
 {
 }
 
+void System::Update(float dt)
+{
+    m_totalElapsedTime += dt;
+}
+
 void System::AddEntity(unsigned int entityId)
 {
     m_entityIds.insert(entityId);

@@ -3,20 +3,18 @@
 #include "GLFW/glfw3.h"
 #include <glm/glm.hpp>
 #include <iostream>
-#include "GameWindow.h"
-#include "Graphics/Renderer.h"
+#include <GLGameWindow.h>
+#include <Systems/Systems.h>
+#include <chrono>
 
 /// @brief Constructor
 Game::Game()
 {
-    m_renderer = new trifle::Renderer();
 }
 
 /// @brief Destructor
 Game::~Game()
 {
-    delete m_renderer;
-    delete m_gameWindow;    
 }
 
 /// @brief Starts main program loop
@@ -35,16 +33,29 @@ int Game::Run()
 
     std::cout << "GLFW initialisation complete" << std::endl;
     std::cout << "Creating game window" << std::endl;
-    
-    m_gameWindow = new trifle::GameWindow(800, 600, "Trifle");
+
+    m_gameWindow = std::make_unique<GLGameWindow>(800, 600, "Trifle");
     m_gameWindow->MakeCurrentContext();
-    GLFWwindow* window = m_gameWindow->GetGLFWwindow();
+
+    std::cout << "Initialising ECS" << std::endl;
+    m_enttySvc = std::make_unique<EntityService>();
+    m_enttySvc->Init();
+
+    std::cout << "Registering Components" << std::endl;
+
+    std::cout << "Registering Systems" << std::endl;
+
+    std::shared_ptr<VoxelRenderSystem> vRender = m_enttySvc->RegisterSystem<VoxelRenderSystem>();
+    vRender->SetGameWindow(m_gameWindow.get());
+    vRender->Init();
 
     std::cout << "Starting main loop" << std::endl;
 
-    while (!glfwWindowShouldClose(window))
+    auto currTime = std::chrono::high_resolution_clock::now();
+
+    while (!m_gameWindow->WindowShouldClose())
     {
-        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        if (m_gameWindow->GetKeyState(GLFW_KEY_ESCAPE) == GLFW_PRESS)
         {
             std::cout << "GLFW_KEY_ESCAPE Pressed. Ending program." << std::endl;
             return 0;
@@ -60,10 +71,11 @@ int Game::Run()
 
         glfwPollEvents();
 
-        m_renderer->Clear(glm::vec3(0, 0.5f, 0));
-        
-        glfwSwapBuffers(window);
-        glFlush();
+        const auto prevTime = currTime;
+        currTime = std::chrono::high_resolution_clock::now();
+        const auto deltaTime = std::chrono::duration_cast<std::chrono::milliseconds>(currTime - prevTime).count();
+
+        vRender->Update(deltaTime);
     }
 
     return 0;

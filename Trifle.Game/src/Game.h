@@ -1,18 +1,20 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <GameWindow.h>
-#include <Graphics/Renderer.h>
-#include <Core/GameObject.h>
+#include <GLGameWindow.h>
+#include <Core/EntityService.h>
+#include <memory>
+
+using namespace trifle;
 
 class Game
 {
-private : 
-    trifle::GameWindow* m_gameWindow;
-    trifle::Renderer* m_renderer;
+  private:
+    std::unique_ptr<EntityService> m_enttySvc;
+    std::unique_ptr<GLGameWindow> m_gameWindow;
 
-protected:
-public : 
+  protected:
+  public:
     Game();
 
     int Run();

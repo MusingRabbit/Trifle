@@ -69,5 +69,6 @@
     "editor.formatOnSave": true,
     "editor.formatOnPaste": true,
     "C_Cpp.formatting": "clangFormat",
-    "C_Cpp.clang_format_fallbackStyle": "{ PointerAlignment: Left}"
+    "C_Cpp.clang_format_fallbackStyle": "{ PointerAlignment: Left}",
+    "C_Cpp.errorSquiggles": "disabled"
 }
