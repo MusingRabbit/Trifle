@@ -63,7 +63,8 @@
         "fstream": "cpp",
         "semaphore": "cpp",
         "stop_token": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "queue": "cpp"
     },
     "cmake.sourceDirectory": "/home/amccallum/dev/Trifle",
     "editor.formatOnSave": true,

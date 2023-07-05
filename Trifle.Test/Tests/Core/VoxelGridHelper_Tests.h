@@ -1,6 +1,6 @@
 #pragma Once
 
-#include <Util/VoxelGridHelper.h>
+#include <Util/VoxelGridUtil.h>
 #include <gtest/gtest.h>
 #include "../../GTestHelper.h"
 #include <string>
@@ -28,7 +28,7 @@ TEST(TrifleTest, GetIndexByPoint_Test)
                 UIntPoint3 point = UIntPoint3{x, y, z};
 
                 // Get index result
-                unsigned int result = VoxelGridHelper::GetIndexByUIntPoint3(point, width, height, depth);
+                unsigned int result = VoxelGridUtil::GetIndexByUIntPoint3(point, width, height, depth);
 
                 if (result >= size)
                 {
@@ -86,15 +86,15 @@ TEST(TrifleTest, GetPointByIndex_Test)
             {
                 // Create new point
                 UIntPoint3 point = UIntPoint3{x, y, z};
-                unsigned int index = VoxelGridHelper::GetIndexByUIntPoint3(point, width, height, depth);
-                UIntPoint3 newPoint = VoxelGridHelper::GetUIntPoint3ByIndex(index, width, height, depth);
+                unsigned int index = VoxelGridUtil::GetIndexByUIntPoint3(point, width, height, depth);
+                UIntPoint3 newPoint = VoxelGridUtil::GetUIntPoint3ByIndex(index, width, height, depth);
 
                 bool isMatch = newPoint.IsEqual(point);
 
                 if (!isMatch)
                 {
                     std::cout << COUT_GTEST_MGT << "Point mismatch @ [" << x << "," << y << "," << z << "]" << ANSI_TXT_MGT << std::endl;
-                    newPoint = VoxelGridHelper::GetUIntPoint3ByIndex(index, width, height, depth);
+                    newPoint = VoxelGridUtil::GetUIntPoint3ByIndex(index, width, height, depth);
                 }
 
                 ASSERT_TRUE(isMatch);

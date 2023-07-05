@@ -2,7 +2,8 @@
 #define GAME_H
 
 #include <GLGameWindow.h>
-#include <Core/EntityService.h>
+#include <Core/EntityManager.h>
+#include <Components/Components.h>
 #include <memory>
 
 using namespace trifle;
@@ -10,12 +11,19 @@ using namespace trifle;
 class Game
 {
   private:
-    std::unique_ptr<EntityService> m_enttySvc;
+    std::shared_ptr<EntityManager> m_entityManager;
     std::unique_ptr<GLGameWindow> m_gameWindow;
+
+    void RegisterComponents();
+    void RegisterSystems();
+    void InitSystems();
+    void GameUpdateSystems(float dt);
 
   protected:
   public:
     Game();
+
+    void Init();
 
     int Run();
 

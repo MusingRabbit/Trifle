@@ -2,20 +2,25 @@
 #define SYSTEM_H
 
 #include <set>
+#include <memory>
 
 namespace trifle
 {
+
+class EntityManager;
+
 class System
 {
   private:
     std::set<unsigned int> m_entityIds;
+    EntityManager& m_entityManager;
 
   protected:
-    std::set<unsigned int> GetEntities();
-    double m_totalElapsedTime;
+    std::set<unsigned int> GetEntityIds();
+    EntityManager& GetEntityManager();
 
   public:
-    System();
+    System(EntityManager& manager);
     ~System();
 
     virtual void Init() = 0;

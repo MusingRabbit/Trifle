@@ -17,18 +17,16 @@ Game::~Game()
 {
 }
 
-/// @brief Starts main program loop
-/// @return Error code. 0 indicates no Error
-int Game::Run()
+void Game::Init()
 {
-    std::cout << "Game.Run()" << std::endl;
+    std::cout << "Game.Init()" << std::endl;
 
     int initResult = glfwInit();
 
     if (initResult == GL_FALSE)
     {
         std::cout << "GLFW initialisation failed" << std::endl;
-        return -1;
+        return;
     }
 
     std::cout << "GLFW initialisation complete" << std::endl;
@@ -38,17 +36,22 @@ int Game::Run()
     m_gameWindow->MakeCurrentContext();
 
     std::cout << "Initialising ECS" << std::endl;
-    m_enttySvc = std::make_unique<EntityService>();
-    m_enttySvc->Init();
+    m_entityManager = std::make_shared<EntityManager>();
+    m_entityManager->Init();
 
-    std::cout << "Registering Components" << std::endl;
+    Entity::Init(m_entityManager);
 
-    std::cout << "Registering Systems" << std::endl;
+    RegisterComponents();
+    RegisterSystems();
 
-    std::shared_ptr<VoxelRenderSystem> vRender = m_enttySvc->RegisterSystem<VoxelRenderSystem>();
-    vRender->SetGameWindow(m_gameWindow.get());
-    vRender->Init();
+    InitSystems();
+}
 
+/// @brief Starts main program loop
+/// @return Error code. 0 indicates no Error
+int Game::Run()
+{
+    std::cout << "Game.Run()" << std::endl;
     std::cout << "Starting main loop" << std::endl;
 
     auto currTime = std::chrono::high_resolution_clock::now();
@@ -75,8 +78,43 @@ int Game::Run()
         currTime = std::chrono::high_resolution_clock::now();
         const auto deltaTime = std::chrono::duration_cast<std::chrono::milliseconds>(currTime - prevTime).count();
 
-        vRender->Update(deltaTime);
+        GameUpdateSystems(deltaTime);
+
+        // std::cout << "Frametime : " << deltaTime << "ms" << std::endl;
     }
 
     return 0;
+}
+
+void Game::RegisterComponents()
+{
+    m_entityManager->RegisterComponent<Collider>();
+    m_entityManager->RegisterComponent<Model3D>();
+    m_entityManager->RegisterComponent<Movement>();
+    m_entityManager->RegisterComponent<Target>();
+    m_entityManager->RegisterComponent<Projection>();
+    m_entityManager->RegisterComponent<Transform>();
+}
+
+void Game::RegisterSystems()
+{
+    m_entityManager->RegisterSystem<Renderer>();
+    m_entityManager->RegisterSystem<VoxelRenderer>();
+}
+
+void Game::InitSystems()
+{
+    m_entityManager->GetSystem<Renderer>()->Init();
+
+    std::shared_ptr<VoxelRenderer> vRenderer = m_entityManager->GetSystem<VoxelRenderer>();
+    vRenderer->SetImageSize(m_gameWindow->GetScreenWidth(), m_gameWindow->GetScreenHeight());
+
+    m_entityManager->GetSystem<VoxelRenderer>()->Init();
+}
+
+void Game::GameUpdateSystems(float dt)
+{
+    m_entityManager->GetSystem<VoxelRenderer>()->Update(dt);
+
+    m_entityManager->GetSystem<Renderer>()->Update(dt);
 }

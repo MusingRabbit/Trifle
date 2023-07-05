@@ -5,20 +5,28 @@ namespace trifle
 
 Collider::Collider()
 {
+    m_isTrigger = false;
+    m_recalculate = true;
+
+    m_max = {};
+    m_centre = {};
+    m_min = {};
+    m_size = {};
 }
 
 Collider::Collider(const Collider& rhs)
 {
     m_max = rhs.m_max;
-    m_centre = rhs.m_centre; /*  */
+    m_centre = rhs.m_centre;
     m_min = rhs.m_min;
-    m_isTrigger = rhs.m_isTrigger;
     m_size = rhs.m_size;
+
+    m_isTrigger = rhs.m_isTrigger;
+    m_recalculate = rhs.m_recalculate;
 }
 
 Collider::~Collider()
 {
-    SetScale(1.0f);
 }
 
 bool Collider::IsEqual(const Collider& rhs)
@@ -137,18 +145,15 @@ void Collider::CalculateCentre()
 
 bool Collider::Collides(const Collider& rhs)
 {
-    if (m_max.x >= rhs.m_min.x &&
-        m_min.x <= rhs.m_max.x) // Check that our X axis falls within the max & min of the rhs collider.
+    if (m_max.x >= rhs.m_min.x && m_min.x <= rhs.m_max.x) // Check that our X axis falls within the max & min of the rhs collider.
     {
-        if (m_max.y < rhs.m_min.y ||
-            m_min.y > rhs.m_max.y) // Check that our Y axis falls within the max & min of the rhs collider.
+        if (m_max.y < rhs.m_min.y || m_min.y > rhs.m_max.y) // Check that our Y axis falls within the max & min of the rhs collider.
         {
             return false;
         }
         else
         {
-            return m_max.z >= rhs.m_min.z &&
-                   m_min.z <= rhs.m_max.z; // Check that our Z axis falls within the max & min of the rhs collider.
+            return m_max.z >= rhs.m_min.z && m_min.z <= rhs.m_max.z; // Check that our Z axis falls within the max & min of the rhs collider.
         }
     }
 

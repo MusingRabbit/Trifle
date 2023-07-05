@@ -5,7 +5,7 @@
 #include <vector>
 #include "Core/Types.h"
 
-#include "../Util/VoxelGridHelper.h"
+#include "../Util/Util.h"
 #include "UIntPoint3.h"
 
 namespace trifle
@@ -96,7 +96,7 @@ class VoxelGrid
 
         for (unsigned int i = 0; i < m_data.size(); i++)
         {
-            UIntPoint3 point = VoxelGridHelper::GetUIntPoint3ByIndex(i, m_width, m_height, m_depth);
+            UIntPoint3 point = VoxelGridUtil::GetUIntPoint3ByIndex(i, m_width, m_height, m_depth);
 
             VoxelGridCell* cell = (VoxelGridCell*)&m_data[i];
             cell->SetId(i);
@@ -122,7 +122,7 @@ class VoxelGrid
 
     T* GetCell(const UIntPoint3& point)
     {
-        return &m_data[VoxelGridHelper::GetIndexByUIntPoint3(point, m_width, m_height, m_depth)];
+        return &m_data[VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth)];
     }
 
     unsigned int GetSize()

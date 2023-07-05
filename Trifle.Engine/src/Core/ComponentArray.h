@@ -46,14 +46,15 @@ class ComponentArray : public IComponentArray
 
     ~ComponentArray()
     {
+        m_entityToIndexMap.clear();
+        m_indexToEntityMap.clear();
     }
 
     /// @brief Maps the entity to the component
-    void Insert(unsigned int entityId, T component)
+    void Insert(unsigned int entityId, const T& component)
     {
-        assert(
-            m_entityToIndexMap.find(entityId) == m_entityToIndexMap.end() &&
-            "Duplicate addition of existing component. A component of the same type has already been mapped to this entity.");
+        assert(m_entityToIndexMap.find(entityId) == m_entityToIndexMap.end() &&
+               "Duplicate addition of existing component. A component of the same type has already been mapped to this entity.");
 
         unsigned int newIndex = m_size;
         m_entityToIndexMap[entityId] = newIndex;
@@ -95,6 +96,11 @@ class ComponentArray : public IComponentArray
         return m_componentArray[idx];
     }
 
+    T& GetByIndex(unsigned int idx)
+    {
+        return m_componentArray[idx];
+    }
+
     void EntityDestroyed(unsigned int entityId) override
     {
         if (m_entityToIndexMap.find(entityId) != m_entityToIndexMap.end())
@@ -106,6 +112,11 @@ class ComponentArray : public IComponentArray
     unsigned int GetCount() override
     {
         return m_size;
+    }
+
+    T const& operator[](unsigned int index) const
+    {
+        return m_componentArray[index];
     }
 };
 

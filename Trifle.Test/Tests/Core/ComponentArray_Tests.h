@@ -11,7 +11,7 @@ using namespace trifle;
 
 /// @brief Populates component array with colliders for 200 entities
 /// @param cmpArray Component array to be populated
-void Populate_ColliderCompArray(ComponentArray<Collider> &cmpArray)
+void Populate_ColliderCompArray(ComponentArray<Collider>& cmpArray)
 {
     srand((unsigned int)time(0));
 
@@ -30,7 +30,7 @@ void Populate_ColliderCompArray(ComponentArray<Collider> &cmpArray)
 
 /// @brief Populates component array with transforms for 200 entities
 /// @param cmpArray Component array to be populated
-void Populate_TransformCompArray(trifle::ComponentArray<Transform> &cmpArray)
+void Populate_TransformCompArray(trifle::ComponentArray<Transform>& cmpArray)
 {
     srand((unsigned int)time(0));
 
@@ -54,7 +54,7 @@ void Populate_TransformCompArray(trifle::ComponentArray<Transform> &cmpArray)
     }
 }
 
-TEST(ComponentArray, ComponentArray_Insert_Test)
+TEST(ComponentArray, Insert)
 {
     unsigned int entityId = 2;
     Collider collider;
@@ -66,12 +66,12 @@ TEST(ComponentArray, ComponentArray_Insert_Test)
     ComponentArray<Collider> cmpArray;
 
     cmpArray.Insert(entityId, collider);
-    Collider &result = cmpArray.Get(entityId);
+    Collider& result = cmpArray.Get(entityId);
 
     ASSERT_TRUE(result.IsEqual(collider));
 }
 
-TEST(ComponentArray, ComponentArray_Get_Test)
+TEST(ComponentArray, Get)
 {
     Collider col1;
     col1.SetMaximum(glm::vec3(1, 1, 1));
@@ -91,9 +91,9 @@ TEST(ComponentArray, ComponentArray_Get_Test)
     cmpArray.Insert(2, col2);
     cmpArray.Insert(3, col3);
 
-    Collider &result1 = cmpArray.Get(1);
-    Collider &result2 = cmpArray.Get(2);
-    Collider &result3 = cmpArray.Get(3);
+    Collider& result1 = cmpArray.Get(1);
+    Collider& result2 = cmpArray.Get(2);
+    Collider& result3 = cmpArray.Get(3);
 
     ASSERT_TRUE(result1.IsEqual(col1));
     ASSERT_TRUE(result2.IsEqual(col2));
@@ -105,36 +105,36 @@ TEST(ComponentArray, ComponentArray_Get_Test)
     ASSERT_FALSE(result3.IsEqual(col2));
 }
 
-TEST(ComponentArray, ComponentArray_Remove_Test)
+TEST(ComponentArray, Remove)
 {
     ComponentArray<Collider> cmpArray;
     Populate_ColliderCompArray(cmpArray);
 
-    Collider &colBeforeRemove = cmpArray.Get(100);
+    Collider& colBeforeRemove = cmpArray.Get(100);
 
     cmpArray.Remove(100);
 
     ASSERT_DEATH(cmpArray.Get(100), "Retrieving non-existent component.");
 }
 
-TEST(ComponentArray, ComponentArray_EntityDestroyed_Test)
+TEST(ComponentArray, EntityDestroyed)
 {
     ComponentArray<Transform> cmpArray;
     Populate_TransformCompArray(cmpArray);
 
-    Transform &colBeforeRemove = cmpArray.Get(100);
+    Transform& colBeforeRemove = cmpArray.Get(100);
 
     cmpArray.EntityDestroyed(100);
 
     ASSERT_DEATH(cmpArray.Get(100), "Retrieving non-existent component.");
 }
 
-TEST(ComponentArray, ComponentArray_Insert_Duplicate_Component_Test)
+TEST(ComponentArray, Insert_Duplicate_Component_Test)
 {
     ComponentArray<Transform> cmpArray;
     Populate_TransformCompArray(cmpArray);
 
-    Transform &orig = cmpArray.Get(10); // Ensure that transform does indeed exist.
+    Transform& orig = cmpArray.Get(10); // Ensure that transform does indeed exist.
 
     Transform newTransform;
     newTransform.SetPosition(glm::vec3(999, 999, 999));
@@ -145,7 +145,7 @@ TEST(ComponentArray, ComponentArray_Insert_Duplicate_Component_Test)
                                                     "type has already been mapped to this entity.");
 }
 
-TEST(ComponentArray, ComponentArray_Get_NotFound_Test)
+TEST(ComponentArray, Get_NotFound_Test)
 {
     ComponentArray<Collider> cmpArray;
 

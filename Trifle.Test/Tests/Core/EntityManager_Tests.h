@@ -7,71 +7,177 @@
 #include <string>
 #include <vector>
 
-#include <Core/EntityManager.h>
+#include <Core/Core.h>
+#include <Systems/Systems.h>
 
 using namespace trifle;
 
-void CreateEntities(EntityManager& manager, unsigned int entityCount)
+void InitialiseService(EntityManager& service, unsigned int entityCount)
 {
+    service.Init();
+
     for (unsigned int i = 0; i < entityCount; i++)
     {
-        manager.CreateEntity();
+        service.CreateEntity();
     }
 }
 
 TEST(EntityManager, CreateEntity_Test)
 {
-    EntityManager manager;
-    CreateEntities(manager, 30);
+    EntityManager service;
+    service.Init();
 
-    ASSERT_EQ(manager.GetCount(), 30);
+    unsigned int iEntity0 = service.CreateEntity();
+    unsigned int iEntity1 = service.CreateEntity();
+    unsigned int iEntity2 = service.CreateEntity();
+
+    ASSERT_EQ(iEntity0, 0);
+    ASSERT_EQ(iEntity1, 1);
+    ASSERT_EQ(iEntity2, 2);
 }
 
 TEST(EntityManager, DestroyEntity_Test)
 {
-    EntityManager manager;
+    EntityManager service;
+    InitialiseService(service, 30);
 
-    unsigned int entityCount = 30;
-
-    CreateEntities(manager, 30);
-
-    ASSERT_EQ(manager.GetCount(), entityCount);
-
-    manager.DestroyEntity(10);
-
-    ASSERT_EQ(manager.GetCount(), entityCount - 1);
-
-    manager.DestroyEntity(20);
-
-    ASSERT_EQ(manager.GetCount(), entityCount - 2);
+    service.DestroyEntity(10);
 }
 
-TEST(EntityManager, SetSignature_Test)
+TEST(EntityManager, RegisterComponent_Test)
 {
-    Signature sig1{"0000000000000000000000000000001"};
-    Signature sig2{"0000000000000000000000000000010"};
-    Signature sig3 = sig1 & sig2;
+    EntityManager service;
+    InitialiseService(service, 30);
 
-    EntityManager manager;
-
-    manager.SetSignature(0, sig1);
-    manager.SetSignature(1, sig2);
-    manager.SetSignature(2, sig3);
+    service.RegisterComponent<Transform>();
+    service.RegisterComponent<Collider>();
 }
 
-TEST(EntityManager, GetSignature_Test)
+TEST(EntityManager, AddComponent_GetComponent_Test)
 {
-    Signature sig1{"0000000000000000000000000000001"};
-    Signature sig2{"0000000000000000000000000000010"};
-    Signature sig3 = sig1 & sig2;
+    EntityManager service;
+    InitialiseService(service, 30);
 
-    EntityManager manager;
+    service.RegisterComponent<Transform>();
+    service.RegisterComponent<Collider>();
 
-    manager.SetSignature(0, sig1);
-    manager.SetSignature(1, sig2);
-    manager.SetSignature(2, sig3);
+    std::vector<Transform> transforms;
+    std::vector<Collider> colliders;
 
-    ASSERT_EQ(manager.GetSignature(0), sig1);
-    ASSERT_EQ(manager.GetSignature(1), sig2);
-    ASSERT_EQ(manager.GetSignature(2), sig3);
+    for (unsigned int i = 0; i < 30; i++)
+    {
+        Transform transform;
+        Collider collider;
+
+        transform.SetPosition(std::rand(), std::rand(), std::rand());
+        collider.SetCentre(std::rand(), std::rand(), std::rand());
+        collider.SetScale(1.0f);
+
+        transforms.push_back(transform);
+        colliders.push_back(collider);
+
+        service.AddComponent<Transform>(i, transform);
+        service.AddComponent<Collider>(i, collider);
+    }
+
+    for (unsigned int i = 0; i < 30; i++)
+    {
+        Transform transform = transforms[i];
+        Collider collider = colliders[i];
+
+        bool transformMatch = transform.IsEqual(service.GetComponent<Transform>(i));
+        bool colliderMatch = collider.IsEqual(service.GetComponent<Collider>(i));
+
+        ASSERT_TRUE(transformMatch && colliderMatch);
+    }
+}
+
+TEST(EntityManager, RemoveComponent_Test)
+{
+    EntityManager service;
+    InitialiseService(service, 30);
+
+    service.RegisterComponent<Transform>();
+    service.RegisterComponent<Collider>();
+
+    for (unsigned int i = 0; i < 30; i++)
+    {
+        Transform transform;
+        Collider collider;
+
+        service.AddComponent<Transform>(i, transform);
+        service.AddComponent<Collider>(i, collider);
+    }
+
+    for (unsigned int i = 0; i < 30; i++)
+    {
+        service.RemoveComponent<Transform>(i);
+    }
+}
+
+TEST(EntityManager, RegisterEntityOnSystem_Test)
+{
+    EntityManager service;
+    InitialiseService(service, 30);
+
+    service.RegisterSystem<Renderer>();
+
+    for (unsigned int i = 0; i < 30; i++)
+    {
+        service.RegisterEntityOnSystem<Renderer>(i);
+    }
+}
+
+TEST(EntityManager, GetSystem_Test)
+{
+    EntityManager service;
+    InitialiseService(service, 30);
+
+    service.RegisterSystem<Renderer>();
+
+    std::shared_ptr<Renderer> system = service.GetSystem<Renderer>();
+
+    for (unsigned int i = 0; i < 30; i++)
+    {
+        service.RegisterEntityOnSystem<Renderer>(i);
+    }
+
+    ASSERT_EQ(system->GetEntityCount(), 30);
+}
+
+TEST(EntityManager, RemoveEntityOnSystem_Test)
+{
+    EntityManager service;
+    InitialiseService(service, 30);
+
+    service.RegisterSystem<Renderer>();
+
+    std::shared_ptr<Renderer> system = service.GetSystem<Renderer>();
+
+    for (unsigned int i = 0; i < 30; i++)
+    {
+        service.RegisterEntityOnSystem<Renderer>(i);
+    }
+
+    for (unsigned int i = 0; i < 15; i++)
+    {
+        service.RemoveEntityOnSystem<Renderer>(i);
+    }
+
+    ASSERT_EQ(system->GetEntityCount(), 15);
+}
+
+TEST(EntityManager, GetComponentType_Test)
+{
+    EntityManager service;
+    InitialiseService(service, 0);
+
+    service.RegisterComponent<Transform>();
+    service.RegisterComponent<Collider>();
+
+    ComponentType transformType = service.GetComponentType<Transform>();
+    ComponentType colliderType = service.GetComponentType<Collider>();
+
+    ASSERT_EQ(transformType, 1);
+    ASSERT_EQ(colliderType, 2);
 }

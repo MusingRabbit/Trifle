@@ -1,7 +1,12 @@
-#pragma Once
+#ifndef COMPONENTS_H
+#define COMPONENTS_H
 
 #include "Collider.h"
 #include "Transform.h"
-#include "Model.h"
-#include "Shader.h"
-#include "Texture2D.h"
+#include "Projection.h"
+#include "EntityData.h"
+#include "Target.h"
+#include "Movement.h"
+#include "Model3D.h"
+
+#endif

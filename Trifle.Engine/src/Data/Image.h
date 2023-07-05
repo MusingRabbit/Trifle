@@ -72,8 +72,6 @@ class Image
 
     void DrawFilledCircle(const UIntPoint2& centre, const Colour& stroke, const Colour& fill, double radius)
     {
-        float diam = radius * 2;
-
         for (unsigned int x = centre.x - radius; x <= centre.x + radius; x++)
         {
             for (unsigned int y = centre.y - radius; y <= centre.y + radius; y++)
@@ -98,8 +96,7 @@ class Image
         }
     }
 
-    void DrawBox(const UIntPoint2& pos, unsigned int width, unsigned int height, const Colour& fill,
-                 const Colour& stroke)
+    void DrawBox(const UIntPoint2& pos, unsigned int width, unsigned int height, const Colour& fill, const Colour& stroke)
     {
         unsigned int minX = pos.x;
         unsigned int minY = pos.y;

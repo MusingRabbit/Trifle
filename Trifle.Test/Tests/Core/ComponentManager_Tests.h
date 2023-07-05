@@ -7,20 +7,20 @@
 #include <vector>
 
 #include <Components/Components.h>
-#include <Core/ComponentManager.h>
+#include <Core/ComponentRegister.h>
 
 using namespace trifle;
 
-TEST(ComponentManager, RegisterComponent_Test)
+TEST(ComponentRegister, RegisterComponent_Test)
 {
-    ComponentManager cmpManager;
+    ComponentRegister cmpRegister;
 
-    cmpManager.RegisterComponent<Transform>();
-    cmpManager.RegisterComponent<Collider>();
+    cmpRegister.RegisterComponent<Transform>();
+    cmpRegister.RegisterComponent<Collider>();
 
     unsigned int cmpsRegistered = 0;
     std::string components[2] = {"trifle::Transform", "trifle::Collider"};
-    std::vector<std::string> comps = cmpManager.GetRegisteredComponents();
+    std::vector<std::string> comps = cmpRegister.GetRegisteredComponents();
 
     for (unsigned int i = 0; i < comps.size(); i++)
     {
@@ -36,32 +36,32 @@ TEST(ComponentManager, RegisterComponent_Test)
     ASSERT_EQ(cmpsRegistered, (unsigned int)2);
 }
 
-TEST(ComponentManager, GetComponentType_test)
+TEST(ComponentRegister, GetComponentType_test)
 {
-    ComponentManager cmpManager;
+    ComponentRegister cmpRegister;
 
-    cmpManager.RegisterComponent<Transform>();
-    cmpManager.RegisterComponent<Collider>();
+    cmpRegister.RegisterComponent<Transform>();
+    cmpRegister.RegisterComponent<Collider>();
 
     unsigned int expectedTransformId = 0;
     unsigned int expectedColliderId = 1;
 
-    unsigned int actualTransformId = cmpManager.GetComponentType<Transform>();
-    unsigned int actualColliderId = cmpManager.GetComponentType<Collider>();
+    unsigned int actualTransformId = cmpRegister.GetComponentType<Transform>();
+    unsigned int actualColliderId = cmpRegister.GetComponentType<Collider>();
 
     ASSERT_EQ(expectedTransformId, actualTransformId);
     ASSERT_EQ(expectedColliderId, actualColliderId);
 }
 
-TEST(ComponentManager, AddComponent_GetComponent_Test)
+TEST(ComponentRegister, AddComponent_GetComponent_Test)
 {
-    ComponentManager cmpManager;
+    ComponentRegister cmpRegister;
 
     unsigned int entityId1 = 0;
     unsigned int entityId2 = 1;
 
-    cmpManager.RegisterComponent<Transform>();
-    cmpManager.RegisterComponent<Collider>();
+    cmpRegister.RegisterComponent<Transform>();
+    cmpRegister.RegisterComponent<Collider>();
 
     Transform transform1;
     transform1.SetPosition(glm::vec3(111, 111, 111));
@@ -81,30 +81,30 @@ TEST(ComponentManager, AddComponent_GetComponent_Test)
     collider2.SetMaximum(glm::vec3(3, 3, 3));
     collider2.SetMinimum(glm::vec3(2, 2, 2));
 
-    cmpManager.AddComponent<Transform>(entityId1, transform1);
-    cmpManager.AddComponent<Collider>(entityId1, collider1);
-    cmpManager.AddComponent<Transform>(entityId2, transform2);
-    cmpManager.AddComponent<Collider>(entityId2, collider2);
+    cmpRegister.AddComponent<Transform>(entityId1, transform1);
+    cmpRegister.AddComponent<Collider>(entityId1, collider1);
+    cmpRegister.AddComponent<Transform>(entityId2, transform2);
+    cmpRegister.AddComponent<Collider>(entityId2, collider2);
 
-    Transform result1 = cmpManager.GetComponent<Transform>(entityId1);
-    Transform result2 = cmpManager.GetComponent<Transform>(entityId2);
+    Transform result1 = cmpRegister.GetComponent<Transform>(entityId1);
+    Transform result2 = cmpRegister.GetComponent<Transform>(entityId2);
 
-    Collider result3 = cmpManager.GetComponent<Collider>(entityId1);
-    Collider result4 = cmpManager.GetComponent<Collider>(entityId2);
+    Collider result3 = cmpRegister.GetComponent<Collider>(entityId1);
+    Collider result4 = cmpRegister.GetComponent<Collider>(entityId2);
 
-    ASSERT_EQ(cmpManager.GetCount(), 4);
+    ASSERT_EQ(cmpRegister.GetCount(), 4);
     ASSERT_TRUE(result1.IsEqual(transform1));
     ASSERT_TRUE(result2.IsEqual(transform2));
     ASSERT_TRUE(result3.IsEqual(collider1));
     ASSERT_TRUE(result4.IsEqual(collider2));
 }
 
-TEST(ComponentManager, AddComponent_Duplicate_Test)
+TEST(ComponentRegister, AddComponent_Duplicate_Test)
 {
     unsigned int entityId = 100;
-    ComponentManager cmpManager;
+    ComponentRegister cmpRegister;
 
-    cmpManager.RegisterComponent<Transform>();
+    cmpRegister.RegisterComponent<Transform>();
 
     Transform transform1;
     transform1.SetPosition(glm::vec3(111, 111, 111));
@@ -116,22 +116,21 @@ TEST(ComponentManager, AddComponent_Duplicate_Test)
     transform2.Rotate(glm::vec3(222, 222, 222));
     transform2.Scale(2);
 
-    cmpManager.AddComponent<Transform>(entityId, transform1);
+    cmpRegister.AddComponent<Transform>(entityId, transform1);
 
-    ASSERT_DEATH(
-        cmpManager.AddComponent<Transform>(entityId, transform2),
-        "Duplicate addition of existing component. A component of the same type has already been mapped to this entity.");
+    ASSERT_DEATH(cmpRegister.AddComponent<Transform>(entityId, transform2),
+                 "Duplicate addition of existing component. A component of the same type has already been mapped to this entity.");
 }
 
-TEST(ComponentManager, RemoveComponent_Test)
+TEST(ComponentRegister, RemoveComponent_Test)
 {
-    ComponentManager cmpManager;
+    ComponentRegister cmpRegister;
 
     unsigned int entityId1 = 0;
     unsigned int entityId2 = 1;
 
-    cmpManager.RegisterComponent<Transform>();
-    cmpManager.RegisterComponent<Collider>();
+    cmpRegister.RegisterComponent<Transform>();
+    cmpRegister.RegisterComponent<Collider>();
 
     Transform transform1;
     transform1.SetPosition(glm::vec3(111, 111, 111));
@@ -151,30 +150,30 @@ TEST(ComponentManager, RemoveComponent_Test)
     collider2.SetMaximum(glm::vec3(3, 3, 3));
     collider2.SetMinimum(glm::vec3(2, 2, 2));
 
-    cmpManager.AddComponent<Transform>(entityId1, transform1);
-    cmpManager.AddComponent<Collider>(entityId1, collider1);
-    cmpManager.AddComponent<Transform>(entityId2, transform2);
-    cmpManager.AddComponent<Collider>(entityId2, collider2);
+    cmpRegister.AddComponent<Transform>(entityId1, transform1);
+    cmpRegister.AddComponent<Collider>(entityId1, collider1);
+    cmpRegister.AddComponent<Transform>(entityId2, transform2);
+    cmpRegister.AddComponent<Collider>(entityId2, collider2);
 
-    ASSERT_EQ(cmpManager.GetCount(), 4);
+    ASSERT_EQ(cmpRegister.GetCount(), 4);
 
-    cmpManager.RemoveComponent<Transform>(entityId1);
+    cmpRegister.RemoveComponent<Transform>(entityId1);
 
-    ASSERT_EQ(cmpManager.GetCount(), 3);
-    ASSERT_DEATH(cmpManager.GetComponent<Transform>(entityId1), "Retrieving non-existent component.");
+    ASSERT_EQ(cmpRegister.GetCount(), 3);
+    ASSERT_DEATH(cmpRegister.GetComponent<Transform>(entityId1), "Retrieving non-existent component.");
 
-    cmpManager.RemoveComponent<Collider>(entityId2);
+    cmpRegister.RemoveComponent<Collider>(entityId2);
 
-    ASSERT_EQ(cmpManager.GetCount(), 2);
-    ASSERT_DEATH(cmpManager.GetComponent<Collider>(entityId2), "Retrieving non-existent component.");
+    ASSERT_EQ(cmpRegister.GetCount(), 2);
+    ASSERT_DEATH(cmpRegister.GetComponent<Collider>(entityId2), "Retrieving non-existent component.");
 }
 
-TEST(ComponentManager, GetComponent_Test)
+TEST(ComponentRegister, GetComponent_Test)
 {
-    ComponentManager cmpManager;
+    ComponentRegister cmpRegister;
 
-    cmpManager.RegisterComponent<Transform>();
-    cmpManager.RegisterComponent<Collider>();
+    cmpRegister.RegisterComponent<Transform>();
+    cmpRegister.RegisterComponent<Collider>();
 
     unsigned int entityId = 9999;
 
@@ -187,23 +186,23 @@ TEST(ComponentManager, GetComponent_Test)
     collider1.SetMaximum(glm::vec3(6, 6, 6));
     collider1.SetMinimum(glm::vec3(5, 5, 5));
 
-    cmpManager.AddComponent<Transform>(entityId, transform1);
-    cmpManager.AddComponent<Collider>(entityId, collider1);
-    cmpManager.AddComponent<Collider>(123, collider1);
+    cmpRegister.AddComponent<Transform>(entityId, transform1);
+    cmpRegister.AddComponent<Collider>(entityId, collider1);
+    cmpRegister.AddComponent<Collider>(123, collider1);
 
-    ASSERT_EQ(cmpManager.GetCount(), 3);
+    ASSERT_EQ(cmpRegister.GetCount(), 3);
 
-    cmpManager.EntityDestroyed(entityId);
+    cmpRegister.EntityDestroyed(entityId);
 
-    ASSERT_EQ(cmpManager.GetCount(), 1);
+    ASSERT_EQ(cmpRegister.GetCount(), 1);
 }
 
-TEST(ComponentManager, GetCount_Test)
+TEST(ComponentRegister, GetCount_Test)
 {
-    ComponentManager cmpManager;
+    ComponentRegister cmpRegister;
 
-    cmpManager.RegisterComponent<Transform>();
-    cmpManager.RegisterComponent<Collider>();
+    cmpRegister.RegisterComponent<Transform>();
+    cmpRegister.RegisterComponent<Collider>();
 
     unsigned int entityCount = rand() % 100;
 
@@ -216,11 +215,11 @@ TEST(ComponentManager, GetCount_Test)
         collider.SetCentre(glm::vec3(std::rand(), std::rand(), std::rand()));
         collider.SetScale(1.0);
 
-        cmpManager.AddComponent<Transform>(i, transform);
-        cmpManager.AddComponent<Collider>(i, collider);
+        cmpRegister.AddComponent<Transform>(i, transform);
+        cmpRegister.AddComponent<Collider>(i, collider);
     }
 
-    unsigned int componentCount = cmpManager.GetCount();
+    unsigned int componentCount = cmpRegister.GetCount();
 
     ASSERT_EQ(componentCount, entityCount * 2);
 }
