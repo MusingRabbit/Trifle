@@ -7,8 +7,7 @@
 #include <string>
 #include <vector>
 
-#include <Core/Core.h>
-#include <Systems/Systems.h>
+#include <trifle.h>
 
 using namespace trifle;
 

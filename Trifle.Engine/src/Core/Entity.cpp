@@ -1,12 +1,9 @@
 #include "Entity.h"
 
+#include "../Components/Transform.h"
+
 namespace trifle
 {
-
-unsigned int Entity::Register()
-{
-    return Entity::entityManager->CreateEntity();
-}
 
 void Entity::Init(std::shared_ptr<EntityManager> manager)
 {
@@ -25,7 +22,9 @@ Entity Entity::Create()
 {
     Entity::InitialisationCheck();
     unsigned int entityId = Entity::entityManager->CreateEntity();
-    return Entity(entityId);
+    Entity result(entityId);
+    result.AddComponent<Transform>();
+    return result;
 }
 
 void Entity::Destroy(unsigned int entityId)
@@ -50,6 +49,11 @@ Entity::Entity()
 
 Entity::~Entity()
 {
+}
+
+void Entity::Register()
+{
+    SetId(Entity::entityManager->CreateEntity());
 }
 
 unsigned int Entity::GetId()

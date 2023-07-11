@@ -2,9 +2,10 @@
 #include <gtest/gtest.h>
 
 #include "../../GTestHelper.h"
-#include <Data/VoxelGrid.h>
 #include <chrono>
 #include <iostream>
+
+#include <trifle.h>
 
 #define atoa(x) #x;
 
@@ -15,13 +16,13 @@ const unsigned int GRID_SIZE = 343;
 TEST(VoxelGrid, Grid_Initialisation)
 {
     VoxelGrid<VoxelGridCell> grid;
-    grid.Initialise(GRID_SIZE, GRID_SIZE, GRID_SIZE);
+    grid.Init(GRID_SIZE, GRID_SIZE, GRID_SIZE);
 }
 
 TEST(VoxelGrid, Grid_GetCell)
 {
     VoxelGrid<VoxelGridCell> grid;
-    grid.Initialise(GRID_SIZE, GRID_SIZE, GRID_SIZE);
+    grid.Init(GRID_SIZE, GRID_SIZE, GRID_SIZE);
 
     auto start = std::chrono::high_resolution_clock::now();
 

@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include <Core/EntityRegister.h>
+#include <trifle.h>
 
 using namespace trifle;
 

@@ -17,6 +17,10 @@ Transform::Transform(const Transform& rhs)
     m_localRot = rhs.m_localRot;
     m_localScale = rhs.m_localScale;
     m_isDirty = true;
+
+    OnPositionChanged = rhs.OnPositionChanged;
+    OnRotationChanged = rhs.OnRotationChanged;
+    OnScaleChanged = rhs.OnScaleChanged;
 }
 
 Transform::~Transform()

@@ -13,10 +13,7 @@ class Entity
   private:
     inline static std::shared_ptr<EntityManager> entityManager;
 
-    unsigned int m_id;
-
-  protected:
-    unsigned int Register();
+    unsigned int m_id = -1;
 
   public:
     static void Init(std::shared_ptr<EntityManager> manager);
@@ -34,6 +31,8 @@ class Entity
     Entity();
 
     ~Entity();
+
+    void Register();
 
     unsigned int GetId();
 

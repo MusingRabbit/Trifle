@@ -3,9 +3,9 @@
 #include <gtest/gtest.h>
 #include <cstdlib>
 #include <functional>
+#include <limits>
 
-#include <Core/EventRegister.h>
-#include <Core/Types.h>
+#include <trifle.h>
 
 #include <stdexcept>
 
@@ -22,24 +22,32 @@ TEST(EventRegister, GetNewEventId_Test)
 {
     EventRegister eRegister;
 
+    EventRegister::MAX_EVENTHANDLERS = 10;
+
     for (unsigned int i = 0; i < EventRegister::MAX_EVENTHANDLERS; i++)
     {
         EventId eId1 = eRegister.GetNewEventId();
-        ASSERT_EQ(eId1, i);
+        ASSERT_EQ(eId1, i + 1);
     }
+
+    EventRegister::MAX_EVENTHANDLERS = UINT_MAX;
 }
 
 TEST(EventRegister, GetNewEventId_TooManyEventIds_Test)
 {
     EventRegister eRegister;
 
+    EventRegister::MAX_EVENTHANDLERS = 10;
+
     for (unsigned int i = 0; i < EventRegister::MAX_EVENTHANDLERS; i++)
     {
         EventId eId1 = eRegister.GetNewEventId();
-        ASSERT_EQ(eId1, i);
+        ASSERT_EQ(eId1, i + 1);
     }
 
     ASSERT_THROW(eRegister.GetNewEventId(), std::runtime_error);
+
+    EventRegister::MAX_EVENTHANDLERS = UINT_MAX;
 }
 
 TEST(EventRegister, GetNewEventId_AfterRelease)
@@ -51,12 +59,11 @@ TEST(EventRegister, GetNewEventId_AfterRelease)
         eRegister.GetNewEventId();
     }
 
-    for (unsigned int i = 0; i > 5; i++)
-    {
-        eRegister.ReleaseEventId(i);
-    }
+    eRegister.ReleaseEventId(5);
 
-    ASSERT_EQ(eRegister.GetNewEventId(), 6);
+    EventId newId = eRegister.GetNewEventId();
+
+    ASSERT_EQ(newId, 5);
 }
 
 TEST(EventRegister, AddListener)

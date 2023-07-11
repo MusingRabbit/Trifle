@@ -6,12 +6,36 @@
 
 namespace trifle
 {
-Camera::Camera() : Entity(Register())
+Camera::Camera() : Entity()
 {
 }
 
 Camera::~Camera()
 {
+}
+
+void Camera::Init(float aspectRatio, float nearPlane, float farPlane)
+{
+    AddComponent<Transform>();
+    AddComponent<Projection>(Projection(aspectRatio, nearPlane, farPlane));
+    AddComponent<Movement>();
+    AddComponent<Target>();
+
+    std::function<void(EventArgs&)> func = [this](EventArgs& e) { this->OnTransformChangedCallback(e); };
+
+    Transform& transform = GetComponent<Transform>();
+
+    transform.OnPositionChanged.UnSubscribe();
+    transform.OnRotationChanged.UnSubscribe();
+
+    transform.OnPositionChanged.Subscribe(func);
+    transform.OnRotationChanged.Subscribe(func);
+}
+
+void Camera::SetPosition(glm::vec3 position)
+{
+    Transform& transform = GetComponent<Transform>();
+    transform.SetPosition(position);
 }
 
 void Camera::Move(glm::vec3 moveVector)
@@ -62,6 +86,26 @@ void Camera::ClearTarget()
     Target& target = GetComponent<Target>();
     target.targetType = TARGET_NONE;
     target.entityId = -1;
+}
+
+void Camera::SetMovementSpeed(float value)
+{
+    GetComponent<Movement>().speed = value;
+}
+
+glm::mat4 Camera::GetViewMatrix()
+{
+    Transform& transform = GetComponent<Transform>();
+    Target& target = GetComponent<Target>();
+
+    return glm::lookAtLH(transform.GetPosition(), target.position, glm::vec3(0, 1, 0));
+
+    // return MatrixHelper::CreateLookAtMatrix(transform.GetPosition(), target.position, glm::vec3(0, 1, 0));
+}
+
+void Camera::OnTransformChangedCallback(EventArgs& e)
+{
+    UpdateTargetPosition();
 }
 
 void Camera::UpdateTargetPosition()

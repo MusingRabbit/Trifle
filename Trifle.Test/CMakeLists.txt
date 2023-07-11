@@ -10,7 +10,7 @@ set(LIBS ${LIBS} gtest)
 message(STATUS "LIBS = ${LIBS}")
 
 file(GLOB_RECURSE TEST_SRC_FILES
-${TEST_DIR}/*.c
+${TEST_DIR}/*.c 
 ${TEST_DIR}/*.cpp
 ${TEST_DIR}/*.h
 ${TEST_DIR}/*.hpp 

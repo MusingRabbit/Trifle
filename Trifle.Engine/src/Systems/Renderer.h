@@ -27,6 +27,8 @@ class Renderer : public System
 
     void Init() override;
 
+    void EnableAlphaBlending();
+
     void Update(float dt) override;
 };
 } // namespace trifle

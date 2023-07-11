@@ -73,21 +73,21 @@ class SystemRegister
 
     void EntitySignatureChanged(unsigned int entityId, Signature entitySignature)
     {
-        for (auto const& pair : m_systems)
-        {
-            auto const& type = pair.first;
-            auto const& system = pair.second;
-            auto const& systemSignature = m_signatures[type];
-
-            if ((entitySignature & systemSignature) == systemSignature)
-            {
-                system->AddEntity(entityId);
-            }
-            else
-            {
-                system->RemoveEntity(entityId);
-            }
-        }
+        // for (auto const& pair : m_systems)
+        //{
+        //     auto const& type = pair.first;
+        //     auto const& system = pair.second;
+        //     auto const& systemSignature = m_signatures[type];
+        //
+        //    if ((entitySignature & systemSignature) == systemSignature)
+        //    {
+        //        system->AddEntity(entityId);
+        //    }
+        //    else
+        //    {
+        //        system->RemoveEntity(entityId);
+        //    }
+        //}
     }
 
     void EntityDestroyed(unsigned int entityId)

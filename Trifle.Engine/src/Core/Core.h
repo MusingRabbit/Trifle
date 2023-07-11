@@ -1,4 +1,5 @@
-#pragma Once
+#ifndef CORE_H
+#define CORE_H
 
 #include "EntityManager.h"
 #include "ComponentArray.h"
@@ -10,3 +11,5 @@
 #include "ComponentRegister.h"
 #include "EventRegister.h"
 #include "SystemRegister.h"
+
+#endif // !CORE_H

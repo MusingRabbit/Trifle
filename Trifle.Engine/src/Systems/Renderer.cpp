@@ -30,6 +30,14 @@ void Renderer::Init()
         fprintf(stderr, "Error: %s\n", glewGetErrorString(initResult));
         throw std::runtime_error("Renderer :: GLEW initialisation failure.");
     }
+
+    EnableAlphaBlending();
+}
+
+void Renderer::EnableAlphaBlending()
+{
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
 }
 
 void Renderer::Update(float dt)

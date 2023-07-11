@@ -1,14 +1,13 @@
 #include <iostream>
-#include "Game.h"
+#include "Program.h"
 
 int main(int argc, const char** argv)
 {
-
     std::cout << "Start" << std::endl;
 
-    Game game;
+    Program program;
 
-    game.Init();
+    program.Init();
 
-    return game.Run();
+    return program.Run();
 }

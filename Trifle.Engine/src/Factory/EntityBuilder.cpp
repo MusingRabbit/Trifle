@@ -14,6 +14,7 @@ Entity EntityBuilder::MakeCamera(float aspectRatio, float nearPlane, float farPl
 
     result.AddComponent<Projection>(proj);
     result.AddComponent<Movement>();
+    result.AddComponent<Target>();
 
     return result;
 }

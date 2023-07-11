@@ -1,6 +1,7 @@
 #pragma Once
 
-#include <Util/VoxelGridUtil.h>
+#include <trifle.h>
+
 #include <gtest/gtest.h>
 #include "../../GTestHelper.h"
 #include <string>

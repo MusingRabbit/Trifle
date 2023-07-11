@@ -36,7 +36,7 @@ class MatrixHelper
         return glm::mat4_cast(qRot);
     }
 
-    static glm::mat4 CreatePerspectiveMatrix(float width, float height, float nearPlane, float farPlane)
+    static glm::mat4 CreateProjectionMatrix(float width, float height, float nearPlane, float farPlane)
     {
         glm::mat4 result;
 

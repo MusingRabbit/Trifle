@@ -19,7 +19,11 @@ class Projection
     Projection(const Projection& rhs);
 
     void Init(float aspectRatio, float nearPlane, float farPlane);
-    glm::mat4 GetPerspectiveMatrix();
+    glm::mat4 GetMatrix();
+
+    float GetNearPlane();
+    float GetFarPlane();
+    float GetAspectRatio();
 };
 } // namespace trifle
 

@@ -6,8 +6,7 @@
 #include <string>
 #include <vector>
 
-#include <Components/Components.h>
-#include <Core/ComponentRegister.h>
+#include <trifle.h>
 
 using namespace trifle;
 

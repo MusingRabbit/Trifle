@@ -1,7 +1,7 @@
 #pragma Once
 
-#include <Components/Components.h>
-#include <Core/ComponentArray.h>
+#include <trifle.h>
+
 #include <gtest/gtest.h>
 
 #include <cstdlib>
@@ -32,8 +32,6 @@ void Populate_ColliderCompArray(ComponentArray<Collider>& cmpArray)
 /// @param cmpArray Component array to be populated
 void Populate_TransformCompArray(trifle::ComponentArray<Transform>& cmpArray)
 {
-    srand((unsigned int)time(0));
-
     for (unsigned int i = 0; i < 200; i++)
     {
         Transform tran;

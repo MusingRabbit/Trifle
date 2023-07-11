@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <vector>
-#include "Core/Types.h"
+#include "../Core/Types.h"
 
 #include "../Util/Util.h"
 #include "UIntPoint3.h"
@@ -82,7 +82,7 @@ class VoxelGrid
     {
     }
 
-    void Initialise(unsigned int width, unsigned int height, unsigned int depth)
+    void Init(unsigned int width, unsigned int height, unsigned int depth)
     {
         Clear();
 
@@ -102,22 +102,12 @@ class VoxelGrid
             cell->SetId(i);
             cell->SetPosition(point);
         }
+    }
 
-        /*         for (unsigned int z = 0; z < m_size; z++)
-                {
-                    for (unsigned int y = 0; y < m_size; y++)
-                    {
-                        for (unsigned int x = 0; x < m_size; x++)
-                        {
-                            UIntPoint3 point{x, y, z};
-                            unsigned int idx = GetIndexByUIntPoint3(point);
-
-                            VoxelGridCell* cell = (VoxelGridCell*)&m_data[idx];
-                            cell->Id = idx;
-                            cell->Position = point;
-                        }
-                    }
-                } */
+    bool Contains(const UIntPoint3& point)
+    {
+        unsigned int idx = VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth);
+        return idx < m_data.size();
     }
 
     T* GetCell(const UIntPoint3& point)
@@ -125,9 +115,41 @@ class VoxelGrid
         return &m_data[VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth)];
     }
 
+    void PaintCell(const UIntPoint3 point, Colour colour)
+    {
+        m_data[VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth)].SetColour(colour);
+    }
+
+    void PaintCells(const UIntPoint3 point, unsigned int brushSize, Colour fillColour)
+    {
+        UIntPoint3 startPoint = {point.x - brushSize, point.y - brushSize, point.z - brushSize};
+        UIntPoint3 endPoint = {point.x + brushSize, point.y + brushSize, point.z + brushSize};
+
+        for (unsigned int x = startPoint.x; x < endPoint.x; x++)
+        {
+            for (unsigned int y = startPoint.y; y < endPoint.y; y++)
+            {
+                for (unsigned int z = startPoint.z; z < endPoint.z; z++)
+                {
+                    PaintCell({x, y, z}, fillColour);
+                }
+            }
+        }
+    }
+
     unsigned int GetSize()
     {
         return m_size;
+    }
+
+    unsigned int GetWidth()
+    {
+        return m_width;
+    }
+
+    unsigned int GetHeight()
+    {
+        return m_height;
     }
 
     unsigned int GetMemorySize()

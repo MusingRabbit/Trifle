@@ -5,7 +5,7 @@
 #include <list>
 #include <unordered_map>
 #include <limits.h>
-#include <queue>
+#include <set>
 
 namespace trifle
 {
@@ -14,10 +14,11 @@ class EventRegister : public IEventRegister
 {
   private:
     std::unordered_map<EventId, std::list<std::function<void(EventArgs&)>>> m_listeners;
-    std::queue<unsigned int> m_availableIds;
+    std::set<unsigned int> m_distributedIds;
+    unsigned int m_lastTouchedId;
 
   public:
-    static const unsigned int MAX_EVENTHANDLERS = 1000000;
+    static unsigned int MAX_EVENTHANDLERS;
 
     static IEventRegister& GetInstance()
     {
@@ -35,6 +36,7 @@ class EventRegister : public IEventRegister
     void SendEvent(EventArgs& args);
     void SendEvent(EventId eventId);
 };
+
 } // namespace trifle
 
 #endif // !EVENTMANAGER_H

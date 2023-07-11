@@ -16,6 +16,10 @@ class Image
 
     std::vector<Colour> m_data;
 
+    Colour m_clearColour;
+
+    bool m_additiveBlend;
+
     unsigned int GetIndex(const UIntPoint2& point)
     {
         return point.x + (point.y * m_width);
@@ -53,16 +57,37 @@ class Image
         return m_height;
     }
 
+    float GetAspectRatio()
+    {
+        return m_width / m_height;
+    }
+
+    void SetAdditiveBlend(bool value)
+    {
+        m_additiveBlend = value;
+    }
+
     void SetPixel(const UIntPoint2& point, const Colour& colour)
     {
         unsigned int idx = GetIndex(point);
 
         if (idx > m_data.size())
         {
-            throw std::runtime_error("Index out of range. The point provided exceeds the range of the image.");
+            return;
+            // throw std::runtime_error("Index out of range. The point provided exceeds the range of the image.");
         }
 
-        m_data[idx] = Colour(colour.r, colour.g, colour.b, colour.a);
+        if (m_additiveBlend)
+        {
+            m_data[idx].r += colour.r;
+            m_data[idx].g += colour.g;
+            m_data[idx].b += colour.b;
+            m_data[idx].a += colour.a;
+        }
+        else
+        {
+            m_data[idx] = Colour(colour.r, colour.g, colour.b, colour.a);
+        }
     }
 
     void DrawCircle(const UIntPoint2& centre, const Colour& stroke, double radius)
@@ -107,7 +132,6 @@ class Image
         {
             for (unsigned int y = minY; y <= maxY; y++)
             {
-
                 if (x == minX || x == maxX || y == minY || y == maxY)
                 {
                     SetPixel({x, y}, stroke);
@@ -158,6 +182,7 @@ class Image
 
     void ClearColour(const Colour& colour)
     {
+        m_clearColour = colour;
         std::fill(m_data.begin(), m_data.end(), colour);
     }
 
