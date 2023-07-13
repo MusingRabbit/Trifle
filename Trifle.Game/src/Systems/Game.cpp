@@ -38,29 +38,30 @@ void Game::Update(float dt)
 
     m_voxelGrid->DrawVoxel({5, 5, 5}, Colour(1, 0, 1, 1));
 
+    glm::vec3 moveVector(0,0,0);
+
     if (m_gameWindow->GetKeyState(GLFW_KEY_W) == GLFW_PRESS)
     {
-        m_camera.Move(glm::vec3(0, -0.1, 0));
-        OutputCameraPosition();
+        moveVector.x += 0.01 * dt;
     }
 
     if (m_gameWindow->GetKeyState(GLFW_KEY_S) == GLFW_PRESS)
     {
-        m_camera.Move(glm::vec3(0, 0.1, 0));
-        OutputCameraPosition();
+        moveVector.x -= 0.01 * dt;
     }
 
     if (m_gameWindow->GetKeyState(GLFW_KEY_A) == GLFW_PRESS)
     {
-        m_camera.Move(glm::vec3(-0.1, 0, 0));
-        OutputCameraPosition();
+        moveVector.y += 0.01 * dt;
     }
 
     if (m_gameWindow->GetKeyState(GLFW_KEY_D) == GLFW_PRESS)
     {
-        m_camera.Move(glm::vec3(0.1, 0, 0));
-        OutputCameraPosition();
+        moveVector.y -= 0.01 * dt;
     }
+
+    m_camera.Move(moveVector);
+    OutputCameraPosition();
 }
 
 void Game::OutputCameraPosition()

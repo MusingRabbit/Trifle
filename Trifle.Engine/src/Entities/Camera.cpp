@@ -41,8 +41,9 @@ void Camera::SetPosition(glm::vec3 position)
 void Camera::Move(glm::vec3 moveVector)
 {
     Transform& transform = GetComponent<Transform>();
+    glm::vec3 rot = transform.GetRotaion();
 
-    glm::mat4 rotate = MatrixHelper::CreateRotationX(transform.GetRotaion().x) * MatrixHelper::CreateRotationY(transform.GetRotaion().y);
+    glm::mat4 rotate = MatrixHelper::CreateRotationX(rot.x) * MatrixHelper::CreateRotationY(rot.y);
 
     float movementSpeed = GetComponent<Movement>().speed;
     glm::vec3 movement = movementSpeed * moveVector;

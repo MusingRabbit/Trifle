@@ -3,6 +3,8 @@
 namespace trifle
 {
 
+double System::TOTAL_ELAPSED_TIME = 0;
+
 System::System(EntityManager& manager) : m_entityManager(manager)
 {
     m_entityIds = {};
@@ -29,6 +31,11 @@ void System::RemoveEntity(unsigned int entityId)
 unsigned int System::GetEntityCount()
 {
     return m_entityIds.size();
+}
+
+void System::UpdateTime(double dt)
+{
+    System::TOTAL_ELAPSED_TIME += dt;
 }
 
 std::set<unsigned int> System::GetEntityIds()

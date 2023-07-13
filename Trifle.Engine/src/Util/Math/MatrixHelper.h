@@ -14,7 +14,7 @@ class MatrixHelper
   public:
     static glm::mat4 CreateTranslationMatrix(glm::vec3 vector)
     {
-        glm::mat4 result;
+        glm::mat4 result = {};
         result[3][0] = vector.x;
         result[3][1] = vector.y;
         result[3][2] = vector.z;
@@ -23,7 +23,7 @@ class MatrixHelper
 
     static glm::mat4 CreateScaleMatrix(glm::vec3 vector)
     {
-        glm::mat4 result;
+        glm::mat4 result = {};
         result[0][0] = vector.x;
         result[1][1] = vector.y;
         result[2][2] = vector.z;
@@ -38,7 +38,7 @@ class MatrixHelper
 
     static glm::mat4 CreateProjectionMatrix(float width, float height, float nearPlane, float farPlane)
     {
-        glm::mat4 result;
+        glm::mat4 result = {};
 
         result[0][0] = 2.0f * nearPlane / width;
         result[1][1] = 2.0f * nearPlane / height;
@@ -51,7 +51,7 @@ class MatrixHelper
 
     static glm::mat4 CreateLookAtMatrix(const glm::vec3& pos, const glm::vec3& target, const glm::vec3& up)
     {
-        glm::mat4 result;
+        glm::mat4 result = {};
 
         glm::vec3 v1 = pos - target;
         glm::vec3 v2 = glm::normalize(glm::cross(up, v1));
@@ -80,7 +80,7 @@ class MatrixHelper
 
     static glm::mat4 CreateRotationX(float radians)
     {
-        glm::mat4 result;
+        glm::mat4 result = {};
 
         float cosR = cos(radians);
         float sinR = sin(radians);
@@ -95,7 +95,7 @@ class MatrixHelper
 
     static glm::mat4 CreateRotationY(float radians)
     {
-        glm::mat4 result;
+        glm::mat4 result = {};
 
         float cosR = cos(radians);
         float sinR = sin(radians);
@@ -110,7 +110,7 @@ class MatrixHelper
 
     static glm::mat4 CreateRotationZ(float radians)
     {
-        glm::mat4 result;
+        glm::mat4 result = {};
 
         float cosR = cos(radians);
         float sinR = sin(radians);

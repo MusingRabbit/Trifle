@@ -23,7 +23,7 @@ class QuatHelper
         float num8 = glm::sin(num3);
         float num9 = glm::cos(num3);
 
-        glm::quat result;
+        glm::quat result = {};
 
         result.x = num9 * num6 * num5 + num8 * num7 * num4;
         result.y = num8 * num7 * num5 - num9 * num6 * num4;
@@ -35,7 +35,7 @@ class QuatHelper
 
     static glm::quat CreateFromRotationMatrix(const glm::mat4& m)
     {
-        glm::quat result;
+        glm::quat result = {};
         float num = m[0][0] + m[1][1] + m[2][2];
 
         float num2, num3;

@@ -16,7 +16,6 @@ class VoxelRenderer : public System
 {
   private:
     unsigned int m_imageWidth, m_imageHeight;
-    double m_totalElapsedTime;
     Entity m_screenEntity;
     Image m_screenImage;
     Texture2D* m_screenTexture;

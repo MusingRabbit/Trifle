@@ -47,8 +47,6 @@ void VoxelRenderer::Init()
 
 void VoxelRenderer::Update(float dt)
 {
-    m_totalElapsedTime += dt;
-
     // if ((int)(round(10 * (int)m_totalElapsedTime) / 10) % 10 == 0)
     //{
     //     DoCommadore64LoadingScreen();

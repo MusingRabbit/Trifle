@@ -76,7 +76,7 @@ int Program::Run()
 
         const auto prevTime = currTime;
         currTime = std::chrono::high_resolution_clock::now();
-        const auto deltaTime = std::chrono::duration_cast<std::chrono::milliseconds>(currTime - prevTime).count();
+        const auto deltaTime = std::chrono::duration_cast<std::chrono::seconds>(currTime - prevTime).count();
 
         GameUpdateSystems(deltaTime);
 
@@ -117,6 +117,8 @@ void Program::InitSystems()
 
 void Program::GameUpdateSystems(float dt)
 {
+    System::UpdateTime(dt);
+
     m_entityManager->GetSystem<VoxelGridSystem>()->Update(dt);
     m_entityManager->GetSystem<VoxelRenderer>()->Update(dt);
     m_entityManager->GetSystem<Renderer>()->Update(dt);

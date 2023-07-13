@@ -20,6 +20,8 @@ class System
     EntityManager& GetEntityManager();
 
   public:
+    static double TOTAL_ELAPSED_TIME;
+
     System(EntityManager& manager);
     ~System();
 
@@ -30,7 +32,10 @@ class System
     void RemoveEntity(unsigned int entityId);
 
     unsigned int GetEntityCount();
+
+    static void UpdateTime(double dt);
 };
+
 } // namespace trifle
 
 #endif // !SYSTEM_H

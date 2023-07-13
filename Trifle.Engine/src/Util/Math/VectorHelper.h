@@ -23,7 +23,7 @@ class VectorHelper
         float num2 = 2.0f * (r.z * v.x - r.x * v.z);
         float num3 = 2.0f * (r.x * v.y - r.y * v.x);
 
-        glm::vec3 result;
+        glm::vec3 result = {};
 
         result.x = v.x + num * r.w + (r.y * num3 - r.z * num2);
         result.y = v.y + num2 * r.w + (r.z * num - r.x * num3);
