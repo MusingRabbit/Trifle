@@ -1,4 +1,4 @@
-#pragma Once
+#pragma once
 #include <gtest/gtest.h>
 
 #include "../../GTestHelper.h"
@@ -44,6 +44,6 @@ TEST(VoxelGrid, Grid_GetCell)
     auto end = std::chrono::high_resolution_clock::now();
     auto microseconds = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
-    std::cout << COUT_GTEST_MGT << "Grid size : " << grid.GetMemorySize() << " bytes" << ANSI_TXT_MGT << std::endl;
-    std::cout << COUT_GTEST_MGT << "Grid traversal took : " << microseconds.count() << "ms" << ANSI_TXT_MGT << std::endl;
+    std::cout << COUT_GTEST_MGT << "Grid size : " << grid.GetMemorySize() << " bytes" << ANSI_TXT_DFT << std::endl;
+    std::cout << COUT_GTEST_MGT << "Grid traversal took : " << microseconds.count() << "ms" << ANSI_TXT_DFT << std::endl;
 }

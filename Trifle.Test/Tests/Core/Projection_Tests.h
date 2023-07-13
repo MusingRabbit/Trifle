@@ -1,4 +1,4 @@
-#pragma Once
+#pragma once
 
 #include <gtest/gtest.h>
 #include <trifle.h>

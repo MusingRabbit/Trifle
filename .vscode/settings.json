@@ -66,7 +66,7 @@
         "thread": "cpp",
         "queue": "cpp"
     },
-    "cmake.sourceDirectory": "/home/amccallum/dev/Trifle",
+    "cmake.sourceDirectory": "D:/dev/Trifle",
     "editor.formatOnSave": true,
     "editor.formatOnPaste": true,
     "C_Cpp.formatting": "clangFormat",

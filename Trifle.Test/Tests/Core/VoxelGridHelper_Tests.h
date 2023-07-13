@@ -1,4 +1,4 @@
-#pragma Once
+#pragma once
 
 #include <trifle.h>
 
@@ -11,10 +11,10 @@ using namespace trifle;
 TEST(TrifleTest, GetIndexByPoint_Test)
 {
     // SETUP : Create test data
-    unsigned int width = 5;
-    unsigned int height = 10;
-    unsigned int depth = 30;
-    unsigned int size = width * height * depth;
+    const unsigned int width = 5;
+    const unsigned int height = 10;
+    const unsigned int depth = 30;
+    const unsigned int size = width * height * depth;
 
     bool indexFlags[size]{false}; // An bool array to ensure that the same index isn't hit twice.
 
@@ -71,10 +71,10 @@ TEST(TrifleTest, GetIndexByPoint_Test)
 TEST(TrifleTest, GetPointByIndex_Test)
 {
     // SETUP : Create test data
-    unsigned int width = 10;
-    unsigned int height = 30;
-    unsigned int depth = 12;
-    unsigned int size = width * height * depth;
+    const unsigned int width = 10;
+    const unsigned int height = 30;
+    const unsigned int depth = 12;
+    const unsigned int size = width * height * depth;
 
     unsigned int indices[size]{false}; // An bool array to ensure that the same index isn't hit twice.
 

@@ -7,5 +7,6 @@
 #include "Math/QuatHelper.h"
 #include "String/StringHelper.h"
 #include "ShaderUtil.h"
+#include "SysUtil.h"
 
 #endif // !UTIL_H

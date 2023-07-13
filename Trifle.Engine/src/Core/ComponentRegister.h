@@ -3,7 +3,6 @@
 
 #include "ComponentArray.h"
 #include <assert.h>
-#include <cxxabi.h>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -11,6 +10,8 @@
 #include <vector>
 
 #include "Types.h"
+
+#include "../Util/Util.h"
 
 namespace trifle
 {
@@ -56,10 +57,7 @@ class ComponentRegister
 
         for (const auto& pair : m_componentTypes)
         {
-            int status;
-            char* demangled = abi::__cxa_demangle(pair.first, 0, 0, &status);
-            std::string typeName(demangled);
-            free(demangled);
+            std::string typeName(SysUtil::Demangle(pair.first));
             result.push_back(typeName);
         }
 

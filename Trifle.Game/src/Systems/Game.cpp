@@ -70,9 +70,12 @@ void Game::OutputCameraPosition()
 
     std::string msg;
     msg.append("Camera Pos : [");
-    msg.append(pos.x);
-    msg.append(pos.y);
-    msg.append(pos.z);
+    msg.append("x" +  std::to_string(pos.x));
+    msg.append(",");
+    msg.append("y" + std::to_string(pos.y));
+    msg.append(",");
+    msg.append("z" + std::to_string(pos.z));
+    msg.append("]");
 
     std::cout << msg.c_str() << std::endl;
 }
