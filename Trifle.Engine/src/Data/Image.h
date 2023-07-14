@@ -69,9 +69,14 @@ class Image
 
     void SetPixel(const UIntPoint2& point, const Colour& colour)
     {
+        if (point.x > m_width || point.y > m_height)
+        {
+            return;
+        }
+
         unsigned int idx = GetIndex(point);
 
-        if (idx > m_data.size())
+        if (idx > m_data.size() - 1)
         {
             return;
             // throw std::runtime_error("Index out of range. The point provided exceeds the range of the image.");
@@ -128,15 +133,24 @@ class Image
         unsigned int maxX = pos.x + width;
         unsigned int maxY = pos.y + height;
 
+        bool hasFill = fill.a > 0;
+        bool hasStroke = stroke.a > 0;
+        bool hasPaint = hasFill || hasStroke;
+        
+        if (!hasPaint)
+        {
+            return;
+        }
+
         for (unsigned int x = minX; x <= maxX; x++)
         {
             for (unsigned int y = minY; y <= maxY; y++)
             {
-                if (x == minX || x == maxX || y == minY || y == maxY)
+                if (hasStroke && (x == minX || x == maxX || y == minY || y == maxY))
                 {
                     SetPixel({x, y}, stroke);
                 }
-                else
+                else if (hasFill)
                 {
                     SetPixel({x, y}, fill);
                 }

@@ -35,6 +35,8 @@ class EventRegister : public IEventRegister
     void AddListener(EventId eventId, std::function<void(EventArgs&)> const& listener);
     void SendEvent(EventArgs& args);
     void SendEvent(EventId eventId);
+
+    bool IsEmpty();
 };
 
 } // namespace trifle

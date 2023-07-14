@@ -60,6 +60,11 @@ EventId EventRegister::GetNewEventId()
 
 void EventRegister::ReleaseEventId(EventId eventId)
 {
+    if (IsEmpty())
+    {
+        return;
+    }
+
     if (m_distributedIds.find(eventId) != m_distributedIds.end())
     {
         m_lastTouchedId = eventId - 1;
@@ -95,5 +100,9 @@ void EventRegister::SendEvent(EventId eventId)
     {
         listener(args);
     }
+}
+bool EventRegister::IsEmpty()
+{
+    return m_distributedIds.size() < 1;
 }
 } // namespace trifle

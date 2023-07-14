@@ -76,7 +76,7 @@ int Program::Run()
 
         const auto prevTime = currTime;
         currTime = std::chrono::high_resolution_clock::now();
-        const auto deltaTime = std::chrono::duration_cast<std::chrono::seconds>(currTime - prevTime).count();
+        const auto deltaTime = (float)std::chrono::duration_cast<std::chrono::milliseconds>(currTime - prevTime).count() / 1000;
 
         GameUpdateSystems(deltaTime);
 
@@ -110,8 +110,8 @@ void Program::InitSystems()
 
     std::shared_ptr<VoxelRenderer> vRenderer = m_entityManager->GetSystem<VoxelRenderer>();
     vRenderer->SetImageSize(m_gameWindow->GetScreenWidth(), m_gameWindow->GetScreenHeight());
+    vRenderer->Init();
 
-    m_entityManager->GetSystem<VoxelRenderer>()->Init();
     m_entityManager->GetSystem<Game>()->Init(m_gameWindow);
 }
 

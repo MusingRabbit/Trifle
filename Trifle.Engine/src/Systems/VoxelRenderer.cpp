@@ -70,6 +70,13 @@ void VoxelRenderer::SetActiveCamera(unsigned int entityId)
     m_camera.SetId(entityId);
 }
 
+void VoxelRenderer::ForceDraw()
+{
+    std::shared_ptr < Renderer> r = GetEntityManager().GetSystem<Renderer>();
+    UpdateScreenTexture();
+    r->Update(0.0f); 
+}
+
 void VoxelRenderer::RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid, Camera& camera)
 {
     m_screenImage.ClearColour(m_emtpyColour);
@@ -87,56 +94,106 @@ void VoxelRenderer::RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid, Camera& came
 
     // return;
 
-    // TODO : DEBUGGING ONLY
-    // std::shared_ptr<Renderer> r = GetEntityManager().GetSystem<Renderer>();
+
+
+
+
+    Transform& camTrans = camera.GetComponent<Transform>();
+    glm::vec3 camPos = camTrans.GetPosition();
+
+    Target& camTarget = camera.GetComponent<Target>();
 
     Projection& proj = camera.GetComponent<Projection>();
-    glm::mat4 mtxView = camera.GetViewMatrix(); // The cameras' view matrix. Translates from World position to view, and vice versa.
+    glm::mat4 mtxView = camera.GetViewMatrix();
+    glm::mat4 mtxViewInv = glm::inverse(mtxView); // The cameras' view matrix. Translates from World position to view, and vice versa.
+    glm::mat4 mtxProj = proj.GetMatrix();
+    glm::mat4 mtxProjInv = glm::inverse(proj.GetMatrix());
 
     unsigned int zFar = (unsigned int)proj.GetFarPlane() - 1;
     unsigned int zNear = (unsigned int)proj.GetNearPlane();
 
+    Colour stroke = Colour(1, 1, 1, 1);
+    int itint = 5;
+
+    unsigned int zDepth = zFar - zNear;
+
     for (unsigned int i = zFar; i >= zNear; i--) // Itterate through the depth frustrum, back to front.
     {
         unsigned int zCurr = i;
-        unsigned int width = zCurr * 1;                            // Width is equal to zCurr. As zCurr decreases, so does the screen width
-        unsigned int height = zCurr * (1 / proj.GetAspectRatio()); // Height is equal to the zCurr times the projections' aspect ratio.
+        unsigned int width = (zCurr * 1);                                // Width is equal to zCurr. As zCurr decreases, so does the screen width
+        unsigned int height = (zCurr * 1);     // Height is equal to the zCurr times the projections' aspect ratio.
+        unsigned int zRemaining = zCurr - zNear;
 
-        for (unsigned int x = 0; x < width; x++)
+        float xScale = (m_screenImage.GetWidth() / 2) / ((float)zRemaining + 1);
+        float yScale = (m_screenImage.GetHeight() / 2) / ((float)zRemaining + 1);
+        int iHeightCount = height * 2 - 1;
+        int iWidthCount = width * 2 - 1;
+        float alpha = 1.0 - ((float)zRemaining / (float)zDepth);
+        stroke.a = alpha;
+
+        //DEBUG CODE FOR COLOURING BLOCKS
+
+        //if (itint == 0)
+        //{
+        //    stroke.b += 0.05f;
+
+        //    if (stroke.b > 0.2f)
+        //    {
+        //        itint = 1;
+        //    }
+        //}
+        //else if (itint == 1)
+        //{
+        //    stroke.g += 0.05f;
+        //    stroke.b -= 0.05f;
+
+        //    if (stroke.g > 0.2f)
+        //    {
+        //        itint = 2;
+        //    }
+        //}
+        //else if (itint == 2)
+        //{
+        //    stroke.r += 0.05f;
+        //    stroke.g -= 0.05f;
+
+        //    if (stroke.r > 0.2f)
+        //    {
+        //        itint = 1;
+        //    }
+        //}
+
+        for (int y = 0; y < iHeightCount; y++)
         {
-            for (unsigned int y = 0; y < height; y++)
+            for (int x = 0; x < iWidthCount; x++)
             {
-                float fX = (float)x;
-                float fY = (float)y;
+                float fX = (float)x - (width);
+                float fY = (float)y - (height);
                 float fZ = (float)zCurr;
 
-                glm::vec3 fPos = glm::vec3(fX, fY, fZ); // Frustum Position
+                glm::vec4 fPos = glm::vec4(fX, fY, fZ, 1.0f); // View Position
+                glm::vec4 wPos = mtxViewInv * fPos;           // World position
 
-                glm::vec4 wPos = glm::inverse(mtxView) * glm::vec4(fPos.x, fPos.y, fPos.z, 1.0f); // World position
+                UIntPoint3 gridPoint{(unsigned int)wPos.x, (unsigned int)wPos.y, (unsigned int)wPos.z};
 
-                if (wPos.x < 0 || wPos.y < 0 || wPos.z < 0)
+                //if (wPos.x != camTarget.position.x || wPos.y != camTarget.position.y)
+                //{
+                //    continue;
+                //}
+
+                if (grid.Contains(gridPoint))
                 {
-                    continue;
-                }
+                    VoxelGridCell* cell = grid.GetCell(gridPoint);
 
-                UIntPoint3 currPoint{(unsigned int)wPos.x, (unsigned int)wPos.y, (unsigned int)wPos.z};
+                    glm::vec4 sPos;
+                    sPos.x = roundf(((fPos.x + (float)width) * xScale) - (xScale / 2));
+                    sPos.y = roundf(((fPos.y + (float)height) * yScale) - (yScale / 2));
 
-                if (grid.Contains(currPoint))
-                {
-                    unsigned int scaleX = 50; // m_screenImage.GetWidth() / width;
-                    unsigned int scaleY = 50; // m_screenImage.GetHeight() / height;
+                    UIntPoint2 screenPos{(unsigned int)sPos.x, (unsigned int)sPos.y};
 
-                    VoxelGridCell* cell = grid.GetCell(currPoint);
+                    m_screenImage.DrawBox(screenPos, xScale, yScale, cell->GetColour(), stroke);
 
-                    UIntPoint2 screenPos{(unsigned int)fPos.x * scaleX, (unsigned int)fPos.y * scaleY};
-                    m_screenImage.DrawBox(screenPos, scaleX, scaleY, cell->GetColour(), Colour{1.0f, 1.0f, 1.0f, 1.0f});
-
-                    // UpdateScreenTexture();
-                    // r->Update(0.0f); // TODO : DELETE ME
-                }
-                else
-                {
-                    // m_screenImage.SetPixel({screenX, screenY}, Colour(1, 1, 1, 0));
+                    //ForceDraw(); // FOR DEBUGING ONLY - REMOVE 
                 }
             }
         }

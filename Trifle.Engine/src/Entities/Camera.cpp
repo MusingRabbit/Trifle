@@ -46,7 +46,7 @@ void Camera::Move(glm::vec3 moveVector)
     glm::mat4 rotate = MatrixHelper::CreateRotationX(rot.x) * MatrixHelper::CreateRotationY(rot.y);
 
     float movementSpeed = GetComponent<Movement>().speed;
-    glm::vec3 movement = movementSpeed * moveVector;
+    glm::vec3 movement = movementSpeed * glm::normalize(moveVector);
     movement = VectorHelper::Transform(movement, rotate);
     movement = transform.GetPosition() + movement;
 
@@ -99,9 +99,10 @@ glm::mat4 Camera::GetViewMatrix()
     Transform& transform = GetComponent<Transform>();
     Target& target = GetComponent<Target>();
 
+
     return glm::lookAtLH(transform.GetPosition(), target.position, glm::vec3(0, 1, 0));
 
-    // return MatrixHelper::CreateLookAtMatrix(transform.GetPosition(), target.position, glm::vec3(0, 1, 0));
+    //return MatrixHelper::CreateLookAtMatrix(transform.GetPosition(), target.position, glm::vec3(0, 1, 0));
 }
 
 void Camera::OnTransformChangedCallback(EventArgs& e)

@@ -23,10 +23,12 @@ class VoxelRenderer : public System
     Camera m_camera;
 
     Colour m_clearColour = Colour(1.0f, 0.0f, 1.0f, 1.0f);
-    Colour m_emtpyColour = Colour(1.0f, 1.0f, 1.0f, 0.0f);
+    Colour m_emtpyColour = Colour(0.0f, 0.0f, 0.0f, 0.0f);
 
     void DoCommadore64LoadingScreen();
     void UpdateScreenTexture();
+
+    void ForceDraw();
 
   public:
     VoxelRenderer(EntityManager& manager);
@@ -38,6 +40,8 @@ class VoxelRenderer : public System
     void Update(float dt) override;
 
     void SetActiveCamera(unsigned int entityId);
+
+    
 
     void RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid);
     void RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid, Camera& camera);

@@ -3,10 +3,12 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include <stdexcept>
 #include "../Core/Types.h"
 
 #include "../Util/Util.h"
 #include "UIntPoint3.h"
+
 
 namespace trifle
 {
@@ -106,12 +108,22 @@ class VoxelGrid
 
     bool Contains(const UIntPoint3& point)
     {
+        if (point.x > m_width || point.y > m_height || point.z > m_depth)
+        {
+            return false;
+        }
+
         unsigned int idx = VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth);
         return idx < m_data.size();
     }
 
     T* GetCell(const UIntPoint3& point)
     {
+        if (point.x > m_width || point.y > m_height || point.z > m_depth)
+        {
+            throw std::out_of_range("point coordinates exceeded grid dimensions.");
+        }
+
         return &m_data[VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth)];
     }
 
