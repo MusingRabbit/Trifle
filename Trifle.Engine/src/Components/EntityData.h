@@ -3,12 +3,12 @@
 
 #include "Component.h"
 
-namespace trifle
+namespace tfl
 {
 struct EntityData
 {
     bool isEnabled = true;
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !ENTITYDATA_H

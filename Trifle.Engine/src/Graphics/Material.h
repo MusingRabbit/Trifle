@@ -5,13 +5,13 @@
 #include "Texture2D.h"
 #include "../Components/Component.h"
 
-namespace trifle
+namespace tfl
 {
 struct Material
 {
     Shader shader;
     Texture2D texture;
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !MATERIAL_H

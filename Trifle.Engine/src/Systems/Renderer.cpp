@@ -10,10 +10,10 @@
 
 #include <stdexcept>
 
-namespace trifle
+namespace tfl
 {
 
-Renderer::Renderer(EntityManager& manager) : System(manager)
+Renderer::Renderer(unsigned int id, const SystemContext& context) : System(id, context)
 {
 }
 
@@ -106,4 +106,4 @@ void Renderer::RenderMesh(Mesh mesh, Shader shader, Texture2D txr)
 
     glDrawElements(GL_TRIANGLES, mesh.IndexCount(), GL_UNSIGNED_INT, 0);
 }
-} // namespace trifle
+} // namespace tfl

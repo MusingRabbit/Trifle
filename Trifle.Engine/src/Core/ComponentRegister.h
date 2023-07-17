@@ -13,7 +13,7 @@
 
 #include "../Util/Util.h"
 
-namespace trifle
+namespace tfl
 {
 
 class ComponentRegister
@@ -125,6 +125,6 @@ class ComponentRegister
     }
 };
 
-} // namespace trifle
+} // namespace tfl
 
 #endif // !COMPONENTMANAGER_H

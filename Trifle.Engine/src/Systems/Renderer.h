@@ -1,14 +1,16 @@
 #ifndef VOXELRENDERSYSTEM_H
 #define VOXELRENDERSYSTEM_H
 
+#include "../GLInclude.h"
+
 #include "../Core/System.h"
-#include "../GLGameWindow.h"
+#include "../GameWindow.h"
 #include "../Components/Components.h"
 #include "../Graphics/Graphics.h"
 
 #include <memory>
 
-namespace trifle
+namespace tfl
 {
 class EntityManager;
 
@@ -21,7 +23,7 @@ class Renderer : public System
     void RenderMesh(Mesh mesh, Shader shader, Texture2D txr);
 
   public:
-    Renderer(EntityManager& manager);
+    Renderer(unsigned int id, const SystemContext& context);
 
     ~Renderer();
 
@@ -31,6 +33,6 @@ class Renderer : public System
 
     void Update(float dt) override;
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !VOXELRENDERSYSTEM_H

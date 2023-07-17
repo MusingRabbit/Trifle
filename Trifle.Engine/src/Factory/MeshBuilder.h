@@ -3,7 +3,7 @@
 
 #include "../Data/MeshData.h"
 
-namespace trifle
+namespace tfl
 {
 class MeshBuilder
 {
@@ -11,6 +11,6 @@ class MeshBuilder
   public:
     static MeshData CreateQuad();
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !SHAPEBUILDER_H

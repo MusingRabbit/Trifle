@@ -1,6 +1,8 @@
 #ifndef UINTPOINT2_H
 #define UINTPOINT2_H
 
+namespace tfl
+{
 struct UIntPoint2
 {
     unsigned int x;
@@ -11,5 +13,6 @@ struct UIntPoint2
         return x == rhs.x && y == rhs.y;
     }
 };
+}
 
 #endif // !UINTPOINT2_H

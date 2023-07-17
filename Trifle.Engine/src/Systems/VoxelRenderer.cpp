@@ -6,12 +6,14 @@
 #include "../Systems/Renderer.h"
 #include "../Data/VoxelGrid.h"
 
+#include "Util/TextUtil.h"
+
 #include <array>
 #include <limits>
 
-namespace trifle
+namespace tfl
 {
-VoxelRenderer::VoxelRenderer(EntityManager& manager) : System(manager)
+VoxelRenderer::VoxelRenderer(unsigned int id, const SystemContext& context) : System(id, context)
 {
 }
 
@@ -30,8 +32,11 @@ void VoxelRenderer::SetImageSize(unsigned int width, unsigned int height)
 
 void VoxelRenderer::Init()
 {
-    m_screenImage.ClearColour(m_clearColour);
+   // TextUtil::LoadFont();
+
+    
     m_screenImage.SetAdditiveBlend(true);
+    SetImageSize(Context.gameWindow->GetWidth(), Context.gameWindow->GetHeight());
 
     m_screenEntity = EntityBuilder::CreateTexturedQuad();
     m_screenEntity.AddSystem<Renderer>();
@@ -60,24 +65,28 @@ void VoxelRenderer::UpdateScreenTexture()
     m_screenTexture->SubDataByColour(m_screenImage.GetData());
 }
 
-void VoxelRenderer::RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid)
+void VoxelRenderer::RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid, RenderMethod method)
 {
-    RenderVoxelGrid(grid, m_camera);
-}
+    switch (method)
+    {
+    case (RENDER_NORM):
+        RenderVoxelGrid(grid, m_camera);
+        break;
 
-void VoxelRenderer::SetActiveCamera(unsigned int entityId)
-{
-    m_camera.SetId(entityId);
-}
-
-void VoxelRenderer::ForceDraw()
-{
-    std::shared_ptr < Renderer> r = GetEntityManager().GetSystem<Renderer>();
-    UpdateScreenTexture();
-    r->Update(0.0f); 
+    case (RENDER_DEBUG):
+        RenderVoxelGrid_Debug(grid, m_camera);
+        break;
+    }
 }
 
 void VoxelRenderer::RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid, Camera& camera)
+{
+    m_screenImage.ClearColour(m_emtpyColour);
+
+
+}
+
+void VoxelRenderer::RenderVoxelGrid_Debug(VoxelGrid<VoxelGridCell>& grid, Camera& camera)
 {
     m_screenImage.ClearColour(m_emtpyColour);
 
@@ -93,10 +102,6 @@ void VoxelRenderer::RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid, Camera& came
     // m_screenImage.DrawBox({m_screenImage.GetWidth() - 101, m_screenImage.GetHeight() - 101}, 100, 100, white, stroke);
 
     // return;
-
-
-
-
 
     Transform& camTrans = camera.GetComponent<Transform>();
     glm::vec3 camPos = camTrans.GetPosition();
@@ -120,15 +125,14 @@ void VoxelRenderer::RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid, Camera& came
     for (unsigned int i = zFar; i >= zNear; i--) // Itterate through the depth frustrum, back to front.
     {
         unsigned int zCurr = i;
-        unsigned int width = (zCurr * 1);                                // Width is equal to zCurr. As zCurr decreases, so does the screen width
+        unsigned int width = (zCurr * 2);                                // Width is equal to zCurr. As zCurr decreases, so does the screen width
         unsigned int height = (zCurr * 1);     // Height is equal to the zCurr times the projections' aspect ratio.
-        unsigned int zRemaining = zCurr - zNear;
 
-        float xScale = (m_screenImage.GetWidth() / 2) / ((float)zRemaining + 1);
-        float yScale = (m_screenImage.GetHeight() / 2) / ((float)zRemaining + 1);
+        float xScale = (m_screenImage.GetWidth()) / ((float)zCurr); 
+        float yScale = (m_screenImage.GetHeight()) / ((float)zCurr);
         int iHeightCount = height * 2 - 1;
         int iWidthCount = width * 2 - 1;
-        float alpha = 1.0 - ((float)zRemaining / (float)zDepth);
+        float alpha = 1.0f; // 1.0 - ((float)i / (float)zDepth);
         stroke.a = alpha;
 
         //DEBUG CODE FOR COLOURING BLOCKS
@@ -162,14 +166,19 @@ void VoxelRenderer::RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid, Camera& came
         //        itint = 1;
         //    }
         //}
-
+        //Clear(); // Test Only - Remove
         for (int y = 0; y < iHeightCount; y++)
         {
             for (int x = 0; x < iWidthCount; x++)
             {
-                float fX = (float)x - (width);
-                float fY = (float)y - (height);
+                float fX = (float)x;
+                float fY = (float)y;
                 float fZ = (float)zCurr;
+
+                if (fX < 0 || fY < 0)
+                {
+                    bool b = false;
+                }
 
                 glm::vec4 fPos = glm::vec4(fX, fY, fZ, 1.0f); // View Position
                 glm::vec4 wPos = mtxViewInv * fPos;           // World position
@@ -185,20 +194,41 @@ void VoxelRenderer::RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid, Camera& came
                 {
                     VoxelGridCell* cell = grid.GetCell(gridPoint);
 
-                    glm::vec4 sPos;
-                    sPos.x = roundf(((fPos.x + (float)width) * xScale) - (xScale / 2));
-                    sPos.y = roundf(((fPos.y + (float)height) * yScale) - (yScale / 2));
+                    glm::vec4 sPos = mtxProj * fPos;
+                    sPos.x = roundf(fPos.x) * xScale - (xScale / 2);
+                    sPos.y = roundf(fPos.y) * yScale - (yScale / 2);
+
+                    //sPos.x = roundf(((fPos.x + (float)width) * xScale) - (xScale / 2));
+                    //sPos.y = roundf(((fPos.y + (float)height) * yScale) - (yScale / 2));
 
                     UIntPoint2 screenPos{(unsigned int)sPos.x, (unsigned int)sPos.y};
 
                     m_screenImage.DrawBox(screenPos, xScale, yScale, cell->GetColour(), stroke);
-
-                    //ForceDraw(); // FOR DEBUGING ONLY - REMOVE 
                 }
             }
         }
+
+        ForceDraw(); // FOR DEBUGING ONLY - REMOVE 
     }
 }
+
+void VoxelRenderer::SetActiveCamera(unsigned int entityId)
+{
+    m_camera.SetId(entityId);
+}
+
+void VoxelRenderer::ForceDraw()
+{
+    std::shared_ptr < Renderer> r = Context.entityManager->GetSystem<Renderer>();
+    UpdateScreenTexture();
+    r->Update(0.0f); 
+}
+
+void VoxelRenderer::Clear()
+{
+    m_screenImage.ClearColour(m_emtpyColour);
+}
+
 
 void VoxelRenderer::DoCommadore64LoadingScreen()
 {
@@ -217,4 +247,4 @@ void VoxelRenderer::DoCommadore64LoadingScreen()
         m_screenImage.DrawBox({0, rowHeight * i}, maxX, rowHeight - 1, c, c);
     }
 }
-} // namespace trifle
+} // namespace tfl

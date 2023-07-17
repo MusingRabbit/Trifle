@@ -3,12 +3,12 @@
 
 #include "Component.h"
 
-namespace trifle
+namespace tfl
 {
 struct Movement
 {
     float speed = 1.0f;
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !MOVEMENT_H

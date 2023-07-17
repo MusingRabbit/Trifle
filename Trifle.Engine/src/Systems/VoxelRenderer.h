@@ -10,8 +10,14 @@
 #include "../Entities/Camera.h"
 #include "../Graphics/Texture2D.h"
 
-namespace trifle
+namespace tfl
 {
+enum RenderMethod
+{
+    RENDER_NORM, 
+    RENDER_DEBUG
+};
+
 class VoxelRenderer : public System
 {
   private:
@@ -31,7 +37,7 @@ class VoxelRenderer : public System
     void ForceDraw();
 
   public:
-    VoxelRenderer(EntityManager& manager);
+    VoxelRenderer(unsigned int id, const SystemContext& context);
     ~VoxelRenderer();
 
     void SetImageSize(unsigned int width, unsigned int height);
@@ -41,11 +47,12 @@ class VoxelRenderer : public System
 
     void SetActiveCamera(unsigned int entityId);
 
-    
-
-    void RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid);
+    void RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid, RenderMethod method);
     void RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid, Camera& camera);
+    void RenderVoxelGrid_Debug(VoxelGrid<VoxelGridCell>& grid, Camera& camera);
+
+    void Clear();
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !VOXELRENDERER_H

@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 
-namespace trifle
+namespace tfl
 {
 struct Vertex
 {
@@ -36,6 +36,6 @@ struct Vertex
         uv = txrPos;
     }
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !VERTEX_H

@@ -4,7 +4,7 @@
 #include <vector>
 #include "Vertex.h"
 
-namespace trifle
+namespace tfl
 {
 struct MeshData
 {
@@ -21,6 +21,6 @@ struct MeshData
         indices = rhs.indices;
     }
 };
-}; // namespace trifle
+}; // namespace tfl
 
 #endif // !SHAPEDATA_H

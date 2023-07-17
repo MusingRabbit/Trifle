@@ -4,7 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 
-namespace trifle
+namespace tfl
 {
 unsigned int Shader::CreateShaderProgram(const char* program, GLenum type)
 {
@@ -85,4 +85,4 @@ bool Shader::IsInitialised()
 {
     return m_program != -1;
 }
-} // namespace trifle
+} // namespace tfl

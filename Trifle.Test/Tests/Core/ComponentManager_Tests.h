@@ -8,7 +8,7 @@
 
 #include <trifle.h>
 
-using namespace trifle;
+using namespace tfl;
 
 TEST(ComponentRegister, RegisterComponent_Test)
 {
@@ -18,7 +18,7 @@ TEST(ComponentRegister, RegisterComponent_Test)
     cmpRegister.RegisterComponent<Collider>();
 
     unsigned int cmpsRegistered = 0;
-    std::string components[2] = {"trifle::Transform", "trifle::Collider"};
+    std::string components[2] = {"tfl::Transform", "tfl::Collider"};
     std::vector<std::string> comps = cmpRegister.GetRegisteredComponents();
 
     for (unsigned int i = 0; i < comps.size(); i++)

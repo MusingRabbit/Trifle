@@ -1,6 +1,6 @@
 #include "Collider.h"
 
-namespace trifle
+namespace tfl
 {
 
 Collider::Collider()
@@ -159,4 +159,4 @@ bool Collider::Collides(const Collider& rhs)
 
     return false;
 }
-} // namespace trifle
+} // namespace tfl

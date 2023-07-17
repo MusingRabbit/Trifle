@@ -64,7 +64,16 @@
         "semaphore": "cpp",
         "stop_token": "cpp",
         "thread": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "xhash": "cpp",
+        "xtree": "cpp",
+        "xutility": "cpp",
+        "span": "cpp",
+        "xstring": "cpp",
+        "*.rh": "cpp",
+        "charconv": "cpp",
+        "xlocinfo": "cpp",
+        "xiosbase": "cpp"
     },
     "cmake.sourceDirectory": "D:/dev/Trifle",
     "editor.formatOnSave": true,

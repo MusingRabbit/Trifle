@@ -3,7 +3,7 @@
 #include "../Data/Image.h"
 #include "GL/glew.h"
 
-namespace trifle
+namespace tfl
 {
 Texture2D::Texture2D()
 {
@@ -57,4 +57,4 @@ bool Texture2D::IsInitialised()
 {
     return m_id != -1;
 }
-} // namespace trifle
+} // namespace tfl

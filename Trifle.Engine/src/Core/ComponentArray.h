@@ -6,7 +6,7 @@
 #include <cassert>
 #include <unordered_map>
 
-namespace trifle
+namespace tfl
 {
 class IComponentArray
 {
@@ -120,5 +120,5 @@ class ComponentArray : public IComponentArray
     }
 };
 
-} // namespace trifle
+} // namespace tfl
 #endif // !COMPONENT_ARRAY

@@ -4,19 +4,13 @@
 #include <memory>
 #include <trifle.h>
 
-using namespace trifle;
+using namespace tfl;
 
 class Program
 {
   private:
-    std::shared_ptr<EntityManager> m_entityManager;
-    std::shared_ptr<GLGameWindow> m_gameWindow;
-
-    void RegisterComponents();
-    void RegisterSystems();
-    void InitSystems();
-    void GameUpdateSystems(float dt);
-
+    tfl::Trifle m_engine;
+    
   protected:
   public:
     Program();

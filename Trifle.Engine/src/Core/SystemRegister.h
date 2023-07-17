@@ -8,14 +8,16 @@
 #include <memory>
 #include <stdexcept>
 #include <unordered_map>
+#include <algorithm>
 
-namespace trifle
+namespace tfl
 {
 class EntityManager;
 
 class SystemRegister
 {
   private:
+    unsigned int m_systemCounter;
     std::unordered_map<const char*, Signature> m_signatures;
     std::unordered_map<const char*, std::shared_ptr<System>> m_systems;
 
@@ -31,15 +33,15 @@ class SystemRegister
     }
 
     template <typename T>
-    std::shared_ptr<T> RegisterSystem(EntityManager& manager)
+    std::shared_ptr<T> RegisterSystem(SystemContext context)
     {
-        static_assert(std::is_base_of<System, T>::value, "type parameter of this method must be of type <trifle::System>");
+        static_assert(std::is_base_of<System, T>::value, "type parameter of this method must be of type <tfl::System>");
 
         const char* typeName = typeid(T).name();
 
         assert(m_systems.find(typeName) == m_systems.end() && "Cannot register a system type more than once.");
 
-        auto system = std::make_shared<T>(manager);
+        auto system = std::make_shared<T>(m_systemCounter++, context);
         m_systems.insert({typeName, system});
         return system;
     }
@@ -47,7 +49,7 @@ class SystemRegister
     template <typename T>
     std::shared_ptr<T> GetSystem()
     {
-        static_assert(std::is_base_of<System, T>::value, "type parameter of this method must be of type <trifle::System>");
+        static_assert(std::is_base_of<System, T>::value, "type parameter of this method must be of type <tfl::System>");
 
         const char* typeName = typeid(T).name();
 
@@ -59,6 +61,20 @@ class SystemRegister
         }
 
         return std::static_pointer_cast<T>(result->second);
+    }
+    
+    std::vector<std::shared_ptr<System>> GetSystems()
+    {
+        std::vector<std::shared_ptr<System>> result;
+
+        for (auto& pair : m_systems)
+        {
+            result.push_back(pair.second);
+        }
+
+        std::sort(result.begin(), result.end(), [](std::shared_ptr<System> lhs, std::shared_ptr<System> rhs){  return lhs->GetUpdateOrder() < rhs->GetUpdateOrder(); });
+
+        return result;
     }
 
     template <typename T>
@@ -99,6 +115,6 @@ class SystemRegister
         }
     }
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !SYSTEMMANAGER_H

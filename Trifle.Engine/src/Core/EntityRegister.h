@@ -8,7 +8,7 @@
 
 #include "IEntityRegister.h"
 
-namespace trifle
+namespace tfl
 {
 
 class EntityRegister : public IEntityRegister
@@ -31,6 +31,6 @@ class EntityRegister : public IEntityRegister
     unsigned int GetCount();
 };
 
-} // namespace trifle
+} // namespace tfl
 
 #endif // !ENTITYREGISTER_H

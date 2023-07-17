@@ -3,7 +3,7 @@
 
 #include "../Core/Entity.h"
 
-namespace trifle
+namespace tfl
 {
 class Camera : public Entity
 {
@@ -27,6 +27,6 @@ class Camera : public Entity
 
     glm::mat4 GetViewMatrix();
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !CAMERA_H

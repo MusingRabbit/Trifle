@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include "../Core/EventHandler.h"
 
-namespace trifle
+namespace tfl
 {
 class Transform
 {
@@ -130,6 +130,6 @@ class Transform
     EventHandler OnRotationChanged;
     EventHandler OnScaleChanged;
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !TRANSFORM_H

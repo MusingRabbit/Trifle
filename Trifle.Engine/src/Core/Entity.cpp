@@ -2,8 +2,26 @@
 
 #include "../Components/Transform.h"
 
-namespace trifle
+namespace tfl
 {
+
+Entity::Entity()
+{
+}
+
+Entity::~Entity()
+{
+}
+
+Entity::Entity(unsigned int entityId)
+{
+    SetId(entityId);
+}
+
+Entity::Entity(const Entity& rhs)
+{
+    SetId(rhs.m_id);
+}
 
 void Entity::Init(std::shared_ptr<EntityManager> manager)
 {
@@ -31,24 +49,6 @@ void Entity::Destroy(unsigned int entityId)
 {
     Entity::InitialisationCheck();
     Entity::entityManager->DestroyEntity(entityId);
-}
-
-Entity::Entity(unsigned int entityId)
-{
-    SetId(entityId);
-}
-
-Entity::Entity(const Entity& rhs)
-{
-    SetId(rhs.m_id);
-}
-
-Entity::Entity()
-{
-}
-
-Entity::~Entity()
-{
 }
 
 void Entity::Register()
@@ -82,4 +82,4 @@ void Entity::SetIsEnabled(bool value)
     GetComponent<EntityData>().isEnabled = value;
 }
 
-} // namespace trifle
+} // namespace tfl

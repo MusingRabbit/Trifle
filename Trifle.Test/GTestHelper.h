@@ -21,9 +21,9 @@ class GTestHelper
         std::cout << COUT_GTEST_MGT << msg.c_str() << ANSI_TXT_DFT << std::endl;
     }
 
-    static std::shared_ptr<trifle::EntityManager> CreateEntityManager()
+    static std::shared_ptr<tfl::EntityManager> CreateEntityManager()
     {
-        std::shared_ptr<trifle::EntityManager> entityManager = std::make_shared<trifle::EntityManager>();
+        std::shared_ptr<tfl::EntityManager> entityManager = std::make_shared<tfl::EntityManager>();
         entityManager->Init();
 
         entityManager->RegisterComponent<Transform>();

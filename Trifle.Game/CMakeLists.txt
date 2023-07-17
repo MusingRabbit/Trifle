@@ -17,6 +17,14 @@ message(STATUS "OPENGL_INCLUDE_DIR = ${OPENGL_INCLUDE_DIR}")
 message(STATUS "ENGINE_NAME = ${ENGINE_NAME}")
 
 add_executable(${GAME_NAME} ${SOURCE_FILES})
+
 target_include_directories(${GAME_NAME} PUBLIC ${OPENGL_INCLUDE_DIR})
+
 target_link_libraries(${GAME_NAME} ${LIBS})
 target_link_libraries(${GAME_NAME} ${ENGINE_NAME})
+
+file(GLOB DLL_FILES ${LIB_DIRECTORY}/sfml/bin/*.dll)
+
+foreach(currentFile IN LISTS DLL_FILES)
+    add_custom_command(TARGET ${GAME_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${currentFile} $<TARGET_FILE_DIR:${GAME_NAME}>)
+endforeach()

@@ -3,7 +3,7 @@
 
 #include "EventRegister.h"
 
-namespace trifle
+namespace tfl
 {
 
 class EventHandler
@@ -23,6 +23,6 @@ class EventHandler
     void Subscribe(std::function<void(EventArgs&)> const& listener);
     void UnSubscribe();
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !EVENTHANDLER_H

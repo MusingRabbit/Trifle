@@ -5,7 +5,7 @@
 #include <any>
 #include <unordered_map>
 
-namespace trifle
+namespace tfl
 {
 class EventArgs
 {
@@ -38,6 +38,6 @@ class EventArgs
     }
 };
 
-} // namespace trifle
+} // namespace tfl
 
 #endif // DEBUG

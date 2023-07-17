@@ -5,7 +5,7 @@
 
 using namespace glm;
 
-namespace trifle
+namespace tfl
 {
 
 MeshData MeshBuilder::CreateQuad()
@@ -36,4 +36,4 @@ MeshData MeshBuilder::CreateQuad()
     return result;
 }
 
-} // namespace trifle
+} // namespace tfl

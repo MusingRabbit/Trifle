@@ -9,7 +9,7 @@
 
 #include <stdexcept>
 
-using namespace trifle;
+using namespace tfl;
 
 bool AddListener_OnEventFired_0_hit = false;
 

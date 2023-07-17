@@ -3,7 +3,7 @@
 
 #include "Types.h"
 
-namespace trifle
+namespace tfl
 {
 class IEntityRegister
 {
@@ -13,6 +13,6 @@ class IEntityRegister
     virtual Signature GetSignature(unsigned int entityId) = 0;
     virtual unsigned int GetCount() = 0;
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif

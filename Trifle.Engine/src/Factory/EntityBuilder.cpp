@@ -3,7 +3,7 @@
 #include "MaterialBuilder.h"
 #include "EntityBuilder.h"
 
-namespace trifle
+namespace tfl
 {
 
 Entity EntityBuilder::MakeCamera(float aspectRatio, float nearPlane, float farPlane)
@@ -31,4 +31,4 @@ Entity EntityBuilder::CreateTexturedQuad()
 
     return result;
 }
-} // namespace trifle
+} // namespace tfl

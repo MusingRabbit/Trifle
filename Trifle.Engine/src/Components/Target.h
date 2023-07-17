@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 
-namespace trifle
+namespace tfl
 {
 enum TargetType
 {
@@ -19,6 +19,6 @@ struct Target
     unsigned int entityId;
     glm::vec3 position;
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !TARGET_H

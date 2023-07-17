@@ -1,7 +1,7 @@
 #include "EntityRegister.h"
 #include "Types.h"
 
-namespace trifle
+namespace tfl
 {
 EntityRegister::EntityRegister()
 {
@@ -58,4 +58,4 @@ unsigned int EntityRegister::GetCount()
 {
     return m_liveEntityIdCount;
 }
-} // namespace trifle
+} // namespace tfl

@@ -6,7 +6,7 @@
 #include "../../GTestHelper.h"
 #include <string>
 
-using namespace trifle;
+using namespace tfl;
 
 TEST(TrifleTest, GetIndexByPoint_Test)
 {

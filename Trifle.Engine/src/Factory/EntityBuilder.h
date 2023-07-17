@@ -5,7 +5,7 @@
 
 #include <memory>
 
-namespace trifle
+namespace tfl
 {
 class EntityBuilder
 {
@@ -14,6 +14,6 @@ class EntityBuilder
     static Entity MakeCamera(float aspectRatio, float nearPlane, float farPlane);
     static Entity CreateTexturedQuad();
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !GAMEOBJECTFACTORY_H

@@ -2,7 +2,7 @@
 #include <glm/glm.hpp>
 #include "../Util/Util.h"
 
-namespace trifle
+namespace tfl
 {
 Transform::Transform()
 {
@@ -211,4 +211,4 @@ bool Transform::IsEqual(const Transform& rhs)
 
     return result;
 }
-} // namespace trifle
+} // namespace tfl

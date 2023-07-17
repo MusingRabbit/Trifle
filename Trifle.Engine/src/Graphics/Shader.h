@@ -3,7 +3,7 @@
 
 #include <GL/glew.h>
 
-namespace trifle
+namespace tfl
 {
 class Shader
 {
@@ -26,6 +26,6 @@ class Shader
 
     bool IsInitialised();
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !SHADER_H

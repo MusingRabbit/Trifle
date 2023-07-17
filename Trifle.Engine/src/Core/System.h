@@ -4,25 +4,48 @@
 #include <set>
 #include <memory>
 
-namespace trifle
+namespace tfl
 {
 
 class EntityManager;
+class GameWindow;
+
+struct SystemContext
+{
+  std::shared_ptr<GameWindow> gameWindow;
+  std::shared_ptr<EntityManager> entityManager;
+
+  SystemContext(){}
+
+  SystemContext(std::shared_ptr<GameWindow> window, std::shared_ptr<EntityManager> manager)
+  {
+    gameWindow = window;
+    entityManager = manager;
+  }
+
+  SystemContext(const SystemContext& rhs)
+  {
+    gameWindow = rhs.gameWindow;
+    entityManager = rhs.entityManager;
+  }
+
+};
 
 class System
 {
   private:
+    unsigned int m_id;
+    unsigned int m_orderNum;
     std::set<unsigned int> m_entityIds;
-    EntityManager& m_entityManager;
 
   protected:
     std::set<unsigned int> GetEntityIds();
-    EntityManager& GetEntityManager();
+    SystemContext Context;
 
   public:
     static double TOTAL_ELAPSED_TIME;
 
-    System(EntityManager& manager);
+    System(unsigned int id, const SystemContext& context);
     ~System();
 
     virtual void Init() = 0;
@@ -34,8 +57,12 @@ class System
     unsigned int GetEntityCount();
 
     static void UpdateTime(double dt);
+
+    unsigned int GetId();
+    void SetUpdateOrder(unsigned int orderNum);
+    unsigned int GetUpdateOrder();
 };
 
-} // namespace trifle
+} // namespace tfl
 
 #endif // !SYSTEM_H

@@ -5,7 +5,7 @@
 #include <vector>
 #include <GL/glew.h>
 
-namespace trifle
+namespace tfl
 {
 class Mesh
 {
@@ -38,6 +38,6 @@ class Mesh
 
     bool IsSet();
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !MESH_H

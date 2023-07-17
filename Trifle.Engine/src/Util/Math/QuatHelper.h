@@ -5,7 +5,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/common.hpp>
 
-namespace trifle
+namespace tfl
 {
 class QuatHelper
 {
@@ -82,6 +82,6 @@ class QuatHelper
         return result;
     }
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // QUATHELPER_H

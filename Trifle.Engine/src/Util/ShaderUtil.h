@@ -1,7 +1,7 @@
 #ifndef SHADERUTIL_H
 #define SHADERUTIL_H
 
-namespace trifle
+namespace tfl
 {
 class ShaderUtil
 {
@@ -45,6 +45,6 @@ class ShaderUtil
                                                   "FragColor = texture(texture1, textCoord);\n"
                                                   "}";
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !SHADERUTIL_H

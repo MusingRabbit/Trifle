@@ -9,7 +9,7 @@
 
 #include <trifle.h>
 
-using namespace trifle;
+using namespace tfl;
 
 void CreateEntities(EntityRegister& manager, unsigned int entityCount)
 {

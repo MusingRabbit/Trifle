@@ -4,7 +4,7 @@
 #include "Component.h"
 #include <glm/glm.hpp>
 
-namespace trifle
+namespace tfl
 {
 class Collider
 {
@@ -51,6 +51,6 @@ class Collider
     bool Collides(const Collider& rhs);
 };
 
-} // namespace trifle
+} // namespace tfl
 
 #endif // !COLLIDER_H

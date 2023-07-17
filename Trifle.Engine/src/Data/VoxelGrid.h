@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include <set>
 #include <stdexcept>
 #include "../Core/Types.h"
 
@@ -10,7 +11,7 @@
 #include "UIntPoint3.h"
 
 
-namespace trifle
+namespace tfl
 {
 
 class VoxelGridCell
@@ -70,23 +71,30 @@ class VoxelGrid
     unsigned int m_width, m_height, m_depth;
 
     std::vector<T> m_data;
+    std::set<unsigned int> m_litVoxels;
 
   protected:
   public:
     /// @brief Constructor
     VoxelGrid()
     {
-        static_assert(std::is_base_of<VoxelGridCell, T>::value, "type parameter of this method must be of type <trifle::VoxelGridCell>");
+        static_assert(std::is_base_of<VoxelGridCell, T>::value, "type parameter of this method must be of type <tfl::VoxelGridCell>");
+        m_litVoxels = {};
     }
 
     /// @brief Destructor
     ~VoxelGrid()
     {
+        m_data.clear();
     }
 
+    /// @brief Initialises the voxel grid with the provided dimensions
+    /// @param width Grid size in the X axis
+    /// @param height Grid size in the Y axis
+    /// @param depth Grid size in the Z axis
     void Init(unsigned int width, unsigned int height, unsigned int depth)
     {
-        Clear();
+        m_data.clear();
 
         m_width = width;
         m_height = height;
@@ -106,6 +114,9 @@ class VoxelGrid
         }
     }
 
+    /// @brief Checks to see if the grid contains a voxel for a given point
+    /// @param point 
+    /// @return Does the grid contain this point? (true/false)
     bool Contains(const UIntPoint3& point)
     {
         if (point.x > m_width || point.y > m_height || point.z > m_depth)
@@ -116,7 +127,10 @@ class VoxelGrid
         unsigned int idx = VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth);
         return idx < m_data.size();
     }
-
+    
+    /// @brief Gets the voxel grid cell for the point provided.
+    /// @param point 
+    /// @return A pointer to the grid cell.
     T* GetCell(const UIntPoint3& point)
     {
         if (point.x > m_width || point.y > m_height || point.z > m_depth)
@@ -127,11 +141,51 @@ class VoxelGrid
         return &m_data[VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth)];
     }
 
-    void PaintCell(const UIntPoint3 point, Colour colour)
+    T* GetCell(unsigned int idx)
     {
-        m_data[VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth)].SetColour(colour);
+        return &m_data[idx];
+    }
+    
+    /// @brief Gets all voxels that have been 'lit' (Voxels with a colour whose alpha is > 0)
+    /// @return A vector of all lit cells
+    std::vector<T*> GetPaintedCells()
+    {
+        std::vector<T*> result;
+        result.reserve(m_litVoxels.size());
+
+        std::set<unsigned int>::reverse_iterator it;
+
+        for (it = m_litVoxels.rbegin(); it != m_litVoxels.rend(); it++)
+        {
+            result.push_back(GetCell(*it));
+        }
+        
+        return result;
     }
 
+    /// @brief Paints the grid cell at the given point with the specified colour.
+    /// @param point Cell coordinate.
+    /// @param colour Cell Colour.
+    void PaintCell(const UIntPoint3 point, Colour colour)
+    {
+        unsigned int idx = VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth);
+
+        if (colour.a > 0.0f)
+        {
+            m_litVoxels.insert(idx);
+        }
+        else 
+        {
+            m_litVoxels.erase(idx);
+        }
+
+        m_data[idx].SetColour(colour);
+    }
+
+    /// @brief Will paint the grid cell at the given point and all surrounding cells to the specified colour. 
+    /// @param point Cell cordinate.
+    /// @param brushSize The number of surrounding voxels to paint.
+    /// @param fillColour Cell Colour.
     void PaintCells(const UIntPoint3 point, unsigned int brushSize, Colour fillColour)
     {
         UIntPoint3 startPoint = {point.x - brushSize, point.y - brushSize, point.z - brushSize};
@@ -146,6 +200,16 @@ class VoxelGrid
                     PaintCell({x, y, z}, fillColour);
                 }
             }
+        }
+    }
+
+    void Clear()
+    {
+        std::set<unsigned int>::iterator it;
+
+        for (it = m_litVoxels.begin(); it != m_litVoxels.end(); it++)
+        {
+            m_data[*it].SetColour({0,0,0,0});
         }
     }
 
@@ -168,13 +232,8 @@ class VoxelGrid
     {
         return (m_size * sizeof(T)) + sizeof(*this);
     }
-
-    void Clear()
-    {
-        m_data.clear();
-    }
 };
 
-} // namespace trifle
+} // namespace tfl
 
 #endif // !VOXELGRID_H

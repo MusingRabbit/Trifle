@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace trifle
+namespace tfl
 {
 class Image
 {
@@ -59,7 +59,7 @@ class Image
 
     float GetAspectRatio()
     {
-        return m_width / m_height;
+        return (float)m_width / (float)m_height;
     }
 
     void SetAdditiveBlend(bool value)
@@ -102,9 +102,11 @@ class Image
 
     void DrawFilledCircle(const UIntPoint2& centre, const Colour& stroke, const Colour& fill, double radius)
     {
-        for (unsigned int x = centre.x - radius; x <= centre.x + radius; x++)
+        unsigned int uintRad = (unsigned int)roundf((float)radius);
+
+        for (unsigned int x = centre.x - uintRad; x <= centre.x + uintRad; x++)
         {
-            for (unsigned int y = centre.y - radius; y <= centre.y + radius; y++)
+            for (unsigned int y = centre.y - uintRad; y <= centre.y + uintRad; y++)
             {
                 UIntPoint2 point = UIntPoint2{x, y};
                 int dX = point.x - centre.x;
@@ -114,11 +116,11 @@ class Image
 
                 int iD = (int)d;
 
-                if (iD < (int)radius)
+                if (iD < (int)uintRad)
                 {
                     SetPixel(point, fill);
                 }
-                else if (iD == (int)radius)
+                else if (iD == (int)uintRad)
                 {
                     SetPixel(point, stroke);
                 }
@@ -128,10 +130,12 @@ class Image
 
     void DrawBox(const UIntPoint2& pos, unsigned int width, unsigned int height, const Colour& fill, const Colour& stroke)
     {
-        unsigned int minX = pos.x;
-        unsigned int minY = pos.y;
+        unsigned int minX = pos.x < 0 ? 0 : pos.x;
+        unsigned int minY = pos.y < 0 ? 0 : pos.y;
         unsigned int maxX = pos.x + width;
         unsigned int maxY = pos.y + height;
+        maxX = maxX > m_width ? m_width : maxX;
+        maxY = maxY > m_height ? m_height : maxY;
 
         bool hasFill = fill.a > 0;
         bool hasStroke = stroke.a > 0;
@@ -184,7 +188,12 @@ class Image
         }
     }
 
-    Colour GetPixel(const UIntPoint2 point)
+    void DrawCharacter(const UIntPoint2& point)
+    {
+
+    }
+
+    Colour GetPixel(const UIntPoint2& point)
     {
         return m_data[GetIndex(point)];
     }
@@ -205,6 +214,6 @@ class Image
         std::fill(m_data.begin(), m_data.end(), Colour(0, 0, 0, 1.0f));
     }
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif //  IMAGE_H

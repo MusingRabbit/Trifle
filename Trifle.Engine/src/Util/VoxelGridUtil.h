@@ -3,7 +3,7 @@
 
 #include "../Data/UIntPoint3.h"
 
-namespace trifle
+namespace tfl
 {
 class VoxelGridUtil
 {
@@ -21,6 +21,6 @@ class VoxelGridUtil
         return UIntPoint3{x, y, z};
     }
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !VOXELGRIDHELPER_H

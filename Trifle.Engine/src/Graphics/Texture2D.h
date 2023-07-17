@@ -5,7 +5,7 @@
 #include "../Data/Image.h"
 #include <array>
 
-namespace trifle
+namespace tfl
 {
 class Texture2D
 {
@@ -25,6 +25,6 @@ class Texture2D
 
     bool IsInitialised();
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !TEXTURE2D_H

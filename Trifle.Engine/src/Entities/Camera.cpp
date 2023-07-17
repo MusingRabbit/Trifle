@@ -4,7 +4,7 @@
 #include "../Components/Components.h"
 #include "../Util/Util.h"
 
-namespace trifle
+namespace tfl
 {
 Camera::Camera() : Entity()
 {
@@ -127,4 +127,4 @@ void Camera::UpdateTargetPosition()
     }
 }
 
-}; // namespace trifle
+}; // namespace tfl

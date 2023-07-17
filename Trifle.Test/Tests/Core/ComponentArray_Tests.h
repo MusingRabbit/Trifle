@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <glm/glm.hpp>
 
-using namespace trifle;
+using namespace tfl;
 
 /// @brief Populates component array with colliders for 200 entities
 /// @param cmpArray Component array to be populated
@@ -30,7 +30,7 @@ void Populate_ColliderCompArray(ComponentArray<Collider>& cmpArray)
 
 /// @brief Populates component array with transforms for 200 entities
 /// @param cmpArray Component array to be populated
-void Populate_TransformCompArray(trifle::ComponentArray<Transform>& cmpArray)
+void Populate_TransformCompArray(tfl::ComponentArray<Transform>& cmpArray)
 {
     for (unsigned int i = 0; i < 200; i++)
     {

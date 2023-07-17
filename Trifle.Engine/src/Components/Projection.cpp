@@ -3,7 +3,7 @@
 #include "../Util/Util.h"
 #include <stdexcept>
 
-namespace trifle
+namespace tfl
 {
 Projection::Projection()
 {
@@ -40,7 +40,7 @@ void Projection::Init(float aspectRatio, float nearPlane, float farPlane)
 
 glm::mat4 Projection::GetMatrix()
 {
-    return glm::perspective(60.0f, 1.0f / m_aspectRatio, m_near, m_far);
+    return glm::perspective(glm::degrees(45.0f), 1.0f / m_aspectRatio, m_near, m_far);
     //return MatrixHelper::CreateProjectionMatrix(1, m_aspectRatio, m_near, m_far);
 }
 
@@ -58,4 +58,4 @@ float Projection::GetAspectRatio()
 {
     return m_aspectRatio;
 }
-} // namespace trifle
+} // namespace tfl

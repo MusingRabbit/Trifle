@@ -3,22 +3,21 @@
 
 #include <trifle.h>
 
-using namespace trifle;
+using namespace tfl;
 
 class Game : public System
 {
   private:
-    std::shared_ptr<GLGameWindow> m_gameWindow;
     std::shared_ptr<VoxelGridSystem> m_voxelGrid;
     Camera m_camera;
 
     void OutputCameraPosition();
 
   public:
-    Game(EntityManager& manager);
+    Game(unsigned int id, const SystemContext& context);
     ~Game();
 
-    void Init(std::shared_ptr<GLGameWindow> gameWindow);
+    void Init(std::shared_ptr<GameWindow> gameWindow);
 
     void Init() override;
     void Update(float dt) override;

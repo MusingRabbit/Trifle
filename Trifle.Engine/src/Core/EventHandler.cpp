@@ -1,6 +1,6 @@
 #include "EventHandler.h"
 
-namespace trifle
+namespace tfl
 {
 EventHandler::EventHandler()
 {
@@ -46,4 +46,4 @@ void EventHandler::UnSubscribe()
 {
     m_register->ReleaseEventId(m_id);
 }
-} // namespace trifle
+} // namespace tfl

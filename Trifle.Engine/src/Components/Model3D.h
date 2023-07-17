@@ -4,7 +4,7 @@
 #include "../Graphics/Graphics.h"
 #include <vector>
 
-namespace trifle
+namespace tfl
 {
 class Model3D
 {
@@ -27,6 +27,6 @@ class Model3D
     Material& GetMaterial();
     std::vector<Model3D>& GetSubModels();
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !MODEL3D_H

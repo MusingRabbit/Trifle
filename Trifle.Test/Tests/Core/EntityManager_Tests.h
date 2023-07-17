@@ -9,7 +9,7 @@
 
 #include <trifle.h>
 
-using namespace trifle;
+using namespace tfl;
 
 void InitialiseService(EntityManager& service, unsigned int entityCount)
 {

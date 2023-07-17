@@ -4,7 +4,7 @@
 #include "../Graphics/Graphics.h"
 #include "../Util/ShaderUtil.h"
 
-namespace trifle
+namespace tfl
 {
 class MaterialBuilder
 {
@@ -25,6 +25,6 @@ class MaterialBuilder
         return result;
     }
 };
-}; // namespace trifle
+}; // namespace tfl
 
 #endif // !MATERIALFACTORY_H

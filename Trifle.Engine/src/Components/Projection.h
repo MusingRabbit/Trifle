@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 
-namespace trifle
+namespace tfl
 {
 class Projection
 {
@@ -25,6 +25,6 @@ class Projection
     float GetFarPlane();
     float GetAspectRatio();
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !PROJECTION_H

@@ -1,13 +1,16 @@
 #include "System.h"
 
-namespace trifle
+namespace tfl
 {
-
 double System::TOTAL_ELAPSED_TIME = 0;
 
-System::System(EntityManager& manager) : m_entityManager(manager)
+System::System(unsigned int id, const SystemContext& context)
 {
+    m_id = id;
     m_entityIds = {};
+
+    Context.entityManager = context.entityManager;
+    Context.gameWindow = context.gameWindow;
 }
 
 System::~System()
@@ -38,14 +41,24 @@ void System::UpdateTime(double dt)
     System::TOTAL_ELAPSED_TIME += dt;
 }
 
+unsigned int System::GetId()
+{
+    return m_id;
+}
+
+void System::SetUpdateOrder(unsigned int orderNum)
+{
+    m_orderNum = orderNum;
+}
+
+unsigned int System::GetUpdateOrder()
+{
+    return m_orderNum;
+}
+
 std::set<unsigned int> System::GetEntityIds()
 {
     return m_entityIds;
-}
-
-EntityManager& System::GetEntityManager()
-{
-    return m_entityManager;
 }
 
 /* std::vector<std::shared_ptr<Entity>> System::GetEntities()
@@ -71,4 +84,4 @@ EntityManager& System::GetEntityManager()
 }
  */
 
-} // namespace trifle
+} // namespace tfl

@@ -7,7 +7,7 @@
 
 #include "QuatHelper.h"
 
-namespace trifle
+namespace tfl
 {
 class MatrixHelper
 {
@@ -131,5 +131,5 @@ class MatrixHelper
         return result;
     }
 };
-} // namespace trifle
+} // namespace tfl
 #endif // !MATRIXHELPER_H

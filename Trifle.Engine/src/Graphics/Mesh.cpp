@@ -1,6 +1,6 @@
 #include "Mesh.h"
 
-namespace trifle
+namespace tfl
 {
 
 Mesh::Mesh()
@@ -85,4 +85,4 @@ void Mesh::Clear()
         glDeleteVertexArrays(1, &m_id);
     }
 }
-} // namespace trifle
+} // namespace tfl

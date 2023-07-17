@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <iostream>
 
-namespace trifle
+namespace tfl
 {
 unsigned int EventRegister::MAX_EVENTHANDLERS = UINT_MAX;
 
@@ -105,4 +105,4 @@ bool EventRegister::IsEmpty()
 {
     return m_distributedIds.size() < 1;
 }
-} // namespace trifle
+} // namespace tfl

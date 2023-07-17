@@ -6,7 +6,7 @@
 #include <memory>
 #include <stdexcept>
 
-namespace trifle
+namespace tfl
 {
 class Entity
 {
@@ -74,6 +74,6 @@ class Entity
     void SetIsEnabled(bool value);
 };
 
-} // namespace trifle
+} // namespace tfl
 
 #endif // !ENTITY_H

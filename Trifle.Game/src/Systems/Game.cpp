@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <string>
 
-Game::Game(EntityManager& manager) : System(manager)
+Game::Game(unsigned int id, const SystemContext& context) : System(id, context)
 {
 }
 
@@ -11,29 +11,23 @@ Game::~Game()
 {
 }
 
-void Game::Init(std::shared_ptr<GLGameWindow> gameWindow)
+void Game::Init()
 {
-    m_gameWindow = gameWindow;
-    float aspectRatio = (float)m_gameWindow->GetScreenWidth() / (float)m_gameWindow->GetScreenHeight();
+    float aspectRatio = (float)Context.gameWindow->GetWidth() / (float)Context.gameWindow->GetHeight();
 
     m_camera.Register();
-    m_camera.Init(aspectRatio, 1.0f, 30);
+    m_camera.Init(aspectRatio, 1.0f, 50);
     m_camera.SetPosition(glm::vec3(15, 15, 0));
     m_camera.SetTarget(glm::vec3(15, 15, 8));
 
     m_camera.GetComponent<Movement>().speed = 1.0f;
 
-    GetEntityManager().GetSystem<VoxelRenderer>()->SetActiveCamera(m_camera.GetId());
+    Context.entityManager->GetSystem<VoxelRenderer>()->SetActiveCamera(m_camera.GetId());
 
-    m_voxelGrid = GetEntityManager().GetSystem<VoxelGridSystem>();
+    m_voxelGrid = Context.entityManager->GetSystem<VoxelGridSystem>();
     m_voxelGrid->Init(UIntPoint3{343, 343, 343});
 
     m_voxelGrid->DrawVoxel({15, 15, 6}, Colour(1, 0, 1, 1));
-}
-
-void Game::Init()
-{
-    throw std::runtime_error("Not implemented.");
 }
 
 void Game::Update(float dt)
@@ -43,31 +37,33 @@ void Game::Update(float dt)
 
     m_voxelGrid->DrawVoxel({5, 5, 5}, Colour(1, 0, 1, 1));
 
-    glm::vec3 moveVector(1,0,0);
+    glm::vec3 moveVector(0,0,0);
 
-    if (m_gameWindow->GetKeyState(GLFW_KEY_UP) == GLFW_PRESS)
+    KeyboardState kbState = Keyboard::GetState();
+
+    if (kbState.IsKeyDown(Keys::Up))
     {
         moveVector.y += 1;
     }
 
-    if (m_gameWindow->GetKeyState(GLFW_KEY_DOWN) == GLFW_PRESS)
+    if (kbState.IsKeyDown(Keys::Down))
     {
         moveVector.y -= 1;
     }
 
-    if (m_gameWindow->GetKeyState(GLFW_KEY_LEFT) == GLFW_PRESS)
+    if (kbState.IsKeyDown(Keys::Left))
     {
         moveVector.x -= 1;
     }
 
-    if (m_gameWindow->GetKeyState(GLFW_KEY_RIGHT) == GLFW_PRESS)
+    if (kbState.IsKeyDown(Keys::Right))
     {
         moveVector.x += 1;
     }
 
     if (abs(moveVector.x) + abs(moveVector.y) + abs(moveVector.z > 0))
     {
-        m_camera.SetMovementSpeed(1.5 * dt);
+        m_camera.SetMovementSpeed(1.5 * (float)dt);
         m_camera.ClearTarget();
         m_camera.Move(moveVector);
         OutputCameraPosition();

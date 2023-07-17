@@ -5,7 +5,7 @@
 #include "Types.h"
 #include <functional>
 
-namespace trifle
+namespace tfl
 {
 class IEventRegister
 {
@@ -16,6 +16,6 @@ class IEventRegister
     virtual void SendEvent(EventArgs& args) = 0;
     virtual void SendEvent(EventId eventId) = 0;
 };
-} // namespace trifle
+} // namespace tfl
 
 #endif // !IEVENTREGISTER_H

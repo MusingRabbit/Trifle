@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace trifle
+namespace tfl
 {
 
 /// @brief Class for managing entities
@@ -90,6 +90,8 @@ class EntityManager
         return m_systemRegister->GetSystem<T>();
     }
 
+    std::vector<std::shared_ptr<System>> GetSystems();
+
     template <typename T>
     void RemoveEntityOnSystem(unsigned int entityId)
     {
@@ -104,9 +106,9 @@ class EntityManager
     }
 
     template <typename T>
-    std::shared_ptr<T> RegisterSystem()
+    std::shared_ptr<T> RegisterSystem(SystemContext ctx)
     {
-        return m_systemRegister->RegisterSystem<T>(*this);
+        return m_systemRegister->RegisterSystem<T>(ctx);
     }
 
     template <typename T>
@@ -116,6 +118,6 @@ class EntityManager
     }
 };
 
-} // namespace trifle
+} // namespace tfl
 
 #endif // !ENTITYMANAGER_H

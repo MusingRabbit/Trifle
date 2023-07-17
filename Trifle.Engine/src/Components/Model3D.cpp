@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-namespace trifle
+namespace tfl
 {
 Model3D::Model3D()
 {
@@ -48,4 +48,4 @@ std::vector<Model3D>& Model3D::GetSubModels()
 {
     return models;
 }
-}; // namespace trifle
+}; // namespace tfl

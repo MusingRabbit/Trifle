@@ -11,6 +11,8 @@ set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules)
 set(LIB_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /STACK:10000000")
+
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})
 
@@ -30,29 +32,31 @@ if(WIN32)
     find_package(dbghelp REQUIRED)
     message(STATUS "Found Dbghelp in ${DBGHELP_LIBRARY}")
 
-    set(LIBS opengl32 glfw3 glm dbghelp glew)
+    set(LIBS ${LIBS} glfw3 opengl32 glm dbghelp glew)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 elseif(UNIX)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
     find_package(OpenGL REQUIRED)
     add_definitions(${OPENGL_DEFINITIONS})
-    set(LIBS X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL pthread freetype glfw3 glew)
+    set(LIBS ${LIBS} X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL pthread glew)
     set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ldl")
 else()
-    set(LIBS)
+    set(LIBS ${LIBS})
 endif(WIN32)
 
 include_directories(
+    ${LIB_DIRECTORY}/glew/include
     ${LIB_DIRECTORY}/glfw/include
     ${LIB_DIRECTORY}/glm/include
     ${LIB_DIRECTORY}/gtest/include
-    ${LIB_DIRECTORY}/glew/include
 )
 
-link_directories(${LIB_DIRECTORY}/glfw/lib
-    ${LIB_DIRECTORY}/glm/lib
+link_directories(
     ${LIB_DIRECTORY}/glew/lib
-    ${LIB_DIRECTORY}/gtest/lib/Debug)
+    ${LIB_DIRECTORY}/glfw/lib
+    ${LIB_DIRECTORY}/glm/lib
+    ${LIB_DIRECTORY}/gtest/lib/Debug
+)
 
 #[===[
 include_directories(${PROJECT_SOURCE_DIR}/includes)

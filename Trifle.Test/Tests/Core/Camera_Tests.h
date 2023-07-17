@@ -11,7 +11,7 @@
 
 #include <trifle.h>
 
-using namespace trifle;
+using namespace tfl;
 
 bool OnPositionChanged_Fired = false;
 

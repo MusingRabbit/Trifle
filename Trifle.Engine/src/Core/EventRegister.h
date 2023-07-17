@@ -7,7 +7,7 @@
 #include <limits.h>
 #include <set>
 
-namespace trifle
+namespace tfl
 {
 
 class EventRegister : public IEventRegister
@@ -39,6 +39,6 @@ class EventRegister : public IEventRegister
     bool IsEmpty();
 };
 
-} // namespace trifle
+} // namespace tfl
 
 #endif // !EVENTMANAGER_H
