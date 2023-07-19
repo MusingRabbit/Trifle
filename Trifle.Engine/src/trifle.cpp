@@ -43,6 +43,8 @@ void Trifle::Init()
     RegisterSystems();
     InitSystems();
 
+    srand(time(0));
+
     m_isInitialised = true;
 }
 

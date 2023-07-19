@@ -73,7 +73,8 @@
         "*.rh": "cpp",
         "charconv": "cpp",
         "xlocinfo": "cpp",
-        "xiosbase": "cpp"
+        "xiosbase": "cpp",
+        "ranges": "cpp"
     },
     "cmake.sourceDirectory": "D:/dev/Trifle",
     "editor.formatOnSave": true,

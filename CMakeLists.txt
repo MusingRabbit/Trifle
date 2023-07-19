@@ -28,6 +28,8 @@ message(STATUS "Found GTest in ${GTEST_INCLUDE_DIRS}")
 ]===]
 find_package(Threads)
 
+set(LIBS freetyped)
+
 if(WIN32)
     find_package(dbghelp REQUIRED)
     message(STATUS "Found Dbghelp in ${DBGHELP_LIBRARY}")
@@ -48,6 +50,7 @@ include_directories(
     ${LIB_DIRECTORY}/glew/include
     ${LIB_DIRECTORY}/glfw/include
     ${LIB_DIRECTORY}/glm/include
+    ${LIB_DIRECTORY}/freetype/include
     ${LIB_DIRECTORY}/gtest/include
 )
 
@@ -55,6 +58,7 @@ link_directories(
     ${LIB_DIRECTORY}/glew/lib
     ${LIB_DIRECTORY}/glfw/lib
     ${LIB_DIRECTORY}/glm/lib
+    ${LIB_DIRECTORY}/freetype/lib
     ${LIB_DIRECTORY}/gtest/lib/Debug
 )
 

@@ -5,8 +5,7 @@
 #include "../Components/Components.h"
 #include "../Systems/Renderer.h"
 #include "../Data/VoxelGrid.h"
-
-#include "Util/TextUtil.h"
+#include "../Resources/Resources.h"
 
 #include <array>
 #include <limits>
@@ -47,7 +46,8 @@ void VoxelRenderer::Init()
 
     m_screenTexture->SetDataByColour(m_screenImage.GetWidth(), m_screenImage.GetHeight(), m_screenImage.GetData());
 
-    srand(time(0));
+    Font font;
+    font.Load(FontResources::Windows_Fonts_Arial_ttf);
 }
 
 void VoxelRenderer::Update(float dt)
@@ -204,11 +204,13 @@ void VoxelRenderer::RenderVoxelGrid_Debug(VoxelGrid<VoxelGridCell>& grid, Camera
                     UIntPoint2 screenPos{(unsigned int)sPos.x, (unsigned int)sPos.y};
 
                     m_screenImage.DrawBox(screenPos, xScale, yScale, cell->GetColour(), stroke);
+
+                   //ForceDraw(); // FOR DEBUGING ONLY - REMOVE 
                 }
             }
         }
 
-        ForceDraw(); // FOR DEBUGING ONLY - REMOVE 
+         
     }
 }
 

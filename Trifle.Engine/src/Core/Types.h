@@ -17,4 +17,10 @@ using ComponentType = std::uint8_t;
 
 using Colour = glm::vec4;
 
+struct FontData
+{
+    unsigned char* data;
+    unsigned int size;
+};
+
 #endif // !TYPES_H
