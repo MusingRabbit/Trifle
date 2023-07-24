@@ -47,9 +47,20 @@ class VoxelGridCell
         return m_colour;
     }
 
-    void SetColour(Colour value)
+    void SetColour(const Colour& value)
     {
-        m_colour = value;
+        m_colour.r = value.r;
+        m_colour.g = value.g;
+        m_colour.b = value.b;
+        m_colour.a = value.a;
+    }
+
+    void AppendColour(const Colour& value)
+    {
+        m_colour.r += value.r;
+        m_colour.g += value.g;
+        m_colour.b += value.b;
+        m_colour.a += value.a;
     }
 
     VoxelGridCell()
@@ -179,7 +190,7 @@ class VoxelGrid
             m_litVoxels.erase(idx);
         }
 
-        m_data[idx].SetColour(colour);
+        m_data[idx].AppendColour(colour);
     }
 
     /// @brief Will paint the grid cell at the given point and all surrounding cells to the specified colour. 

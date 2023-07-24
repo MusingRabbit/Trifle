@@ -16,6 +16,8 @@ public:
 
     unsigned char* GetResource(unsigned char* name);
     void AddResource(unsigned char* name, unsigned char* data);
+
+
 };
 }
 

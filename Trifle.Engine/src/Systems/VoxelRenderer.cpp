@@ -8,7 +8,9 @@
 #include "../Resources/Resources.h"
 
 #include <array>
+#include <format>
 #include <limits>
+#include <string>
 
 namespace tfl
 {
@@ -25,8 +27,8 @@ void VoxelRenderer::SetImageSize(unsigned int width, unsigned int height)
     m_imageWidth = width;
     m_imageHeight = height;
 
-    m_screenImage.Resize(m_imageWidth, m_imageHeight);
-    m_screenImage.ClearColour(m_clearColour);
+    m_canvas.Resize(m_imageWidth, m_imageHeight);
+    m_canvas.ClearColour(m_clearColour);
 }
 
 void VoxelRenderer::Init()
@@ -34,7 +36,7 @@ void VoxelRenderer::Init()
    // TextUtil::LoadFont();
 
     
-    m_screenImage.SetAdditiveBlend(true);
+    m_canvas.SetAdditiveBlend(true);
     SetImageSize(Context.gameWindow->GetWidth(), Context.gameWindow->GetHeight());
 
     m_screenEntity = EntityBuilder::CreateTexturedQuad();
@@ -44,10 +46,7 @@ void VoxelRenderer::Init()
 
     m_screenTexture = &model3d.GetMaterial().texture;
 
-    m_screenTexture->SetDataByColour(m_screenImage.GetWidth(), m_screenImage.GetHeight(), m_screenImage.GetData());
-
-    Font font;
-    font.Load(FontResources::Windows_Fonts_Arial_ttf);
+    m_screenTexture->SetDataByColour(m_canvas.GetWidth(), m_canvas.GetHeight(), m_canvas.GetData());
 }
 
 void VoxelRenderer::Update(float dt)
@@ -57,12 +56,12 @@ void VoxelRenderer::Update(float dt)
     //     DoCommadore64LoadingScreen();
     // }
 
-    m_screenTexture->SubDataByColour(m_screenImage.GetData());
+    m_screenTexture->SubDataByColour(m_canvas.GetData());
 }
 
 void VoxelRenderer::UpdateScreenTexture()
 {
-    m_screenTexture->SubDataByColour(m_screenImage.GetData());
+    m_screenTexture->SubDataByColour(m_canvas.GetData());
 }
 
 void VoxelRenderer::RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid, RenderMethod method)
@@ -81,14 +80,22 @@ void VoxelRenderer::RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid, RenderMethod
 
 void VoxelRenderer::RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid, Camera& camera)
 {
-    m_screenImage.ClearColour(m_emtpyColour);
+    m_canvas.ClearColour(m_emtpyColour);
 
 
 }
 
+glm::vec4 VoxelRenderer::TransformWorldView(Camera& camera, glm::vec4 fPos)
+{
+    glm::mat4 mtxView = camera.GetViewMatrix();
+    glm::mat4 mtxViewInv = glm::inverse(mtxView);
+
+    return mtxViewInv * fPos; 
+}
+
 void VoxelRenderer::RenderVoxelGrid_Debug(VoxelGrid<VoxelGridCell>& grid, Camera& camera)
 {
-    m_screenImage.ClearColour(m_emtpyColour);
+    m_canvas.ClearColour(m_emtpyColour);
 
     // Colour stroke{1.0, 1.0, 1.0, 1.0};
     // Colour red{1.0f, 0.0f, 0.0f, 1.0f};
@@ -96,17 +103,15 @@ void VoxelRenderer::RenderVoxelGrid_Debug(VoxelGrid<VoxelGridCell>& grid, Camera
     // Colour blue{0.0f, 0.0f, 1.0f, 1.0f};
     // Colour white{1.0f, 1.0f, 1.0f, 1.0f};
 
-    // m_screenImage.DrawBox({0, 0}, 100, 100, red, stroke);
-    // m_screenImage.DrawBox({0, m_screenImage.GetHeight() - 101}, 100, 100, green, stroke);
-    // m_screenImage.DrawBox({m_screenImage.GetWidth() - 101, 0}, 100, 100, blue, stroke);
-    // m_screenImage.DrawBox({m_screenImage.GetWidth() - 101, m_screenImage.GetHeight() - 101}, 100, 100, white, stroke);
+    // m_canvas.DrawBox({0, 0}, 100, 100, red, stroke);
+    // m_canvas.DrawBox({0, m_canvas.GetHeight() - 101}, 100, 100, green, stroke);
+    // m_canvas.DrawBox({m_canvas.GetWidth() - 101, 0}, 100, 100, blue, stroke);
+    // m_canvas.DrawBox({m_canvas.GetWidth() - 101, m_canvas.GetHeight() - 101}, 100, 100, white, stroke);
 
     // return;
 
     Transform& camTrans = camera.GetComponent<Transform>();
     glm::vec3 camPos = camTrans.GetPosition();
-
-    Target& camTarget = camera.GetComponent<Target>();
 
     Projection& proj = camera.GetComponent<Projection>();
     glm::mat4 mtxView = camera.GetViewMatrix();
@@ -124,16 +129,22 @@ void VoxelRenderer::RenderVoxelGrid_Debug(VoxelGrid<VoxelGridCell>& grid, Camera
 
     for (unsigned int i = zFar; i >= zNear; i--) // Itterate through the depth frustrum, back to front.
     {
+        //m_canvas.ClearColour(m_emtpyColour);
+        
         unsigned int zCurr = i;
-        unsigned int width = (zCurr * 2);                                // Width is equal to zCurr. As zCurr decreases, so does the screen width
+        unsigned int width = (zCurr * 1);                                // Width is equal to zCurr. As zCurr decreases, so does the screen width
         unsigned int height = (zCurr * 1);     // Height is equal to the zCurr times the projections' aspect ratio.
+        float xOffset = (float)width / 2;
+        float yOffset = (float)height / 2;
 
-        float xScale = (m_screenImage.GetWidth()) / ((float)zCurr); 
-        float yScale = (m_screenImage.GetHeight()) / ((float)zCurr);
-        int iHeightCount = height * 2 - 1;
-        int iWidthCount = width * 2 - 1;
+       //float xScale = (m_canvas.GetWidth()) / ((float)zCurr); 
+       //float yScale = (m_canvas.GetHeight()) / ((float)zCurr);
         float alpha = 1.0f; // 1.0 - ((float)i / (float)zDepth);
         stroke.a = alpha;
+
+        float xScale = (m_canvas.GetWidth() / (float)zCurr);
+        float yScale = (m_canvas.GetHeight() / (float)zCurr);
+        float zScale = 100;
 
         //DEBUG CODE FOR COLOURING BLOCKS
 
@@ -167,18 +178,13 @@ void VoxelRenderer::RenderVoxelGrid_Debug(VoxelGrid<VoxelGridCell>& grid, Camera
         //    }
         //}
         //Clear(); // Test Only - Remove
-        for (int y = 0; y < iHeightCount; y++)
+        for (int y = 0; y < height * 2; y++)
         {
-            for (int x = 0; x < iWidthCount; x++)
+            for (int x = 0; x < width * 2; x++)
             {
-                float fX = (float)x;
-                float fY = (float)y;
+                float fX = (float)x - width;
+                float fY = (float)y - height;
                 float fZ = (float)zCurr;
-
-                if (fX < 0 || fY < 0)
-                {
-                    bool b = false;
-                }
 
                 glm::vec4 fPos = glm::vec4(fX, fY, fZ, 1.0f); // View Position
                 glm::vec4 wPos = mtxViewInv * fPos;           // World position
@@ -194,23 +200,42 @@ void VoxelRenderer::RenderVoxelGrid_Debug(VoxelGrid<VoxelGridCell>& grid, Camera
                 {
                     VoxelGridCell* cell = grid.GetCell(gridPoint);
 
-                    glm::vec4 sPos = mtxProj * fPos;
-                    sPos.x = roundf(fPos.x) * xScale - (xScale / 2);
-                    sPos.y = roundf(fPos.y) * yScale - (yScale / 2);
+                    glm::vec4 sPos = fPos;
+                    sPos.x = (sPos.x + (xOffset)) * xScale;
+                    sPos.y = (sPos.y + (yOffset)) * yScale;
+                    sPos.z = fPos.z;
 
-                    //sPos.x = roundf(((fPos.x + (float)width) * xScale) - (xScale / 2));
-                    //sPos.y = roundf(((fPos.y + (float)height) * yScale) - (yScale / 2));
+                    Point2 screenPos{(int)sPos.x, (int)sPos.y};
 
-                    UIntPoint2 screenPos{(unsigned int)sPos.x, (unsigned int)sPos.y};
+                    //m_canvas.DrawBox(screenPos, xScale, yScale, cell->GetColour(), stroke);
+                    
+                    //ForceDraw(); // FOR DEBUGING ONLY - REMOVE 
 
-                    m_screenImage.DrawBox(screenPos, xScale, yScale, cell->GetColour(), stroke);
+                    float multiplier = 6;
+                    float r = grid.GetWidth() / (wPos.x * multiplier);
+                    float b = (wPos.x * multiplier) / grid.GetWidth();
+                    float g = (1.0 / r) - b;
 
-                   //ForceDraw(); // FOR DEBUGING ONLY - REMOVE 
+                    Colour cellColour = cell->GetColour();
+
+                    if (roundf(wPos.x) == 15.0f && roundf(wPos.y) == 15.0f)
+                    {
+                        cellColour = {1,0,0,1};
+                    }
+                    
+                    m_canvas.DrawBox(screenPos, xScale, yScale, cellColour, {r,g,b,1.0f});
+                    
+                    if (false && zCurr < 8)
+                    {
+                        unsigned int fontSize = 3 + (8 - zCurr);
+                        std::string strPos = std::format("[x:{0},y:{1}z:{2}]", gridPoint.x, gridPoint.y, gridPoint.z);
+                        m_canvas.DrawString({screenPos.x + 5, screenPos.y + 5}, strPos, fontSize);
+                    }
                 }
             }
         }
 
-         
+        //ForceDraw(); // FOR DEBUGING ONLY - REMOVE 
     }
 }
 
@@ -228,25 +253,25 @@ void VoxelRenderer::ForceDraw()
 
 void VoxelRenderer::Clear()
 {
-    m_screenImage.ClearColour(m_emtpyColour);
+    m_canvas.ClearColour(m_emtpyColour);
 }
 
 
 void VoxelRenderer::DoCommadore64LoadingScreen()
 {
-    unsigned int maxX = m_screenImage.GetWidth() - 1;
-    unsigned int height = m_screenImage.GetHeight();
+    unsigned int maxX = m_canvas.GetWidth() - 1;
+    unsigned int height = m_canvas.GetHeight();
     unsigned int rowHeight = height * 0.01;
     unsigned int rows = (height / rowHeight);
 
-    for (unsigned int i = 0; i < rows; i++)
+    for (int i = 0; i < rows; i++)
     {
         float rR = (float)(rand()) / (float)(RAND_MAX);
         float rG = (float)(rand()) / (float)(RAND_MAX);
         float rB = (float)(rand()) / (float)(RAND_MAX);
 
         Colour c = Colour(rR, rG, rB, 1.0f);
-        m_screenImage.DrawBox({0, rowHeight * i}, maxX, rowHeight - 1, c, c);
+        m_canvas.DrawBox({0, (int)rowHeight * i}, maxX, rowHeight - 1, c, c);
     }
 }
 } // namespace tfl

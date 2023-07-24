@@ -2,7 +2,6 @@
 #define TEXTURE2D_H
 
 #include "../Core/Types.h"
-#include "../Data/Image.h"
 #include <array>
 
 namespace tfl

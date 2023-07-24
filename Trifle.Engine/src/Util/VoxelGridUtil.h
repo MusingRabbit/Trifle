@@ -1,7 +1,11 @@
 #ifndef VOXELGRIDHELPER_H
 #define VOXELGRIDHELPER_H
 
+#include <array>
+
 #include "../Data/UIntPoint3.h"
+
+#define VOXEL_BLOCK_POINT_COUNT = 27;
 
 namespace tfl
 {

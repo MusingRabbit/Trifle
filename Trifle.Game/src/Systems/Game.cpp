@@ -17,8 +17,8 @@ void Game::Init()
 
     m_camera.Register();
     m_camera.Init(aspectRatio, 1.0f, 50);
-    m_camera.SetPosition(glm::vec3(15, 15, 0));
-    m_camera.SetTarget(glm::vec3(15, 15, 8));
+    m_camera.SetPosition(glm::vec3(15.1, 15, 0));
+    m_camera.SetTarget(glm::vec3(15, 15, 6));
 
     m_camera.GetComponent<Movement>().speed = 1.0f;
 
@@ -33,7 +33,7 @@ void Game::Init()
 void Game::Update(float dt)
 {
     bool moved = false;
-    std::cout << "Game.Update() -> FRAMETIME : " << dt << "ms" << std::endl;
+    std::cout << "Game.Update() -> FRAMETIME : " << dt * 1000 << "ms" << std::endl;
 
     m_voxelGrid->DrawVoxel({5, 5, 5}, Colour(1, 0, 1, 1));
 

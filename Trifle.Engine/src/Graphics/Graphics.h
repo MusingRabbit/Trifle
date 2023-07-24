@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Texture2D.h"
 #include "Material.h"
+#include "Canvas.h"
 
 #include "Text/Font.h"
 

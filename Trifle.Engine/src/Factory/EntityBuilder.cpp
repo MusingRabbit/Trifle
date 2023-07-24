@@ -24,7 +24,9 @@ Entity EntityBuilder::CreateTexturedQuad()
     Entity result = Entity::Create();
 
     Model3D model;
-    model.GetMesh().SetMeshData(MeshBuilder::CreateQuad());
+
+    MeshData data = MeshBuilder::CreateQuad();
+    model.GetMesh().SetMeshData(data);
     model.SetMaterial(MaterialBuilder::CreateBasicTextureMaterial());
 
     result.AddComponent<Model3D>(model);

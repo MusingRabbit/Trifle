@@ -8,7 +8,7 @@
 #include "../Core/Types.h"
 
 #include "../Entities/Camera.h"
-#include "../Graphics/Texture2D.h"
+#include "../Graphics/Graphics.h"
 
 namespace tfl
 {
@@ -23,7 +23,7 @@ class VoxelRenderer : public System
   private:
     unsigned int m_imageWidth, m_imageHeight;
     Entity m_screenEntity;
-    Image m_screenImage;
+    Canvas m_canvas;
     Texture2D* m_screenTexture;
 
     Camera m_camera;
@@ -35,6 +35,8 @@ class VoxelRenderer : public System
     void UpdateScreenTexture();
 
     void ForceDraw();
+
+    glm::vec4 TransformWorldView(Camera& camera, glm::vec4 fPos);
 
   public:
     VoxelRenderer(unsigned int id, const SystemContext& context);
@@ -49,6 +51,7 @@ class VoxelRenderer : public System
 
     void RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid, RenderMethod method);
     void RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid, Camera& camera);
+    
     void RenderVoxelGrid_Debug(VoxelGrid<VoxelGridCell>& grid, Camera& camera);
 
     void Clear();

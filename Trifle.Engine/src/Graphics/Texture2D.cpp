@@ -1,6 +1,5 @@
 #include "Texture2D.h"
 
-#include "../Data/Image.h"
 #include "GL/glew.h"
 
 namespace tfl
