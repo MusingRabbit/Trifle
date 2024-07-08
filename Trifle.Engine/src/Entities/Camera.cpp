@@ -4,9 +4,13 @@
 #include "../Components/Components.h"
 #include "../Util/Util.h"
 
-namespace tfl
-{
+using namespace tfl;
+
 Camera::Camera() : Entity()
+{
+}
+
+Camera::Camera(Camera& rhs) : Entity(rhs)
 {
 }
 
@@ -14,10 +18,10 @@ Camera::~Camera()
 {
 }
 
-void Camera::Init(float aspectRatio, float nearPlane, float farPlane)
+void Camera::Init(float width, float height, float nearPlane, float farPlane)
 {
     AddComponent<Transform>();
-    AddComponent<Projection>(Projection(aspectRatio, nearPlane, farPlane));
+    AddComponent<Projection>(Projection(width / height, nearPlane, farPlane));
     AddComponent<Movement>();
     AddComponent<Target>();
 
@@ -94,15 +98,32 @@ void Camera::SetMovementSpeed(float value)
     GetComponent<Movement>().speed = value;
 }
 
+float Camera::GetNearPlane()
+{
+    return GetComponent<Projection>().GetNearPlane();
+}
+
+float Camera::GetFarPlane()
+{
+    return GetComponent<Projection>().GetFarPlane();
+}
+
 glm::mat4 Camera::GetViewMatrix()
 {
     Transform& transform = GetComponent<Transform>();
     Target& target = GetComponent<Target>();
 
+    glm::vec3 camPos = transform.GetPosition();
+    glm::vec3 tgtPos = target.position;
 
-    return glm::lookAtLH(transform.GetPosition(), target.position, glm::vec3(0, 1, 0));
+    return glm::lookAtLH(camPos, tgtPos, glm::vec3(0, 1, 0));
 
     //return MatrixHelper::CreateLookAtMatrix(transform.GetPosition(), target.position, glm::vec3(0, 1, 0));
+}
+
+glm::mat4 Camera::GetProjectionMatrix()
+{
+    return GetComponent<Projection>().GetMatrix();
 }
 
 void Camera::OnTransformChangedCallback(EventArgs& e)
@@ -126,5 +147,3 @@ void Camera::UpdateTargetPosition()
         target.position = transform.GetPosition() + offset;
     }
 }
-
-}; // namespace tfl

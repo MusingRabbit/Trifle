@@ -24,11 +24,13 @@ void System::Update(float dt)
 void System::AddEntity(unsigned int entityId)
 {
     m_entityIds.insert(entityId);
+    OnEntityAdded(entityId);
 }
 
 void System::RemoveEntity(unsigned int entityId)
 {
     m_entityIds.erase(entityId);
+    OnEntityRemoved(entityId);
 }
 
 unsigned int System::GetEntityCount()

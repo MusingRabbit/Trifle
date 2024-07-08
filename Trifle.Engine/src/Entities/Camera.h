@@ -13,9 +13,10 @@ class Camera : public Entity
 
   public:
     Camera();
+    Camera(Camera& rhs);
     ~Camera();
 
-    void Init(float aspectRatio, float nearPlane, float farPlane);
+    void Init(float width, float height, float nearPlane, float farPlane);
 
     void SetPosition(glm::vec3 position);
     void Move(glm::vec3 moveVector);
@@ -25,7 +26,11 @@ class Camera : public Entity
     void ClearTarget();
     void SetMovementSpeed(float value);
 
+    float GetNearPlane();
+    float GetFarPlane();
+
     glm::mat4 GetViewMatrix();
+    glm::mat4 GetProjectionMatrix();
 };
 } // namespace tfl
 

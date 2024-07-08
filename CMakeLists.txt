@@ -10,22 +10,21 @@ set(CMAKE_CXX_EXTENSIONS ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules)
 set(LIB_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
+set(GTEST_ROOT ${CMAKE_SOURCE_DIR}/lib/gtest)
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /STACK:10000000")
 
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})
 
-#[===[
 find_package(GLFW3 REQUIRED)
 message(STATUS "Found GLFW3 in ${GLFW3_INCLUDE_DIR}")
 
 find_package(GLM REQUIRED)
 message(STATUS "Found GLM in ${GLM_INCLUDE_DIR}")
 
-find_package(GTest REQUIRED)
-message(STATUS "Found GTest in ${GTEST_INCLUDE_DIRS}")
-]===]
+# find_package(GTest REQUIRED)
+# message(STATUS "Found GTest in ${GTEST_INCLUDE_DIRS}")
 find_package(Threads)
 
 set(LIBS freetyped)

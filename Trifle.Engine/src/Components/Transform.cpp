@@ -1,9 +1,8 @@
 #include "Transform.h"
-#include <glm/glm.hpp>
 #include "../Util/Util.h"
 
-namespace tfl
-{
+using namespace tfl;
+
 Transform::Transform()
 {
     SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -34,6 +33,7 @@ void Transform::SetPosition(const glm::vec3& pos)
 
 void Transform::SetPosition(float x, float y, float z)
 {
+    glm::vec3 oldVal = m_localPos;
     bool isChanged = m_localPos.x != x || m_localPos.y != y || m_localPos.z != z;
 
     if (isChanged)
@@ -44,7 +44,9 @@ void Transform::SetPosition(float x, float y, float z)
 
         m_isDirty = true;
 
-        OnPositionChanged.Invoke();
+        TransformChangedArgs args{ TransformChangedType::Position, oldVal , m_localPos};
+
+        OnPositionChanged.Invoke(args);
     }
 }
 
@@ -65,6 +67,8 @@ glm::vec3 Transform::GetRotaion()
 
 void Transform::Translate(float x, float y, float z)
 {
+    glm::vec3 oldVal = m_localPos;
+
     m_localPos.x += x;
     m_localPos.y += y;
     m_localPos.z += z;
@@ -73,7 +77,8 @@ void Transform::Translate(float x, float y, float z)
 
     if (m_isDirty)
     {
-        OnPositionChanged.Invoke();
+        TransformChangedArgs args{ TransformChangedType::Position, oldVal , m_localPos};
+        OnPositionChanged.Invoke(args);
     }
 }
 
@@ -103,18 +108,23 @@ void Transform::SetRotation(float x, float y, float z)
 
     if (isChanged)
     {
+        glm::vec3 oldVal = m_localRot;
+
         m_localRot.x = x;
         m_localRot.y = y;
         m_localRot.z = z;
 
         m_isDirty = true;
 
-        OnRotationChanged.Invoke();
+        TransformChangedArgs args{ TransformChangedType::Rotation, oldVal , m_localPos};
+        OnRotationChanged.Invoke(args);
     }
 }
 
 void Transform::Rotate(float x, float y, float z)
 {
+    glm::vec3 oldVal = m_localRot;
+
     m_localRot.x += x;
     m_localRot.y += y;
     m_localRot.z += z;
@@ -123,7 +133,8 @@ void Transform::Rotate(float x, float y, float z)
 
     if (m_isDirty)
     {
-        OnRotationChanged.Invoke();
+        TransformChangedArgs args{ TransformChangedType::Rotation, oldVal , m_localPos};
+        OnRotationChanged.Invoke(args);
     }
 }
 
@@ -153,13 +164,16 @@ void Transform::Scale(float x, float y, float z)
 
     if (isChanged)
     {
+        glm::vec3 oldVal = m_localScale;
+
         m_localScale.x = x;
         m_localScale.y = y;
         m_localScale.z = z;
 
         m_isDirty = true;
 
-        OnScaleChanged.Invoke();
+        TransformChangedArgs args{ TransformChangedType::Scale, oldVal , m_localPos};
+        OnScaleChanged.Invoke(args);
     }
 }
 
@@ -211,4 +225,3 @@ bool Transform::IsEqual(const Transform& rhs)
 
     return result;
 }
-} // namespace tfl

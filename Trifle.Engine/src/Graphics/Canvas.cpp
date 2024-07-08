@@ -44,28 +44,54 @@ void Canvas::SetAdditiveBlend(bool value)
     m_additiveBlend = value;
 }
 
-void Canvas::SetPixel(const Point2& point, const Colour& colour)
+void Canvas::SetOverwriteExisting(bool value)
+{
+    m_overwrite = value;
+}
+
+bool Canvas::IsValidPoint(const Point2& point)
 {
     if (point.x > m_width || point.y > m_height)
     {
-        return;
+        return false;
     }
     unsigned int idx = GetIndex(point);
     if (idx > m_data.size() - 1)
     {
-        return;
+        return false;
         // throw std::runtime_error("Index out of range. The point provided exceeds the range of the Canvas.");
     }
+
+    return true;
+}
+
+void Canvas::SetPixel(const Point2& point, const Colour& colour)
+{
+    if (!IsValidPoint(point))
+    {
+        return;
+    }
+
+    Colour& pixel = m_data[GetIndex(point)];
+
+    if (pixel.a > 0.99f && m_overwrite == false)
+    {
+        return;
+    }
+    
     if (m_additiveBlend)
     {
-        m_data[idx].r += colour.r;
-        m_data[idx].g += colour.g;
-        m_data[idx].b += colour.b;
-        m_data[idx].a += colour.a;
+        pixel.r += colour.r;
+        pixel.g += colour.g;
+        pixel.b += colour.b;
+        pixel.a += colour.a;
     }
     else
     {
-        m_data[idx] = Colour(colour.r, colour.g, colour.b, colour.a);
+        pixel.r = colour.r;
+        pixel.g = colour.g;
+        pixel.b = colour.b;
+        pixel.a = colour.a;
     }
 }
 
@@ -178,8 +204,18 @@ void Canvas::DrawCharacter(const Point2& point, char32_t charCode, unsigned int 
     }
 }
 
-Colour Canvas::GetPixel(const Point2& point)
+bool Canvas::IsPixelSet(const Point2& point)
 {
+    return !IsValidPoint(point) || m_data[GetIndex(point)].a > 0.99f;
+}
+
+Colour& Canvas::GetPixel(const Point2& point)
+{
+    if (!IsValidPoint(point))
+    {
+        throw std::runtime_error("Index out of range. The point provided exceeds the range of the Canvas.");
+    }
+
     return m_data[GetIndex(point)];
 }
 

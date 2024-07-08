@@ -179,10 +179,10 @@ struct KeyboardState
     /// @param key Key to be set
     void SetKey(Keys key, bool isActive = true)
     {
-        unsigned int keyIdx = 1;//(unsigned int)(int)key >> 5;
-        unsigned int num = ((unsigned int)1 << ((int)key & 31));
+        unsigned int keyIdx = (unsigned int)(int)key >> 5;
         unsigned int currKey = m_keys[keyIdx];
-
+        unsigned int num = ((unsigned int)1 << ((int)key & 31));
+        
         unsigned int value = 0;
 
         if (isActive)

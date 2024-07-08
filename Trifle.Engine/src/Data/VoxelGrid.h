@@ -5,6 +5,7 @@
 #include <vector>
 #include <set>
 #include <stdexcept>
+#include <functional>
 #include "../Core/Types.h"
 
 #include "../Util/Util.h"
@@ -61,6 +62,11 @@ class VoxelGridCell
         m_colour.g += value.g;
         m_colour.b += value.b;
         m_colour.a += value.a;
+
+        m_colour.r = (m_colour.r < 0) ? 0 : m_colour.r;
+        m_colour.g = (m_colour.g < 0) ? 0 : m_colour.g;
+        m_colour.b = (m_colour.b < 0) ? 0 : m_colour.b;
+        m_colour.a = (m_colour.a < 0) ? 0 : m_colour.a;
     }
 
     VoxelGridCell()
@@ -69,6 +75,20 @@ class VoxelGridCell
         m_pos = UIntPoint3{0, 0, 0};
         m_colour = glm::vec4(0, 0, 0, 0);
     }
+
+    VoxelGridCell(const VoxelGridCell& rhs)
+    {
+        m_id = rhs.m_id;
+        m_pos = rhs.m_pos;
+        m_colour = rhs.m_colour;
+    }
+};
+
+enum class CellSortOrder
+{
+    None = 0,
+    ZAscending,
+    ZDescending,
 };
 
 template <typename T>
@@ -146,7 +166,8 @@ class VoxelGrid
     {
         if (point.x > m_width || point.y > m_height || point.z > m_depth)
         {
-            throw std::out_of_range("point coordinates exceeded grid dimensions.");
+            //throw std::out_of_range("point coordinates exceeded grid dimensions.");
+            return nullptr;
         }
 
         return &m_data[VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth)];
@@ -154,30 +175,64 @@ class VoxelGrid
 
     T* GetCell(unsigned int idx)
     {
+        if (idx < 0 || idx > m_size)
+        {
+            return nullptr;
+        }
+
         return &m_data[idx];
     }
     
     /// @brief Gets all voxels that have been 'lit' (Voxels with a colour whose alpha is > 0)
     /// @return A vector of all lit cells
-    std::vector<T*> GetPaintedCells()
+    std::vector<T*> GetPaintedCells(CellSortOrder sortOrder, std::function<bool(T*)> filter)
     {
         std::vector<T*> result;
+        
         result.reserve(m_litVoxels.size());
 
-        std::set<unsigned int>::reverse_iterator it;
+        std::set<unsigned int>::iterator it{};
+        std::set<unsigned int>::reverse_iterator rIt{};
 
-        for (it = m_litVoxels.rbegin(); it != m_litVoxels.rend(); it++)
+        //TODO : Duplicate code.... Why are reverse itterators a thing?
+        switch (sortOrder)
         {
-            result.push_back(GetCell(*it));
+            case CellSortOrder::ZAscending:
+            case CellSortOrder::None:
+                
+                for (it = m_litVoxels.begin(); it != m_litVoxels.end(); it++)
+                {
+                    T* cell = GetCell(*it);
+
+                    if (filter(cell))
+                    {
+                        result.push_back(GetCell(*it));
+                    }
+                }
+            break;
+            case CellSortOrder::ZDescending: 
+                
+
+                for (rIt = m_litVoxels.rbegin(); rIt != m_litVoxels.rend(); rIt++)
+                {
+                    T* cell = GetCell(*rIt);
+
+                    if (filter(cell))
+                    {
+                        result.push_back(GetCell(*rIt));
+                    }
+                }
+
+            break;
         }
-        
+
         return result;
     }
 
     /// @brief Paints the grid cell at the given point with the specified colour.
     /// @param point Cell coordinate.
     /// @param colour Cell Colour.
-    void PaintCell(const UIntPoint3 point, Colour colour)
+    void PaintCell(const UIntPoint3& point, const Colour& colour)
     {
         unsigned int idx = VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth);
 
@@ -197,9 +252,9 @@ class VoxelGrid
     /// @param point Cell cordinate.
     /// @param brushSize The number of surrounding voxels to paint.
     /// @param fillColour Cell Colour.
-    void PaintCells(const UIntPoint3 point, unsigned int brushSize, Colour fillColour)
+    void PaintCells(const UIntPoint3 point, unsigned int brushSize, const Colour& fillColour)
     {
-        UIntPoint3 startPoint = {point.x - brushSize, point.y - brushSize, point.z - brushSize};
+        UIntPoint3 startPoint = {point.x, point.y, point.z};
         UIntPoint3 endPoint = {point.x + brushSize, point.y + brushSize, point.z + brushSize};
 
         for (unsigned int x = startPoint.x; x < endPoint.x; x++)

@@ -93,6 +93,7 @@ void Trifle::RegisterComponents()
     m_entityManager->RegisterComponent<Target>();
     m_entityManager->RegisterComponent<Projection>();
     m_entityManager->RegisterComponent<Transform>();
+    m_entityManager->RegisterComponent<ColourComponent>();
 }
 
 void Trifle::RegisterSystems()

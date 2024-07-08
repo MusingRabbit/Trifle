@@ -42,7 +42,7 @@ class Entity
     void AddComponent()
     {
         Entity::InitialisationCheck();
-        T component;
+        T component = T();
         Entity::entityManager->AddComponent<T>(m_id, component);
     }
 

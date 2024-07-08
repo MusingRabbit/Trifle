@@ -10,7 +10,7 @@
 # the name of the Find-module where it is called (in original casing).
 #
 # The first simple mode looks like this:
-#    FIND_PACKAGE_HANDLE_STANDARD_ARGS(<name> (DEFAULT_MSG|"Custom failure message") <var1>...<varN> )
+# FIND_PACKAGE_HANDLE_STANDARD_ARGS(<name> (DEFAULT_MSG|"Custom failure message") <var1>...<varN> )
 # If the variables <var1> to <varN> are all valid, then <UPPERCASED_NAME>_FOUND
 # will be set to TRUE.
 # If DEFAULT_MSG is given as second argument, then the function will generate
@@ -18,11 +18,11 @@
 # for the failure case. This is not recommended.
 #
 # The second mode is more powerful and also supports version checking:
-#    FIND_PACKAGE_HANDLE_STANDARD_ARGS(NAME [REQUIRED_VARS <var1>...<varN>]
-#                                           [VERSION_VAR   <versionvar>]
-#                                           [HANDLE_COMPONENTS]
-#                                           [CONFIG_MODE]
-#                                           [FAIL_MESSAGE "Custom failure message"] )
+# FIND_PACKAGE_HANDLE_STANDARD_ARGS(NAME [REQUIRED_VARS <var1>...<varN>]
+# [VERSION_VAR   <versionvar>]
+# [HANDLE_COMPONENTS]
+# [CONFIG_MODE]
+# [FAIL_MESSAGE "Custom failure message"] )
 #
 # As above, if <var1> through <varN> are all valid, <UPPERCASED_NAME>_FOUND
 # will be set to TRUE.
@@ -47,7 +47,7 @@
 #
 # Example for mode 1:
 #
-#    FIND_PACKAGE_HANDLE_STANDARD_ARGS(LibXml2  DEFAULT_MSG  LIBXML2_LIBRARY LIBXML2_INCLUDE_DIR)
+# FIND_PACKAGE_HANDLE_STANDARD_ARGS(LibXml2  DEFAULT_MSG  LIBXML2_LIBRARY LIBXML2_INCLUDE_DIR)
 #
 # LibXml2 is considered to be found, if both LIBXML2_LIBRARY and
 # LIBXML2_INCLUDE_DIR are valid. Then also LIBXML2_FOUND is set to TRUE.
@@ -58,8 +58,8 @@
 #
 # Example for mode 2:
 #
-#    FIND_PACKAGE_HANDLE_STANDARD_ARGS(BISON  REQUIRED_VARS BISON_EXECUTABLE
-#                                             VERSION_VAR BISON_VERSION)
+# FIND_PACKAGE_HANDLE_STANDARD_ARGS(BISON  REQUIRED_VARS BISON_EXECUTABLE
+# VERSION_VAR BISON_VERSION)
 # In this case, BISON is considered to be found if the variable(s) listed
 # after REQUIRED_VAR are all valid, i.e. BISON_EXECUTABLE in this case.
 # Also the version of BISON will be checked by using the version contained
@@ -68,14 +68,14 @@
 #
 # Another example for mode 2:
 #
-#    find_package(Automoc4 QUIET NO_MODULE HINTS /opt/automoc4)
-#    FIND_PACKAGE_HANDLE_STANDARD_ARGS(Automoc4  CONFIG_MODE)
+# find_package(Automoc4 QUIET NO_MODULE HINTS /opt/automoc4)
+# FIND_PACKAGE_HANDLE_STANDARD_ARGS(Automoc4  CONFIG_MODE)
 # In this case, FindAutmoc4.cmake wraps a call to find_package(Automoc4 NO_MODULE)
 # and adds an additional search directory for automoc4.
 # The following FIND_PACKAGE_HANDLE_STANDARD_ARGS() call produces a proper
 # success/error message.
 
-#=============================================================================
+# =============================================================================
 # Copyright 2007-2009 Kitware, Inc.
 #
 # Distributed under the OSI-approved BSD License (the "License");
@@ -84,24 +84,23 @@
 # This software is distributed WITHOUT ANY WARRANTY; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the License for more information.
-#=============================================================================
+# =============================================================================
 # (To distribute this file outside of CMake, substitute the full
-#  License text for the above reference.)
+# License text for the above reference.)
 
 include(FindPackageMessage)
 include(CMakeParseArguments)
 
 # internal helper macro
 macro(_FPHSA_FAILURE_MESSAGE _msg)
-  if (${_NAME}_FIND_REQUIRED)
+  if(${_NAME}_FIND_REQUIRED)
     message(FATAL_ERROR "${_msg}")
-  else ()
-    if (NOT ${_NAME}_FIND_QUIETLY)
+  else()
+    if(NOT ${_NAME}_FIND_QUIETLY)
       message(STATUS "${_msg}")
-    endif ()
-  endif ()
+    endif()
+  endif()
 endmacro()
-
 
 # internal helper macro to generate the failure message when used in CONFIG_MODE:
 macro(_FPHSA_HANDLE_FAILURE_CONFIG_MODE)
@@ -115,14 +114,17 @@ macro(_FPHSA_HANDLE_FAILURE_CONFIG_MODE)
       set(configsText "")
       list(LENGTH ${_NAME}_CONSIDERED_CONFIGS configsCount)
       math(EXPR configsCount "${configsCount} - 1")
+
       foreach(currentConfigIndex RANGE ${configsCount})
         list(GET ${_NAME}_CONSIDERED_CONFIGS ${currentConfigIndex} filename)
         list(GET ${_NAME}_CONSIDERED_VERSIONS ${currentConfigIndex} version)
         set(configsText "${configsText}    ${filename} (version ${version})\n")
       endforeach()
-      if (${_NAME}_NOT_FOUND_MESSAGE)
+
+      if(${_NAME}_NOT_FOUND_MESSAGE)
         set(configsText "${configsText}    Reason given by package: ${${_NAME}_NOT_FOUND_MESSAGE}\n")
       endif()
+
       _FPHSA_FAILURE_MESSAGE("${FPHSA_FAIL_MESSAGE} ${VERSION_MSG}, checked the following files:\n${configsText}")
 
     else()
@@ -132,15 +134,13 @@ macro(_FPHSA_HANDLE_FAILURE_CONFIG_MODE)
   endif()
 endmacro()
 
-
 function(FIND_PACKAGE_HANDLE_STANDARD_ARGS _NAME _FIRST_ARG)
-
-# set up the arguments for CMAKE_PARSE_ARGUMENTS and check whether we are in
-# new extended or in the "old" mode:
+  # set up the arguments for CMAKE_PARSE_ARGUMENTS and check whether we are in
+  # new extended or in the "old" mode:
   set(options CONFIG_MODE HANDLE_COMPONENTS)
   set(oneValueArgs FAIL_MESSAGE VERSION_VAR)
   set(multiValueArgs REQUIRED_VARS)
-  set(_KEYWORDS_FOR_EXTENDED_MODE  ${options} ${oneValueArgs} ${multiValueArgs} )
+  set(_KEYWORDS_FOR_EXTENDED_MODE ${options} ${oneValueArgs} ${multiValueArgs})
   list(FIND _KEYWORDS_FOR_EXTENDED_MODE "${_FIRST_ARG}" INDEX)
 
   if(${INDEX} EQUAL -1)
@@ -148,20 +148,18 @@ function(FIND_PACKAGE_HANDLE_STANDARD_ARGS _NAME _FIRST_ARG)
     set(FPHSA_REQUIRED_VARS ${ARGN})
     set(FPHSA_VERSION_VAR)
   else()
-
-    CMAKE_PARSE_ARGUMENTS(FPHSA "${options}" "${oneValueArgs}" "${multiValueArgs}"  ${_FIRST_ARG} ${ARGN})
+    CMAKE_PARSE_ARGUMENTS(FPHSA "${options}" "${oneValueArgs}" "${multiValueArgs}" ${_FIRST_ARG} ${ARGN})
 
     if(FPHSA_UNPARSED_ARGUMENTS)
       message(FATAL_ERROR "Unknown keywords given to FIND_PACKAGE_HANDLE_STANDARD_ARGS(): \"${FPHSA_UNPARSED_ARGUMENTS}\"")
     endif()
 
     if(NOT FPHSA_FAIL_MESSAGE)
-      set(FPHSA_FAIL_MESSAGE  "DEFAULT_MSG")
+      set(FPHSA_FAIL_MESSAGE "DEFAULT_MSG")
     endif()
   endif()
 
-# now that we collected all arguments, process them
-
+  # now that we collected all arguments, process them
   if("${FPHSA_FAIL_MESSAGE}" STREQUAL "DEFAULT_MSG")
     set(FPHSA_FAIL_MESSAGE "Could NOT find ${_NAME}")
   endif()
@@ -188,6 +186,7 @@ function(FIND_PACKAGE_HANDLE_STANDARD_ARGS _NAME _FIRST_ARG)
   set(MISSING_VARS "")
   set(DETAILS "")
   set(${_NAME_UPPER}_FOUND TRUE)
+
   # check if all passed variables are valid
   foreach(_CURRENT_VAR ${FPHSA_REQUIRED_VARS})
     if(NOT ${_CURRENT_VAR})
@@ -205,26 +204,26 @@ function(FIND_PACKAGE_HANDLE_STANDARD_ARGS _NAME _FIRST_ARG)
   if(FPHSA_HANDLE_COMPONENTS)
     foreach(comp ${${_NAME}_FIND_COMPONENTS})
       if(${_NAME}_${comp}_FOUND)
-
         if(NOT DEFINED FOUND_COMPONENTS_MSG)
           set(FOUND_COMPONENTS_MSG "found components: ")
         endif()
+
         set(FOUND_COMPONENTS_MSG "${FOUND_COMPONENTS_MSG} ${comp}")
 
       else()
-
         if(NOT DEFINED MISSING_COMPONENTS_MSG)
           set(MISSING_COMPONENTS_MSG "missing components: ")
         endif()
+
         set(MISSING_COMPONENTS_MSG "${MISSING_COMPONENTS_MSG} ${comp}")
 
         if(${_NAME}_FIND_REQUIRED_${comp})
           set(${_NAME_UPPER}_FOUND FALSE)
           set(MISSING_VARS "${MISSING_VARS} ${comp}")
         endif()
-
       endif()
     endforeach()
+
     set(COMPONENT_MSG "${FOUND_COMPONENTS_MSG} ${MISSING_COMPONENTS_MSG}")
     set(DETAILS "${DETAILS}[c${COMPONENT_MSG}]")
   endif()
@@ -232,43 +231,40 @@ function(FIND_PACKAGE_HANDLE_STANDARD_ARGS _NAME _FIRST_ARG)
   # version handling:
   set(VERSION_MSG "")
   set(VERSION_OK TRUE)
-  set(VERSION ${${FPHSA_VERSION_VAR}} )
-  if (${_NAME}_FIND_VERSION)
+  set(VERSION ${${FPHSA_VERSION_VAR}})
 
+  if(${_NAME}_FIND_VERSION)
     if(VERSION)
-
-      if(${_NAME}_FIND_VERSION_EXACT)       # exact version required
-        if (NOT "${${_NAME}_FIND_VERSION}" VERSION_EQUAL "${VERSION}")
+      if(${_NAME}_FIND_VERSION_EXACT) # exact version required
+        if(NOT "${${_NAME}_FIND_VERSION}" VERSION_EQUAL "${VERSION}")
           set(VERSION_MSG "Found unsuitable version \"${VERSION}\", but required is exact version \"${${_NAME}_FIND_VERSION}\"")
           set(VERSION_OK FALSE)
-        else ()
+        else()
           set(VERSION_MSG "(found suitable exact version \"${VERSION}\")")
-        endif ()
+        endif()
 
-      else()     # minimum version specified:
-        if ("${${_NAME}_FIND_VERSION}" VERSION_GREATER "${VERSION}")
+      else() # minimum version specified:
+        if("${${_NAME}_FIND_VERSION}" VERSION_GREATER "${VERSION}")
           set(VERSION_MSG "Found unsuitable version \"${VERSION}\", but required is at least \"${${_NAME}_FIND_VERSION}\"")
           set(VERSION_OK FALSE)
-        else ()
+        else()
           set(VERSION_MSG "(found suitable version \"${VERSION}\", minimum required is \"${${_NAME}_FIND_VERSION}\")")
-        endif ()
+        endif()
       endif()
 
     else()
-
       # if the package was not found, but a version was given, add that to the output:
       if(${_NAME}_FIND_VERSION_EXACT)
-         set(VERSION_MSG "(Required is exact version \"${${_NAME}_FIND_VERSION}\")")
+        set(VERSION_MSG "(Required is exact version \"${${_NAME}_FIND_VERSION}\")")
       else()
-         set(VERSION_MSG "(Required is at least version \"${${_NAME}_FIND_VERSION}\")")
+        set(VERSION_MSG "(Required is at least version \"${${_NAME}_FIND_VERSION}\")")
       endif()
-
     endif()
-  else ()
+  else()
     if(VERSION)
       set(VERSION_MSG "(found version \"${VERSION}\")")
     endif()
-  endif ()
+  endif()
 
   if(VERSION_OK)
     set(DETAILS "${DETAILS}[v${VERSION}(${${_NAME}_FIND_VERSION})]")
@@ -276,12 +272,10 @@ function(FIND_PACKAGE_HANDLE_STANDARD_ARGS _NAME _FIRST_ARG)
     set(${_NAME_UPPER}_FOUND FALSE)
   endif()
 
-
   # print the result:
-  if (${_NAME_UPPER}_FOUND)
+  if(${_NAME_UPPER}_FOUND)
     FIND_PACKAGE_MESSAGE(${_NAME} "Found ${_NAME}: ${${_FIRST_REQUIRED_VAR}} ${VERSION_MSG} ${COMPONENT_MSG}" "${DETAILS}")
-  else ()
-
+  else()
     if(FPHSA_CONFIG_MODE)
       _FPHSA_HANDLE_FAILURE_CONFIG_MODE()
     else()
@@ -291,9 +285,7 @@ function(FIND_PACKAGE_HANDLE_STANDARD_ARGS _NAME _FIRST_ARG)
         _FPHSA_FAILURE_MESSAGE("${FPHSA_FAIL_MESSAGE} (missing: ${MISSING_VARS}) ${VERSION_MSG}")
       endif()
     endif()
-
-  endif ()
+  endif()
 
   set(${_NAME_UPPER}_FOUND ${${_NAME_UPPER}_FOUND} PARENT_SCOPE)
-
 endfunction()

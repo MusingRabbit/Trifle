@@ -6,6 +6,21 @@
 
 namespace tfl
 {
+
+enum TransformChangedType
+{
+  Position,
+  Rotation,
+  Scale
+};
+
+struct TransformChangedArgs
+{
+  TransformChangedType type;
+  glm::vec3 oldValue;
+  glm::vec3 newValue;
+};
+
 class Transform
 {
   private:
@@ -24,6 +39,11 @@ class Transform
     glm::mat4 GetTranslationMatrix();
 
   public:
+    /// @brief Events
+    EventHandler OnPositionChanged;
+    EventHandler OnRotationChanged;
+    EventHandler OnScaleChanged;
+
     /// @brief Constructor.
     Transform();
 
@@ -124,11 +144,6 @@ class Transform
     /// @param rhs Other transform to be evaluated
     /// @return Are they equal? (True/false).
     bool IsEqual(const Transform& rhs);
-
-    /// @brief Events
-    EventHandler OnPositionChanged;
-    EventHandler OnRotationChanged;
-    EventHandler OnScaleChanged;
 };
 } // namespace tfl
 

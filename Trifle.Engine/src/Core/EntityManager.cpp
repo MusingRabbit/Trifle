@@ -39,6 +39,7 @@ void EntityManager::DestroyEntity(unsigned int entityId)
     m_componentRegister->EntityDestroyed(entityId);
     m_systemRegister->EntityDestroyed(entityId);
 }
+
 std::vector<std::shared_ptr<System>> EntityManager::GetSystems()
 {
     return m_systemRegister->GetSystems();

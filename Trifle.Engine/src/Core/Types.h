@@ -23,4 +23,25 @@ struct FontData
     unsigned int size;
 };
 
+struct OnPositionChangedArgs
+{
+    unsigned int entityId;
+    glm::vec3 oldPos;
+    glm::vec3 newPos;
+};
+
+struct OnRotationChangedArgs
+{
+    unsigned int entityId;
+    glm::vec3 oldRot;
+    glm::vec3 newRot;
+};
+
+struct OnSizeChangedArgs
+{
+    unsigned int entityId;
+    glm::vec3 oldSize;
+    glm::vec3 newSize;
+};
+
 #endif // !TYPES_H

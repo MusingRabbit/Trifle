@@ -42,6 +42,9 @@ class System
     std::set<unsigned int> GetEntityIds();
     SystemContext Context;
 
+    virtual void OnEntityAdded(unsigned int entityId) = 0;
+    virtual void OnEntityRemoved(unsigned int entityId) = 0;
+
   public:
     static double TOTAL_ELAPSED_TIME;
 

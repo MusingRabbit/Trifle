@@ -13,12 +13,10 @@ Game::~Game()
 
 void Game::Init()
 {
-    float aspectRatio = (float)Context.gameWindow->GetWidth() / (float)Context.gameWindow->GetHeight();
-
     m_camera.Register();
-    m_camera.Init(aspectRatio, 1.0f, 50);
+    m_camera.Init((float)Context.gameWindow->GetWidth(), (float)Context.gameWindow->GetHeight(), 1.0f, 50);
     m_camera.SetPosition(glm::vec3(15.1, 15, 0));
-    m_camera.SetTarget(glm::vec3(15, 15, 6));
+    m_camera.SetTarget(glm::vec3(15, 15, 8));
 
     m_camera.GetComponent<Movement>().speed = 1.0f;
 
@@ -26,16 +24,18 @@ void Game::Init()
 
     m_voxelGrid = Context.entityManager->GetSystem<VoxelGridSystem>();
     m_voxelGrid->Init(UIntPoint3{343, 343, 343});
-
-    m_voxelGrid->DrawVoxel({15, 15, 6}, Colour(1, 0, 1, 1));
+    
+    VoxelEntity e;
+    e.Init();
+    e.SetPoint({15, 15, 8});
+    
+    m_voxelGrid->AddEntity(e.GetId());
 }
 
 void Game::Update(float dt)
 {
     bool moved = false;
     std::cout << "Game.Update() -> FRAMETIME : " << dt * 1000 << "ms" << std::endl;
-
-    m_voxelGrid->DrawVoxel({5, 5, 5}, Colour(1, 0, 1, 1));
 
     glm::vec3 moveVector(0,0,0);
 
@@ -63,11 +63,21 @@ void Game::Update(float dt)
 
     if (abs(moveVector.x) + abs(moveVector.y) + abs(moveVector.z > 0))
     {
-        m_camera.SetMovementSpeed(1.5 * (float)dt);
+        m_camera.SetMovementSpeed(1.5f * (float)dt);
         m_camera.ClearTarget();
         m_camera.Move(moveVector);
         OutputCameraPosition();
     }
+}
+
+void Game::OnEntityAdded(unsigned int entityId)
+{
+
+}
+
+void Game::OnEntityRemoved(unsigned int entityId)
+{
+
 }
 
 void Game::OutputCameraPosition()

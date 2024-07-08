@@ -1,15 +1,17 @@
 #ifndef CORE_H
 #define CORE_H
 
-#include "EntityManager.h"
 #include "ComponentArray.h"
-#include "EventArgs.h"
-#include "Entity.h"
-#include "System.h"
-#include "Types.h"
-
 #include "ComponentRegister.h"
+#include "Entity.h"
+#include "EntityManager.h"
+#include "EventArgs.h"
+#include "EventHandler.h"
 #include "EventRegister.h"
+#include "GameTimer.h"
+#include "ResourceManager.h"
+#include "System.h"
 #include "SystemRegister.h"
+#include "Types.h"
 
 #endif // !CORE_H

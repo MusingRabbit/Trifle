@@ -1,7 +1,7 @@
 #include "EventHandler.h"
 
-namespace tfl
-{
+using namespace tfl;
+
 EventHandler::EventHandler()
 {
     m_register = &EventRegister::GetInstance();
@@ -46,4 +46,9 @@ void EventHandler::UnSubscribe()
 {
     m_register->ReleaseEventId(m_id);
 }
-} // namespace tfl
+
+template<typename T>
+void EventHandler::Subscribe(std::function<void(EventArgs&)> const& listener)
+{
+    m_register->AddListener(m_id, listener);
+}

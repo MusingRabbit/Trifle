@@ -5,7 +5,9 @@
 #include <queue>
 
 #include "../Data/VoxelGrid.h"
-#include "../Core/Types.h"
+#include "../Core/Core.h"
+#include "../Components/Components.h"
+#include "../Entities/VoxelEntity.h"
 #include "VoxelRenderer.h"
 
 namespace tfl
@@ -24,16 +26,23 @@ class VoxelGridSystem : public System
     VoxelGrid<VoxelGridCell> m_grid;
     //std::queue<VoxelDrawArgs> m_drawQueue;
 
+  protected:
+    void OnEntityAdded(unsigned int entityId) override;
+    void OnEntityRemoved(unsigned int entityId) override;
+
   public:
     VoxelGridSystem(unsigned int id, const SystemContext& context);
     ~VoxelGridSystem();
 
+
+    void Init(const UIntPoint3& gridScale);
     void Init() override;
     void Update(float dt) override;
 
-    void Init(const UIntPoint3& gridScale);
-    void DrawVoxels(const UIntPoint3& position, unsigned int brushSize, Colour fillColour);
-    void DrawVoxel(const UIntPoint3& position, Colour colour);
+    
+
+    //void DrawVoxels(const UIntPoint3& position, unsigned int brushSize, const Colour& fillColour);
+    //void DrawVoxel(const UIntPoint3& position, const Colour& colour);
     void Clear();
 };
 } // namespace tfl

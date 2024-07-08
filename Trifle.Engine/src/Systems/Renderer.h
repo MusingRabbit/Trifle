@@ -28,6 +28,8 @@ class Renderer : public System
     ~Renderer();
 
     void Init() override;
+    void OnEntityAdded(unsigned int entityId) override;
+    void OnEntityRemoved(unsigned int entityId) override;
 
     void EnableAlphaBlending();
 

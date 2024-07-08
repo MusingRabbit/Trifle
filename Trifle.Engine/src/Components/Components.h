@@ -8,5 +8,7 @@
 #include "Target.h"
 #include "Movement.h"
 #include "Model3D.h"
+#include "ColourComponent.h"
+
 
 #endif

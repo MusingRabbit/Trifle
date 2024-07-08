@@ -21,11 +21,14 @@ class Canvas
     Colour m_clearColour;
 
     bool m_additiveBlend;
+    bool m_overwrite;
 
     unsigned int GetIndex(const Point2& point)
     {
         return point.x + (point.y * m_width);
     }
+
+    bool IsValidPoint(const Point2& point);
 
   public:
     Canvas();
@@ -43,7 +46,9 @@ class Canvas
     float GetAspectRatio();
     
     void SetAdditiveBlend(bool value);
-    
+
+    void SetOverwriteExisting(bool value);
+
     void SetPixel(const Point2& point, const Colour& colour);
     
     void DrawCircle(const Point2& centre, const Colour& stroke, double radius);
@@ -58,7 +63,9 @@ class Canvas
 
     void DrawCharacter(const Point2& point, char32_t charCode, unsigned int fontSize, const Colour& colour = {1, 1, 1, 1});
 
-    Colour GetPixel(const Point2& point);
+    bool IsPixelSet(const Point2& point);
+
+    Colour& GetPixel(const Point2& point);
     
     Colour* GetData();
     

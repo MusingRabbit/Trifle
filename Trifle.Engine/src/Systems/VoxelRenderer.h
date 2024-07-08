@@ -18,6 +18,17 @@ enum RenderMethod
     RENDER_DEBUG
 };
 
+struct ViewData
+{
+  glm::mat4 mtxView;
+  glm::mat4 mtxProj;
+  glm::mat4 mtxViewProj;
+  glm::mat4 mtxInvViewProj;
+  glm::vec4 viewPort;
+  float zNear;
+  float zFar;
+};
+
 class VoxelRenderer : public System
 {
   private:
@@ -25,6 +36,7 @@ class VoxelRenderer : public System
     Entity m_screenEntity;
     Canvas m_canvas;
     Texture2D* m_screenTexture;
+    BoundingBox m_viewBox;
 
     Camera m_camera;
 
@@ -37,7 +49,11 @@ class VoxelRenderer : public System
     void ForceDraw();
 
     glm::vec4 TransformWorldView(Camera& camera, glm::vec4 fPos);
+    ViewData GetViewData(Camera& camera);
+    void CreateViewBoundingBox(const ViewData& viewData);
 
+    bool GetPaintedCellsFilter(VoxelGridCell* cell);
+    bool IsDrawn(Rectangle& rect);
   public:
     VoxelRenderer(unsigned int id, const SystemContext& context);
     ~VoxelRenderer();
@@ -46,6 +62,8 @@ class VoxelRenderer : public System
 
     void Init() override;
     void Update(float dt) override;
+    void OnEntityAdded(unsigned int entityId) override;
+    void OnEntityRemoved(unsigned int entityId) override;
 
     void SetActiveCamera(unsigned int entityId);
 
@@ -53,6 +71,10 @@ class VoxelRenderer : public System
     void RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid, Camera& camera);
     
     void RenderVoxelGrid_Debug(VoxelGrid<VoxelGridCell>& grid, Camera& camera);
+
+    void RenderVoxelGrid_Debug_Slow(VoxelGrid<VoxelGridCell>& grid, Camera& camera);
+
+    
 
     void Clear();
 };

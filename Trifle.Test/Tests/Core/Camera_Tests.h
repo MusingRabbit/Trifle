@@ -24,7 +24,7 @@ TEST(Camera, OnTransformedChanged)
     Camera camera;
 
     camera.Register();
-    camera.Init(1.0f, 1.0f, 1000.0f);
+    camera.Init(100, 100, 1.0f, 1000.0f);
 
     Transform& transform = camera.GetComponent<Transform>();
 
@@ -43,7 +43,7 @@ TEST(Camera, Dev_DeleteMe_Test)
     Camera camera;
 
     camera.Register();
-    camera.Init(1.0f, 1.0f, 10.0f);
+    camera.Init(100, 100, 1.0f, 10.0f);
 
     Transform& camTransform = camera.GetComponent<Transform>();
     camTransform.SetPosition(glm::vec3(5, 5, 0));

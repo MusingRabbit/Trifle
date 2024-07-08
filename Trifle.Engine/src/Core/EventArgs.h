@@ -4,6 +4,7 @@
 #include "Types.h"
 #include <any>
 #include <unordered_map>
+#include <iostream>
 
 namespace tfl
 {
@@ -27,9 +28,9 @@ class EventArgs
     }
 
     template <typename T>
-    T GetData()
+    T& GetData()
     {
-        return std::any_cast<T>(m_data);
+        return (T&)m_data;
     }
 
     EventId GetEventId() const

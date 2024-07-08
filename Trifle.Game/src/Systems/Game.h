@@ -21,6 +21,9 @@ class Game : public System
 
     void Init() override;
     void Update(float dt) override;
+
+    void OnEntityAdded(unsigned int entityId) override;
+    void OnEntityRemoved(unsigned int entityId) override;
 };
 
 #endif // !GAME_H

@@ -10,8 +10,7 @@
 
 #include <stdexcept>
 
-namespace tfl
-{
+using namespace tfl;
 
 Renderer::Renderer(unsigned int id, const SystemContext& context) : System(id, context)
 {
@@ -32,6 +31,14 @@ void Renderer::Init()
     }
 
     EnableAlphaBlending();
+}
+
+void tfl::Renderer::OnEntityAdded(unsigned int entityId)
+{
+}
+
+void tfl::Renderer::OnEntityRemoved(unsigned int entityId)
+{
 }
 
 void Renderer::EnableAlphaBlending()
@@ -106,4 +113,3 @@ void Renderer::RenderMesh(Mesh mesh, Shader shader, Texture2D txr)
 
     glDrawElements(GL_TRIANGLES, mesh.IndexCount(), GL_UNSIGNED_INT, 0);
 }
-} // namespace tfl
