@@ -33,7 +33,41 @@ class MatrixHelper
     static glm::mat4 CreateRotationMatrix(glm::vec3 vector)
     {
         glm::quat qRot = QuatHelper::CreateFromYawPitchRoll(vector.x, vector.y, vector.z);
-        return glm::mat4_cast(qRot);
+        return GetMatrixFromQuat(qRot);
+    }
+
+    static glm::mat4 GetMatrixFromQuat(glm::quat q)
+    {
+        float num   = q.x * q.x;
+        float num2  = q.y * q.y;
+        float num3  = q.z * q.z;
+        float num4  = q.x * q.y;
+        float num5  = q.z * q.w;
+        float num6  = q.z * q.x;
+        float num7  = q.y * q.w;
+        float num8  = q.y * q.z;
+        float num9  = q.x * q.w;
+
+        glm::mat4 result;
+
+        result[0][0]    = 1.0f - 2.0f * (num2 + num3);
+        result[0][1]    = 2.0f * (num4 + num5);
+        result[0][2]    = 2.0f * (num6 - num7);
+        result[0][3]    = 0.0f;
+        result[1][0]    = 2.0f * (num4 - num5);
+        result[1][1]    = 1.0f - 2.0f * (num3 + num);
+        result[1][2]    = 2.0f * (num8 + num9);
+        result[1][3]    = 0.0f;
+        result[2][0]    = 2.0f * (num6 + num7);
+        result[2][1]    = 2.0f * (num8 - num9);
+        result[2][2]    = 1.0f - 2.0f * (num2 + num);
+        result[2][3]    = 0.0f;
+        result[3][0]    = 0.0f;
+        result[3][1]    = 0.0f;
+        result[3][2]    = 0.0f;
+        result[3][3]    = 1.0f;
+        
+        return result;   
     }
 
     static glm::mat4 CreateProjectionMatrix(float width, float height, float nearPlane, float farPlane)

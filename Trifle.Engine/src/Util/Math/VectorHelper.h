@@ -8,6 +8,46 @@ class VectorHelper
   private:
     /* data */
   public:
+    static glm::vec4 GetScreenSpace(const glm::vec4 ndc, float width, float height, float xOffset, float yOffset)
+    {
+      glm::vec4 result;
+
+      result.x = width * (ndc.x + 1) / 2 + xOffset;
+      result.y = height * (ndc.y + 1) / 2 + yOffset;
+      result.z = (ndc.z +1) / 2;
+      result.w = ndc.w;
+
+      return result;
+    }
+
+    static glm::vec4 GetClipSpace(const glm::vec4& viewPos, float nearPlane, float farPlane, float width, float height)
+    {
+        glm::vec4 result;
+
+        float focalLength = farPlane - nearPlane;
+
+        result.x = focalLength * viewPos.x / (width / 2);
+        result.y = focalLength * viewPos.y / (height / 2);
+        result.z = -nearPlane;
+        result.w = viewPos.z;
+
+        return result;
+    }
+
+    static glm::vec4 GetNormalisedDeviceCoords(const glm::vec4 clipPos)
+    {
+      glm::vec4 result;
+    
+      result.x = clipPos.x / clipPos.w;
+      result.y = clipPos.y / clipPos.w;
+      result.z = clipPos.z / clipPos.w;
+      result.w = 1 / clipPos.w;
+      
+      return result;
+    }
+
+
+
     static glm::vec3 Transform(const glm::vec3& v, const glm::mat4 m)
     {
         float x = v.x * m[0][0] + v.y * m[1][0] + v.z * m[2][0] + m[3][0];

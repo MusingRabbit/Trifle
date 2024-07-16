@@ -184,7 +184,7 @@ void Transform::Scale(float amt)
 
 void Transform::UpdateWorldMatrix()
 {
-    m_mtxWorld = glm::mat4();
+    m_mtxWorld = glm::identity<glm::mat4>();
     m_mtxWorld *= GetScaleMatrix();
     m_mtxWorld *= GetRotaionMatrix();
     m_mtxWorld *= GetTranslationMatrix();
@@ -205,9 +205,9 @@ glm::mat4 Transform::GetTranslationMatrix()
     return MatrixHelper::CreateTranslationMatrix(m_localPos);
 }
 
-glm::mat4 Transform::GetWorldMatrix()
+glm::mat4 Transform::GetWorldMatrix(bool forceRefresh)
 {
-    if (m_isDirty)
+    if (m_isDirty || forceRefresh)
     {
         UpdateWorldMatrix();
     }

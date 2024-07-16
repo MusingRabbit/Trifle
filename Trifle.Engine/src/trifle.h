@@ -31,6 +31,8 @@ class Trifle
     void InitSystems();
     void GameUpdateSystems(float dt);
 
+    void RenderSystems(float dt);
+
     void GameWindow_OnResized(const EventArgs& e);
 
     public :

@@ -9,6 +9,7 @@
 #include "../Core/Types.h"
 
 #include "../Util/Util.h"
+#include "../Components/Components.h"
 #include "UIntPoint3.h"
 
 
@@ -46,6 +47,16 @@ class VoxelGridCell
     Colour GetColour()
     {
         return m_colour;
+    }
+
+    Transform GetTransform()
+    {
+        Transform result;
+
+        result.SetPosition({(float)m_pos.x, (float)m_pos.y, (float)m_pos.z});
+        result.Scale(1.0f);
+
+        return result;
     }
 
     void SetColour(const Colour& value)
@@ -102,6 +113,7 @@ class VoxelGrid
     unsigned int m_width, m_height, m_depth;
 
     std::vector<T> m_data;
+
     std::set<unsigned int> m_litVoxels;
 
   protected:
@@ -158,6 +170,14 @@ class VoxelGrid
         unsigned int idx = VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth);
         return idx < m_data.size();
     }
+
+    /// @brief Chekcs to see whether grid contains a lit voxel at a given point
+    /// @param point 
+    /// @return 
+    bool ContainsLit(const UIntPoint3& point)
+    {
+        return m_litVoxels.contains(VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth));
+    }
     
     /// @brief Gets the voxel grid cell for the point provided.
     /// @param point 
@@ -182,48 +202,110 @@ class VoxelGrid
 
         return &m_data[idx];
     }
-    
-    /// @brief Gets all voxels that have been 'lit' (Voxels with a colour whose alpha is > 0)
-    /// @return A vector of all lit cells
-    std::vector<T*> GetPaintedCells(CellSortOrder sortOrder, std::function<bool(T*)> filter)
+
+    std::vector<T*> GetCellsByRange(const glm::vec3& start, const glm::vec3& end, std::function<bool(T*)> filter)
+    {
+        std::vector<T*> result;
+        std::vector<UIntPoint3> distances;
+
+        glm::vec3 cStart = {start.x, start.y, start.z};
+        glm::vec3 cEnd = {end.x, end.y, end.z};
+
+        glm::vec3 cVector = cEnd - cStart;
+        glm::vec3 cVecNorm = {cVector.x, cVector.y, cVector.z};
+        cVecNorm = glm::normalize(cVecNorm);
+
+        for (unsigned int z = start.z; z < end.z; z++)
+        {
+            float currX = cVecNorm.x * z;
+            float currY = cVecNorm.y * z;
+            glm::vec3 currPos = {roundf(currX), roundf(currY), z};
+
+            UIntPoint3 currPoint = {(unsigned int)roundf(start.x), (unsigned int)roundf(start.y), (unsigned int)roundf(start.z)};
+            currPoint.x += (currPos.x);
+            currPoint.y += (currPos.y);
+            currPoint.z += (currPos.z);
+            
+            if (currPoint.x == UINT_MAX || currPoint.y == UINT_MAX || currPoint.z == UINT_MAX)
+            {
+                break;
+            }
+
+            VoxelGridCell* cell = GetCell(currPoint);
+
+            if (cell == nullptr)
+            {
+                break;
+            }
+        }
+        return result;
+    }
+
+    std::vector<T*> GetCells(CellSortOrder sortOrder, std::function<bool(T*)> filter)
     {
         std::vector<T*> result;
         
-        result.reserve(m_litVoxels.size());
+        typename std::vector<T>::iterator it{};
+        typename std::vector<T>::reverse_iterator rIt{};
 
-        std::set<unsigned int>::iterator it{};
-        std::set<unsigned int>::reverse_iterator rIt{};
-
-        //TODO : Duplicate code.... Why are reverse itterators a thing?
         switch (sortOrder)
         {
             case CellSortOrder::ZAscending:
             case CellSortOrder::None:
-                
-                for (it = m_litVoxels.begin(); it != m_litVoxels.end(); it++)
+                for (it = m_data.begin(); it != m_data.end(); it++)
                 {
-                    T* cell = GetCell(*it);
+                    T* cell = GetCell((unsigned int)(it - m_data.begin()));
 
                     if (filter(cell))
                     {
-                        result.push_back(GetCell(*it));
+                        result.push_back(cell);
                     }
                 }
             break;
+
             case CellSortOrder::ZDescending: 
-                
-
-                for (rIt = m_litVoxels.rbegin(); rIt != m_litVoxels.rend(); rIt++)
+                for (rIt = m_data.rbegin(); rIt != m_data.rend(); rIt++)
                 {
-                    T* cell = GetCell(*rIt);
+                    T* cell = GetCell((unsigned int)(rIt - m_data.rbegin()));
 
                     if (filter(cell))
                     {
-                        result.push_back(GetCell(*rIt));
+                        result.push_back(cell);
                     }
                 }
-
             break;
+        }
+
+        return result;
+    }
+
+    /// @brief Gets all voxels that have been 'lit' (Voxels with a colour whose alpha is > 0)
+    /// @return A vector of all lit cells
+    std::vector<T*>  GetPaintedCells()
+    {
+        std::set<unsigned int>::iterator it;
+        std::vector<T*> result = {};
+
+        for (it = m_litVoxels.begin(); it != m_litVoxels.end(); it++)
+        {
+            unsigned int idx = *it;
+            result.push_back(GetCell(idx));
+        }
+
+        return result;
+    }
+    
+    /// @brief Gets all voxels that have been 'lit' (Voxels with a colour whose alpha is > 0)
+    /// @return A vector of all lit cells
+    std::unordered_map<unsigned int, T*>  GetPaintedCellsMapped()
+    {
+        std::unordered_map<unsigned int, T*> result = {};
+        std::set<unsigned int>::iterator it;
+
+        for (it = m_litVoxels.begin(); it != m_litVoxels.end(); it++)
+        {
+            unsigned int idx = *it;
+            result.insert({idx, GetCell(idx)});
         }
 
         return result;
@@ -245,7 +327,7 @@ class VoxelGrid
             m_litVoxels.erase(idx);
         }
 
-        m_data[idx].AppendColour(colour);
+        m_data[idx].SetColour(colour);
     }
 
     /// @brief Will paint the grid cell at the given point and all surrounding cells to the specified colour. 

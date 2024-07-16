@@ -21,6 +21,11 @@ void System::Update(float dt)
 {
 }
 
+void System::Draw(float dt)
+{
+    
+}
+
 void System::AddEntity(unsigned int entityId)
 {
     m_entityIds.insert(entityId);

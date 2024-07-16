@@ -34,10 +34,6 @@ class Transform
 
     void UpdateWorldMatrix();
 
-    glm::mat4 GetScaleMatrix();
-    glm::mat4 GetRotaionMatrix();
-    glm::mat4 GetTranslationMatrix();
-
   public:
     /// @brief Events
     EventHandler OnPositionChanged;
@@ -138,12 +134,24 @@ class Transform
 
     /// @brief Gets the transforms' current world matrix, which is an aggregate of the transforms' Scale, Rotation and Translation matrices.
     /// @return World Matrix
-    glm::mat4 GetWorldMatrix();
+    glm::mat4 GetWorldMatrix(bool forceRefresh);
 
     /// @brief By valid equality comparison
     /// @param rhs Other transform to be evaluated
     /// @return Are they equal? (True/false).
     bool IsEqual(const Transform& rhs);
+
+    /// @brief Gets the scale matrix
+    /// @return scale matrix
+    glm::mat4 GetScaleMatrix();
+
+    /// @brief Gets the rotation matrix
+    /// @return rotation matrix
+    glm::mat4 GetRotaionMatrix();
+
+    /// @brief Gets the translation matrix
+    /// @return translation matrix
+    glm::mat4 GetTranslationMatrix();
 };
 } // namespace tfl
 

@@ -54,7 +54,7 @@ void VoxelGridSystem::Update(float dt)
         VoxelEntity e;
         e.SetId(id);
         
-        //m_grid.PaintCells(e.GetPoint(), e.GetSize(), e.GetColour());
+        m_grid.PaintCells(e.GetPoint(), e.GetSize(), e.GetColour());
 
         //Transform& transform = e.GetComponent<Transform>();
         //VoxelBlock& voxelBlock = e.GetComponent<VoxelBlock>();
@@ -62,7 +62,7 @@ void VoxelGridSystem::Update(float dt)
         //UIntPoint3 point{(unsigned int)pos.x, (unsigned int)pos.y, (unsigned int)pos.z};
         //m_grid.PaintCells(point, voxelBlock.size, voxelBlock.colour);
 
-        m_renderer->RenderVoxelGrid(m_grid, RenderMethod::RENDER_DEBUG);
+        //m_renderer->RenderVoxelGrid(m_grid, RenderMethod::RENDER_DEBUG);
     }
 
     //m_grid.Clear();
@@ -75,7 +75,7 @@ void VoxelGridSystem::Update(float dt)
     //    m_drawQueue.pop();
     //}
 
-    m_renderer->RenderVoxelGrid(m_grid, RenderMethod::RENDER_DEBUG);
+    m_renderer->ProcessVoxelGrid(m_grid, RenderMethod::RENDER_DEBUG);
 }
 
 

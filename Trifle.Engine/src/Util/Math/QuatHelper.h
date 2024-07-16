@@ -66,7 +66,7 @@ class QuatHelper
             num2 = sqrt(1.0f + m[1][1] - m[0][0] - m[2][2]);
             num3 = 0.5f / num2;
             result.x = (m[1][0] + m[0][1]) * num3;
-            result.y = 0.5 * num2;
+            result.y = 0.5 * (float)num2;
             result.z = (m[2][1] + m[1][2]) * num3;
             result.w = (m[2][0] + m[0][2]) * num3;
             return result;

@@ -22,7 +22,6 @@ EventHandler::EventHandler(IEventRegister& eventRegister)
 
 EventHandler::~EventHandler()
 {
-    m_register->ReleaseEventId(m_id);
 }
 
 void EventHandler::Invoke()

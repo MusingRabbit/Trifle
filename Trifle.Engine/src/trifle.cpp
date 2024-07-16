@@ -80,6 +80,8 @@ int Trifle::Run()
         const auto deltaTime = (float)std::chrono::duration_cast<std::chrono::milliseconds>(currTime - prevTime).count() / 1000;
 
         GameUpdateSystems(deltaTime);
+
+        RenderSystems(deltaTime);
     }
 
     return 0;
@@ -101,6 +103,7 @@ void Trifle::RegisterSystems()
     m_entityManager->RegisterSystem<Renderer>({m_gameWindow, m_entityManager});
     m_entityManager->RegisterSystem<VoxelRenderer>({m_gameWindow, m_entityManager});
     m_entityManager->RegisterSystem<VoxelGridSystem>({m_gameWindow, m_entityManager});
+    m_entityManager->RegisterSystem<VoxelRasteriser>({m_gameWindow, m_entityManager});
 }
 
 void Trifle::InitSystems()
@@ -108,7 +111,11 @@ void Trifle::InitSystems()
     m_entityManager->GetSystem<Renderer>()->Init();
 
     std::shared_ptr<VoxelRenderer> vRenderer = m_entityManager->GetSystem<VoxelRenderer>();
-    vRenderer->SetImageSize(m_gameWindow->GetWidth(), m_gameWindow->GetHeight());
+    std::shared_ptr<VoxelRasteriser> vRaster = m_entityManager->GetSystem<VoxelRasteriser>();
+
+    //vRenderer->SetImageSize(m_gameWindow->GetWidth(), m_gameWindow->GetHeight());
+    
+    vRaster->Init();
     vRenderer->Init();
 }
 
@@ -124,10 +131,20 @@ void Trifle::GameUpdateSystems(float dt)
     }
 }
 
+void Trifle::RenderSystems(float dt)
+{
+    auto systems = m_entityManager->GetSystems();
+
+    for (auto system : systems)
+    {
+        system->Draw(dt);
+    }
+}
+
 void Trifle::GameWindow_OnResized(const EventArgs& e)
 {
     std::shared_ptr<VoxelRenderer> vRenderer = m_entityManager->GetSystem<VoxelRenderer>();
-    vRenderer->SetImageSize(m_gameWindow->GetWidth(), m_gameWindow->GetHeight());
+    //vRenderer->SetImageSize(m_gameWindow->GetWidth(), m_gameWindow->GetHeight());
 }
 
 } // namespace tfl

@@ -239,10 +239,12 @@ void Canvas::DrawBox(const Point2& pos, unsigned int width, unsigned int height,
 {
     int minX = pos.x < 0 ? 0 : pos.x;
     int minY = pos.y < 0 ? 0 : pos.y;
+
     int maxX = pos.x + width;
     int maxY = pos.y + height;
     maxX = maxX > m_width ? m_width : maxX;
     maxY = maxY > m_height ? m_height : maxY;
+
     bool hasFill = fill.a > 0;
     bool hasStroke = stroke.a > 0;
     bool hasPaint = hasFill || hasStroke;
@@ -252,9 +254,9 @@ void Canvas::DrawBox(const Point2& pos, unsigned int width, unsigned int height,
         return;
     }
     
-    for (int x = minX; x <= maxX; x++)
+    for (int y = minY; y <= maxY; y++)
     {
-        for (int y = minY; y <= maxY; y++)
+        for (int x = minX; x <= maxX; x++)
         {
             if (hasStroke && (x == minX || x == maxX || y == minY || y == maxY))
             {

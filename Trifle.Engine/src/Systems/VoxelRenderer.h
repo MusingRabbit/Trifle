@@ -10,74 +10,85 @@
 #include "../Entities/Camera.h"
 #include "../Graphics/Graphics.h"
 
+#include "VoxelRasteriser.h"
+
 namespace tfl
 {
-enum RenderMethod
-{
-    RENDER_NORM, 
-    RENDER_DEBUG
-};
+  enum RenderMethod
+  {
+      RENDER_NORM, 
+      RENDER_DEBUG
+  };
 
-struct ViewData
-{
-  glm::mat4 mtxView;
-  glm::mat4 mtxProj;
-  glm::mat4 mtxViewProj;
-  glm::mat4 mtxInvViewProj;
-  glm::vec4 viewPort;
-  float zNear;
-  float zFar;
-};
+  struct ViewData
+  {
+    glm::mat4 mtxView;
+    glm::mat4 mtxProj;
+    glm::mat4 mtxViewProj;
+    glm::mat4 mtxInvViewProj;
+    glm::vec4 viewPort;
+    float zNear;
+    float zFar;
+  };
 
-class VoxelRenderer : public System
-{
-  private:
-    unsigned int m_imageWidth, m_imageHeight;
-    Entity m_screenEntity;
-    Canvas m_canvas;
-    Texture2D* m_screenTexture;
-    BoundingBox m_viewBox;
+  class VoxelRenderer : public System
+  {
+    private:
+      unsigned int m_imageWidth, m_imageHeight;
+      //Entity m_screenEntity;
+      //Canvas m_canvas;
+      //Texture2D* m_screenTexture;
+      std::shared_ptr<VoxelRasteriser> m_raster;
+      
+      BoundingBox m_viewBox;
 
-    Camera m_camera;
+      Camera m_camera;
 
-    Colour m_clearColour = Colour(1.0f, 0.0f, 1.0f, 1.0f);
-    Colour m_emtpyColour = Colour(0.0f, 0.0f, 0.0f, 0.0f);
+      //Colour m_clearColour = Colour(1.0f, 0.0f, 1.0f, 1.0f);
+      //Colour m_emtpyColour = Colour(0.0f, 0.0f, 0.0f, 0.0f);
 
-    void DoCommadore64LoadingScreen();
-    void UpdateScreenTexture();
+      //void DoCommadore64LoadingScreen();
+      //void UpdateScreenTexture();
 
-    void ForceDraw();
+      //void ForceDraw();
 
-    glm::vec4 TransformWorldView(Camera& camera, glm::vec4 fPos);
-    ViewData GetViewData(Camera& camera);
-    void CreateViewBoundingBox(const ViewData& viewData);
+      glm::vec4 TransformWorldView(Camera& camera, glm::vec4 fPos);
+      ViewData GetViewData(Camera& camera);
+      void CreateViewBoundingBox(const ViewData& viewData);
 
-    bool GetPaintedCellsFilter(VoxelGridCell* cell);
-    bool IsDrawn(Rectangle& rect);
-  public:
-    VoxelRenderer(unsigned int id, const SystemContext& context);
-    ~VoxelRenderer();
+      bool IsCellVisibleFilter(VoxelGridCell* cell);
+      bool IsCellLitFilter(VoxelGridCell* cell);
 
-    void SetImageSize(unsigned int width, unsigned int height);
+    public:
+      VoxelRenderer(unsigned int id, const SystemContext& context);
+      ~VoxelRenderer();
 
-    void Init() override;
-    void Update(float dt) override;
-    void OnEntityAdded(unsigned int entityId) override;
-    void OnEntityRemoved(unsigned int entityId) override;
+      //void SetImageSize(unsigned int width, unsigned int height);
 
-    void SetActiveCamera(unsigned int entityId);
+      void Init() override;
+      void Update(float dt) override;
+      void OnEntityAdded(unsigned int entityId) override;
+      void OnEntityRemoved(unsigned int entityId) override;
 
-    void RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid, RenderMethod method);
-    void RenderVoxelGrid(VoxelGrid<VoxelGridCell>& grid, Camera& camera);
-    
-    void RenderVoxelGrid_Debug(VoxelGrid<VoxelGridCell>& grid, Camera& camera);
+      //void UpdateScreenTexture();
 
-    void RenderVoxelGrid_Debug_Slow(VoxelGrid<VoxelGridCell>& grid, Camera& camera);
+      void SetActiveCamera(unsigned int entityId);
 
     
+      void ProcessVoxelGrid(VoxelGrid<VoxelGridCell>& grid, RenderMethod method);
+      void ProcessVoxelGrid(VoxelGrid<VoxelGridCell>& grid, Camera& camera);
 
-    void Clear();
-};
+
+      //void ProcessVoxelGrid_Debug_Slow(VoxelGrid<VoxelGridCell>& grid, Camera& camera);
+      //void ProcessVoxelGrid_Debug_BoxRender(VoxelGrid<VoxelGridCell>& grid, Camera& camera, bool drawCellOutlines);
+      void ProcessVoxelGrid_Debug_BoxRender(VoxelGrid<VoxelGridCell>& grid, Camera& camera);
+
+      void DrawDebugInfo(std::string strContent);
+
+      void Draw();
+
+      void Clear();
+  };
 } // namespace tfl
 
 #endif // !VOXELRENDERER_H

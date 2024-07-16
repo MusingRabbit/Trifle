@@ -7,64 +7,65 @@
 namespace tfl
 {
 
-class EntityManager;
-class GameWindow;
+  class EntityManager;
+  class GameWindow;
 
-struct SystemContext
-{
-  std::shared_ptr<GameWindow> gameWindow;
-  std::shared_ptr<EntityManager> entityManager;
-
-  SystemContext(){}
-
-  SystemContext(std::shared_ptr<GameWindow> window, std::shared_ptr<EntityManager> manager)
+  struct SystemContext
   {
-    gameWindow = window;
-    entityManager = manager;
-  }
+    std::shared_ptr<GameWindow> gameWindow;
+    std::shared_ptr<EntityManager> entityManager;
 
-  SystemContext(const SystemContext& rhs)
+    SystemContext(){}
+
+    SystemContext(std::shared_ptr<GameWindow> window, std::shared_ptr<EntityManager> manager)
+    {
+      gameWindow = window;
+      entityManager = manager;
+    }
+
+    SystemContext(const SystemContext& rhs)
+    {
+      gameWindow = rhs.gameWindow;
+      entityManager = rhs.entityManager;
+    }
+
+  };
+
+  class System
   {
-    gameWindow = rhs.gameWindow;
-    entityManager = rhs.entityManager;
-  }
+    private:
+      unsigned int m_id;
+      unsigned int m_orderNum;
+      std::set<unsigned int> m_entityIds;
 
-};
+    protected:
+      std::set<unsigned int> GetEntityIds();
+      SystemContext Context;
 
-class System
-{
-  private:
-    unsigned int m_id;
-    unsigned int m_orderNum;
-    std::set<unsigned int> m_entityIds;
+      virtual void OnEntityAdded(unsigned int entityId) = 0;
+      virtual void OnEntityRemoved(unsigned int entityId) = 0;
 
-  protected:
-    std::set<unsigned int> GetEntityIds();
-    SystemContext Context;
+    public:
+      static double TOTAL_ELAPSED_TIME;
 
-    virtual void OnEntityAdded(unsigned int entityId) = 0;
-    virtual void OnEntityRemoved(unsigned int entityId) = 0;
+      System(unsigned int id, const SystemContext& context);
+      ~System();
 
-  public:
-    static double TOTAL_ELAPSED_TIME;
+      virtual void Init() = 0;
+      virtual void Update(float dt);
+      virtual void Draw(float dt);
 
-    System(unsigned int id, const SystemContext& context);
-    ~System();
+      void AddEntity(unsigned int entityId);
+      void RemoveEntity(unsigned int entityId);
 
-    virtual void Init() = 0;
-    virtual void Update(float dt);
+      unsigned int GetEntityCount();
 
-    void AddEntity(unsigned int entityId);
-    void RemoveEntity(unsigned int entityId);
+      static void UpdateTime(double dt);
 
-    unsigned int GetEntityCount();
-
-    static void UpdateTime(double dt);
-
-    unsigned int GetId();
-    void SetUpdateOrder(unsigned int orderNum);
-    unsigned int GetUpdateOrder();
-};
+      unsigned int GetId();
+      void SetUpdateOrder(unsigned int orderNum);
+      unsigned int GetUpdateOrder();
+  };
 
 } // namespace tfl
 

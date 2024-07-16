@@ -54,6 +54,7 @@ Signature EntityRegister::GetSignature(unsigned int entityId)
 
     return m_signatures[entityId];
 }
+
 unsigned int EntityRegister::GetCount()
 {
     return m_liveEntityIdCount;

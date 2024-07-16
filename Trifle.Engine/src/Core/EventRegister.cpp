@@ -101,6 +101,7 @@ void EventRegister::SendEvent(EventId eventId)
         listener(args);
     }
 }
+
 bool EventRegister::IsEmpty()
 {
     return m_distributedIds.size() < 1;

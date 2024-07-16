@@ -84,8 +84,8 @@ void GameTimer::Tick()
         return;
     }
 
-    m_currTime =  Now();
-    m_deltaTime = (m_currTime - m_prevTime) * m_secondsPerCount;
+    m_currTime = Now();
+    m_deltaTime = (m_currTime - m_prevTime); //* m_secondsPerCount;
     m_prevTime = m_currTime;
 
     if (m_deltaTime < 0.0f)
