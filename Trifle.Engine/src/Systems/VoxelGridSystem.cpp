@@ -47,15 +47,20 @@ void VoxelGridSystem::Clear()
 
 void VoxelGridSystem::Update()
 {
-    auto entityIds = GetEntityIds();
-
-    for (unsigned int id : entityIds)
+    ThreadPool::GetInstance()->QueueTask([this] 
     {
-        VoxelEntity e;
-        e.SetId(id);
-        
-        m_grid.PaintCells(e.GetPoint(), e.GetSize(), e.GetColour());
+        auto entityIds = GetEntityIds();
+
+        for (unsigned int id : entityIds)
+        {
+            VoxelEntity e;
+            e.SetId(id);
+            
+            m_grid.PaintCells(e.GetPoint(), e.GetSize(), e.GetColour());
+        }
     }
+    );
+
 
     m_renderer->ProcessVoxelGrid(m_grid, RenderMethod::RENDER_DEBUG);
 }

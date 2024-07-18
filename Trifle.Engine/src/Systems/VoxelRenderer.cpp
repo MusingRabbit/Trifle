@@ -245,7 +245,7 @@ void VoxelRenderer::SetActiveCamera(unsigned int entityId)
 
 void VoxelRenderer::Draw()
 {
-    ThreadPool::GetInstance()->QueueJob([this]{m_raster->DrawNow();});
+    ThreadPool::GetInstance()->QueueTask([this]{m_raster->DrawNow();});
 }
 
 void VoxelRenderer::Clear()

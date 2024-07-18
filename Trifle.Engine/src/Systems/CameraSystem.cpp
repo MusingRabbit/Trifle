@@ -53,8 +53,8 @@ namespace tfl
             // Update target offset
             glm::vec3 vRot = transform.GetRotaion();
             glm::mat4 mtxRot = MatrixHelper::CreateRotationX(vRot.x) * MatrixHelper::CreateRotationY(vRot.y);
-            glm::quat qRot = QuatHelper::CreateFromRotationMatrix(mtxRot);
-            glm::vec3 offset = VectorHelper::Transform(glm::vec3(0, 0, 1), qRot);
+            //glm::quat qRot = QuatHelper::CreateFromRotationMatrix(mtxRot); // TODO : There is a known bug in this function that needs to be investigated....
+            glm::vec3 offset = mtxRot * glm::vec4(0, 0, 1.0f, 0.0f); //VectorHelper::Transform(glm::vec3(0, 0, 1.0f), qRot);
             target.position = transform.GetPosition() + offset;
         }
     }

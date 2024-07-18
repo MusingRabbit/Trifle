@@ -124,16 +124,18 @@ void Game::Update()
     if (isMoving)
     {
         m_camera.Move(moveVector);
+        OutputCameraPosition();
     }
 
     if (isRotating)
     {
         m_camera.Rotate(rotate);
+        OutputCameraTarget();
     }
 
-    //OutputCameraPosition();
-    //OutputCameraTarget();
-    OutputFrameTime();
+    
+    
+    //OutputFrameTime();
 }
 
 void Game::OnEntityAdded(unsigned int entityId)
@@ -153,17 +155,36 @@ void Game::OutputFrameTime()
 
 void Game::OutputCameraTarget()
 {
+    Transform& camTrans = m_camera.GetComponent<Transform>();
     Target& camTarget = m_camera.GetComponent<Target>();
+    glm::vec3 cPos = camTrans.GetPosition();
     glm::vec3 pos = camTarget.position;
+    glm::vec3 rot = camTrans.GetRotaion();
 
     std::string msg;
+    msg.append("Camera Pos : [");
+    msg.append("x : " +  std::to_string(cPos.x));
+    msg.append(",");
+    msg.append("y : " + std::to_string(cPos.y));
+    msg.append(",");
+    msg.append("z : " + std::to_string(cPos.z));
+    msg.append("]\n");
+
     msg.append("Camera Tgt : [");
     msg.append("x : " +  std::to_string(pos.x));
     msg.append(",");
     msg.append("y : " + std::to_string(pos.y));
     msg.append(",");
     msg.append("z : " + std::to_string(pos.z));
-    msg.append("]");
+    msg.append("]\n");
+
+    msg.append("Camera Rot : [");
+    msg.append("x : " +  std::to_string(rot.x));
+    msg.append(",");
+    msg.append("y : " + std::to_string(rot.y));
+    msg.append(",");
+    msg.append("z : " + std::to_string(rot.z));
+    msg.append("]\n\n");
 
     std::cout << msg.c_str() << std::endl;
 }

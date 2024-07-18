@@ -2,27 +2,46 @@
 
 namespace tfl
 {
+    ThreadPool::ThreadPool()
+    {
+        
+    }
+
+    ThreadPool::~ThreadPool()
+    {
+        Stop();
+    }
+
     void ThreadPool::Start()
     {
         const uint32_t threadCount = std::thread::hardware_concurrency();   // Max # of threads the system supports
         
+        m_threads.reserve(threadCount);
+
         for (uint32_t i = 0; i < threadCount; i++)
         {
             m_threads.emplace_back(std::thread(&ThreadPool::ThreadLoop, this));
         }
     }
 
-    void ThreadPool::QueueJob(const std::function<void()>& job)
+    void ThreadPool::QueueTask(const std::function<void()>& task)
     {
-        std::unique_lock<std::mutex> lock(m_queueMutex);
-        m_jobs.push(job);
+        {
+            std::unique_lock<std::mutex> lock(m_queueMutex);
+            m_tasks.push(task);
+        }
+        
         m_mutexCondition.notify_one();
     }
 
     void ThreadPool::Stop()
     {
-        std::unique_lock<std::mutex> lock(m_queueMutex);
-        m_shouldTerminate = true;
+        // Lock the queue to set the stop flag safely
+        {
+            std::unique_lock<std::mutex> lock(m_queueMutex);
+            m_stop = true;
+        }
+
         m_mutexCondition.notify_all();
 
         for (std::thread& thd : m_threads)
@@ -36,29 +55,29 @@ namespace tfl
     bool ThreadPool::IsBusy()
     {
         std::unique_lock<std::mutex> lock(m_queueMutex);
-        return !m_jobs.empty();
+        return m_tasks.empty();
     }
 
     void ThreadPool::ThreadLoop()
     {
         while(true)
         {
-            std::function<void()> job;
+            std::function<void()> task;
             
             std::unique_lock<std::mutex> lock(m_queueMutex);
             m_mutexCondition.wait(lock, [this] { 
-                return !m_jobs.empty() || m_shouldTerminate; 
+                return !m_tasks.empty() || m_stop; 
             });
 
-            if (m_shouldTerminate)
+            if (m_stop)
             {
                 return;
             }
 
-            job = m_jobs.front();
-            m_jobs.pop();
+            task = m_tasks.front();
+            m_tasks.pop();
             
-            job();
+            task();
         }
     }
 

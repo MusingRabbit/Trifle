@@ -104,11 +104,12 @@ void Trifle::RegisterComponents()
 
 void Trifle::RegisterSystems()
 {
+    m_entityManager->RegisterSystem<CameraSystem>({m_gameWindow, m_entityManager});
     m_entityManager->RegisterSystem<Renderer>({m_gameWindow, m_entityManager});
     m_entityManager->RegisterSystem<VoxelRenderer>({m_gameWindow, m_entityManager});
     m_entityManager->RegisterSystem<VoxelGridSystem>({m_gameWindow, m_entityManager});
     m_entityManager->RegisterSystem<VoxelRasteriser>({m_gameWindow, m_entityManager});
-    m_entityManager->RegisterSystem<CameraSystem>({m_gameWindow, m_entityManager});
+   
 }
 
 void Trifle::InitSystems()

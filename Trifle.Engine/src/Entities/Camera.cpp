@@ -62,16 +62,7 @@ void Camera::Move(glm::vec3 moveVector)
 void Camera::Rotate(glm::vec2 rotationVector)
 {
     Transform& transform = GetComponent<Transform>();
-
-    float xRot = transform.GetRotaion().x + rotationVector.x;
-    float xRotMin = -(glm::pi<float>() / 2) + 0.01f;
-    float xRotMax = (glm::pi<float>() / 2) - 0.01f;
-
-    xRot = glm::clamp(xRot, xRotMin, xRotMax);
-    float yRot = transform.GetRotaion().y + rotationVector.y;
-    float zRot = 0.0f;
-
-    transform.SetRotation(xRot, yRot, zRot);
+    transform.Rotate({rotationVector.x,rotationVector.y,0.0f});
 }
 
 void Camera::SetTarget(unsigned int entityId)

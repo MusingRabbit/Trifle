@@ -9,6 +9,7 @@
 #include "../Components/Components.h"
 #include "../Entities/VoxelEntity.h"
 #include "VoxelRenderer.h"
+#include "../Threading/ThreadPool.h"
 
 namespace tfl
 {
