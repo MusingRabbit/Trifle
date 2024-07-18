@@ -9,16 +9,16 @@ namespace tfl
 class VoxelEntity : public Entity
 {
     private:
-    void NotifyPositionChanged(const glm::vec3& oldVal, const glm::vec3& newVal);
+/*     void NotifyPositionChanged(const glm::vec3& oldVal, const glm::vec3& newVal);
     void NotifyRotationChanged(const glm::vec3& oldVal, const glm::vec3& newVal);
     void NotifyScaleChanged(const glm::vec3& oldSize, const glm::vec3& newSize);
-    void OnTransformChangedCallback(EventArgs& e);
+    void OnTransformChangedCallback(EventArgs& e); */
 
     public :
-    EventHandler OnPositionChanged;
-    EventHandler OnSizeChanged;
-    EventHandler OnRotationChanged;
-
+/*     EventHandler OnPositionChanged = {};
+    EventHandler OnRotationChanged = {};
+    EventHandler OnSizeChanged = {}; */
+    
     VoxelEntity();
     VoxelEntity(const VoxelEntity& rhs);
     ~VoxelEntity();

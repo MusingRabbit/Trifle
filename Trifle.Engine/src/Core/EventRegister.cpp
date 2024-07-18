@@ -58,6 +58,19 @@ EventId EventRegister::GetNewEventId()
     return result;
 }
 
+void EventRegister::SwapEventListeners(EventId oldEventId, EventId newEventId)
+{
+    bool oldEventIdExists = m_distributedIds.find(oldEventId) != m_distributedIds.end();
+    bool newEventIdExists = m_distributedIds.find(newEventId) != m_distributedIds.end();
+
+    if (oldEventIdExists && newEventIdExists)
+    {
+        std::list<std::function<void(EventArgs&)>> tmp = m_listeners[newEventId];
+        m_listeners[newEventId] = m_listeners[oldEventId];
+        m_listeners[oldEventId] = tmp;
+    }
+}
+
 void EventRegister::ReleaseEventId(EventId eventId)
 {
     if (IsEmpty())

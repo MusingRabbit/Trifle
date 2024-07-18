@@ -13,6 +13,9 @@ class Game : public System
     GameTimer m_gameTimer;
 
     void OutputCameraPosition();
+    void OutputCameraTarget();
+    void OutputFrameTime();
+
     void SetupEntities(unsigned int count);
 
   public:
@@ -23,10 +26,11 @@ class Game : public System
 
     void Init() override;
     
-    void Update(float dt) override;
+    void Update() override;
 
     void OnEntityAdded(unsigned int entityId) override;
     void OnEntityRemoved(unsigned int entityId) override;
+    
 };
 
 #endif // !GAME_H

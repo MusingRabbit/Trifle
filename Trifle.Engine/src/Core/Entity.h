@@ -34,34 +34,34 @@ class Entity
 
     void Register();
 
-    unsigned int GetId();
+    unsigned int GetId() const;
 
     void SetId(unsigned int entityId);
 
-    template <typename T>
-    void AddComponent()
+    template <typename T> 
+    void AddComponent() const
     {
         Entity::InitialisationCheck();
-        T component = T();
+        T component = {};
         Entity::entityManager->AddComponent<T>(m_id, component);
     }
 
     template <typename T>
-    void AddComponent(T component)
+    void AddComponent(T component) const
     {
         Entity::InitialisationCheck();
         Entity::entityManager->AddComponent<T>(m_id, component);
     }
 
     template <typename T>
-    T& GetComponent()
+    T& GetComponent() const
     {
         Entity::InitialisationCheck();
         return Entity::entityManager->GetComponent<T>(m_id);
     }
 
     template <typename T>
-    void AddSystem()
+    void AddSystem() const
     {
         Entity::InitialisationCheck();
         return Entity::entityManager->RegisterEntityOnSystem<T>(m_id);

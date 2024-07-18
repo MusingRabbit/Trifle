@@ -14,6 +14,12 @@ Model3D::Model3D(const Model3D& rhs)
     m_mesh = rhs.m_mesh;
 }
 
+/* Model3D::Model3D(Model3D&& rhs)
+{
+    m_material = rhs.m_material;
+    m_mesh = rhs.m_mesh;
+} */
+
 Model3D::~Model3D()
 {
 }

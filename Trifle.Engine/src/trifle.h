@@ -10,6 +10,7 @@
 #include "Systems/Systems.h"
 #include "Util/Util.h"
 #include "Input/Input.h"
+#include "Threading/ThreadPool.h"
 
 #include <glm/glm.hpp>
 #include <iostream>
@@ -29,9 +30,9 @@ class Trifle
     void RegisterComponents();
     void RegisterSystems();
     void InitSystems();
-    void GameUpdateSystems(float dt);
+    void GameUpdateSystems();
 
-    void RenderSystems(float dt);
+    void RenderSystems();
 
     void GameWindow_OnResized(const EventArgs& e);
 

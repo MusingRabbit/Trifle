@@ -42,12 +42,14 @@ class QuatHelper
 
         if (num > 0.0f)
         {
-            num2 = sqrt(num + 1.0f);
+            num2 = sqrt(1.0f + num);
             num3 = 0.5f / num2;
+
             result.x = (m[1][2] - m[2][1]) * num3;
             result.y = (m[2][0] - m[0][2]) * num3;
             result.z = (m[0][1] - m[1][0]) * num3;
             result.w = num2 * 0.5f;
+
             return result;
         }
 
@@ -55,16 +57,20 @@ class QuatHelper
         {
             num2 = sqrt(1.0f + m[0][0] - m[1][1] - m[2][2]);
             num3 = 0.5f / num2;
+
             result.x = 0.5f * num2;
             result.y = (m[0][1] + m[1][0]) * num3;
             result.z = (m[0][2] + m[2][0]) * num3;
             result.w = (m[1][2] + m[2][1]) * num3;
+
+            return result;
         }
 
         if (m[1][1] > m[2][2])
         {
             num2 = sqrt(1.0f + m[1][1] - m[0][0] - m[2][2]);
             num3 = 0.5f / num2;
+
             result.x = (m[1][0] + m[0][1]) * num3;
             result.y = 0.5 * (float)num2;
             result.z = (m[2][1] + m[1][2]) * num3;

@@ -47,10 +47,8 @@ void Renderer::EnableAlphaBlending()
     glEnable(GL_BLEND);
 }
 
-void Renderer::Update(float dt)
+void Renderer::Update()
 {
-    System::Update(dt);
-
     glClearColor(0, 0, 0.3f, 1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 

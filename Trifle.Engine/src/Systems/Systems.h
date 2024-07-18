@@ -5,5 +5,6 @@
 #include "VoxelRenderer.h"
 #include "VoxelGridSystem.h"
 #include "VoxelRasteriser.h"
+#include "CameraSystem.h"
 
 #endif

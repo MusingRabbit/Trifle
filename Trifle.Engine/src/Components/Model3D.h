@@ -17,6 +17,7 @@ class Model3D
   public:
     Model3D();
     Model3D(const Model3D& rhs);
+    //Model3D(Model3D&& rhs);
     ~Model3D();
 
     void SetMaterial(const Material& material);

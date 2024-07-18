@@ -37,7 +37,7 @@ class VoxelGridSystem : public System
 
     void Init(const UIntPoint3& gridScale);
     void Init() override;
-    void Update(float dt) override;
+    void Update() override;
 
     
 

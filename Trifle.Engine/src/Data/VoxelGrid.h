@@ -51,7 +51,7 @@ class VoxelGridCell
 
     Transform GetTransform()
     {
-        Transform result;
+        Transform result = {};
 
         result.SetPosition({(float)m_pos.x, (float)m_pos.y, (float)m_pos.z});
         result.Scale(1.0f);
@@ -274,6 +274,27 @@ class VoxelGrid
                     }
                 }
             break;
+        }
+
+        return result;
+    }
+
+    /// @brief Gets all voxels that have been 'lit' (Voxels with a colour whose alpha is > 0)
+    /// @return A vector of all lit cells
+    std::vector<T*>  GetPaintedCells(std::function<bool(T*)> filter)
+    {
+        std::set<unsigned int>::iterator it;
+        std::vector<T*> result = {};
+
+        for (it = m_litVoxels.begin(); it != m_litVoxels.end(); it++)
+        {
+            unsigned int idx = *it;
+            T* cell = GetCell(idx);
+
+            if (filter(cell))
+            {
+                result.push_back(cell);
+            }
         }
 
         return result;

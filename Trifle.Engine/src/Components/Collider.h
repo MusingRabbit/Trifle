@@ -24,6 +24,7 @@ class Collider
     Collider();
 
     Collider(const Collider& rhs);
+    //Collider(Collider&& rhs);
     ~Collider();
 
     bool IsEqual(const Collider& rhs);

@@ -17,13 +17,30 @@ Transform::Transform(const Transform& rhs)
     m_localScale = rhs.m_localScale;
     m_isDirty = true;
 
-    OnPositionChanged = rhs.OnPositionChanged;
+/*     OnPositionChanged = rhs.OnPositionChanged;
     OnRotationChanged = rhs.OnRotationChanged;
-    OnScaleChanged = rhs.OnScaleChanged;
+    OnScaleChanged = rhs.OnScaleChanged; */
 }
+
+/* Transform::Transform(Transform&& rhs)
+{
+    m_localPos = rhs.m_localPos;
+    m_localRot = rhs.m_localRot;
+    m_localScale = rhs.m_localScale;
+    m_isDirty = true;
+
+    OnPositionChanged.Init();
+    OnRotationChanged.Init();
+    OnScaleChanged.Init();
+
+    OnPositionChanged.SwapListeners(rhs.OnPositionChanged);
+    OnRotationChanged.SwapListeners(rhs.OnRotationChanged);
+    OnScaleChanged.SwapListeners(rhs.OnScaleChanged);
+} */
 
 Transform::~Transform()
 {
+    
 }
 
 void Transform::SetPosition(const glm::vec3& pos)
@@ -44,9 +61,8 @@ void Transform::SetPosition(float x, float y, float z)
 
         m_isDirty = true;
 
-        TransformChangedArgs args{ TransformChangedType::Position, oldVal , m_localPos};
-
-        OnPositionChanged.Invoke(args);
+        /*TransformChangedArgs args{ TransformChangedType::Position, oldVal , m_localPos};
+        OnPositionChanged.Invoke(args); */
     }
 }
 
@@ -75,11 +91,11 @@ void Transform::Translate(float x, float y, float z)
 
     m_isDirty = m_isDirty || (x + y + z > 0.0f);
 
-    if (m_isDirty)
+    /*if (m_isDirty && OnPositionChanged.HasEventRegister())
     {
         TransformChangedArgs args{ TransformChangedType::Position, oldVal , m_localPos};
         OnPositionChanged.Invoke(args);
-    }
+    } */
 }
 
 void Transform::Translate(const glm::vec3& vector)
@@ -115,9 +131,11 @@ void Transform::SetRotation(float x, float y, float z)
         m_localRot.z = z;
 
         m_isDirty = true;
-
-        TransformChangedArgs args{ TransformChangedType::Rotation, oldVal , m_localPos};
-        OnRotationChanged.Invoke(args);
+        /*if (OnRotationChanged.HasEventRegister())
+        {
+            TransformChangedArgs args{ TransformChangedType::Rotation, oldVal , m_localRot};
+            OnRotationChanged.Invoke(args);
+        } */
     }
 }
 
@@ -131,11 +149,11 @@ void Transform::Rotate(float x, float y, float z)
 
     m_isDirty = m_isDirty || (x + y + z > 0);
 
-    if (m_isDirty)
+    /*if (m_isDirty && OnRotationChanged.HasEventRegister())
     {
-        TransformChangedArgs args{ TransformChangedType::Rotation, oldVal , m_localPos};
+        TransformChangedArgs args{ TransformChangedType::Rotation, oldVal , m_localRot};
         OnRotationChanged.Invoke(args);
-    }
+    } */
 }
 
 void Transform::Rotate(const glm::vec3& vector)
@@ -172,8 +190,11 @@ void Transform::Scale(float x, float y, float z)
 
         m_isDirty = true;
 
-        TransformChangedArgs args{ TransformChangedType::Scale, oldVal , m_localPos};
-        OnScaleChanged.Invoke(args);
+        /*if (OnScaleChanged.HasEventRegister())
+        {
+            TransformChangedArgs args{ TransformChangedType::Scale, oldVal , m_localScale};
+            OnScaleChanged.Invoke(args);
+        } */
     }
 }
 
@@ -205,6 +226,30 @@ glm::mat4 Transform::GetTranslationMatrix()
     return MatrixHelper::CreateTranslationMatrix(m_localPos);
 }
 
+/* void tfl::Transform::SetEventRegister(std::shared_ptr<IEventRegister> evtRegister)
+{
+    OnPositionChanged.Init(m_evtRegister);
+    OnRotationChanged.Init(m_evtRegister);
+    OnScaleChanged.Init(m_evtRegister);
+} */
+
+bool Transform::IsDirty()
+{
+    return m_isDirty;
+}
+
+void Transform::ResetIsDirtyFlag()
+{
+    m_isDirty = false;
+}
+
+/* void Transform::InitCallbacks()
+{
+    OnPositionChanged.Init();
+    OnRotationChanged.Init();
+    OnScaleChanged.Init();
+}
+ */
 glm::mat4 Transform::GetWorldMatrix(bool forceRefresh)
 {
     if (m_isDirty || forceRefresh)

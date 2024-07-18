@@ -59,7 +59,7 @@ class ComponentArray : public IComponentArray
         unsigned int newIndex = m_size;
         m_entityToIndexMap[entityId] = newIndex;
         m_indexToEntityMap[newIndex] = entityId;
-        m_componentArray[newIndex] = component;
+        m_componentArray[newIndex] = T(component);
         m_size++;
     }
 

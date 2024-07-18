@@ -36,9 +36,9 @@ namespace tfl
         m_canvas.ClearColour(m_clearColour);
     }
 
-    bool VoxelRasteriser::IsDrawn(Rectangle& rect)
+    bool VoxelRasteriser::IsDrawn(const Rectangle& rect)
     {
-        return m_canvas.IsPixelSet(rect.TopLeft()) && m_canvas.IsPixelSet(rect.TopRight()) && m_canvas.IsPixelSet(rect.BottomLeft()) && m_canvas.IsPixelSet(rect.BottomRight());
+        return m_canvas.IsPixelSet(rect.TopLeft()) || m_canvas.IsPixelSet(rect.TopRight()) || m_canvas.IsPixelSet(rect.BottomLeft()) || m_canvas.IsPixelSet(rect.BottomRight());
     }
 
     void VoxelRasteriser::FillCanvas()
@@ -51,18 +51,25 @@ namespace tfl
             {
                 int x = (int)roundf(value.screenPos.x);
                 int y = (int)roundf(value.screenPos.y);
+
+/*
+                Rectangle rct = Rectangle(x, y, value.scale.x, value.scale.y);
+
+                 if (!IsDrawn(rct))
+                {
+                    m_canvas.DrawBox({x, y}, value.scale.x, value.scale.y, value.colour, value.colour); 
+                }
+ */
                 m_canvas.DrawBox({x, y}, value.scale.x, value.scale.y, value.colour, value.colour); 
             }
         }
-
-        m_drawMap.clear();
     }
 
     void VoxelRasteriser::Init()
     {
     }
 
-    void VoxelRasteriser::Update(float dt)
+    void VoxelRasteriser::Update()
     {
 
     }
@@ -75,12 +82,12 @@ namespace tfl
     {
     }
 
-    void VoxelRasteriser::Draw(float dt)
+    void VoxelRasteriser::Draw()
     {
         FillCanvas();
         std::shared_ptr<Renderer> r = Context.entityManager->GetSystem<Renderer>();
         m_screenTexture->SubDataByColour(m_canvas.GetData());
-        r->Update(0.0f); 
+        r->Update(); 
     }
 
     void VoxelRasteriser::DrawNow()
@@ -88,7 +95,7 @@ namespace tfl
         FillCanvas();
         std::shared_ptr<Renderer> r = Context.entityManager->GetSystem<Renderer>();
         m_screenTexture->SubDataByColour(m_canvas.GetData());
-        r->Update(0.0f); 
+        r->Update(); 
     }
 
     void VoxelRasteriser::Clear()

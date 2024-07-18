@@ -9,7 +9,7 @@ class Camera : public Entity
 {
   private:
     void UpdateTargetPosition();
-    void OnTransformChangedCallback(EventArgs& e);
+    //void OnTransformChangedCallback(EventArgs& e);
 
   public:
     Camera();

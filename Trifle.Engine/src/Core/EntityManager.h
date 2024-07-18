@@ -46,7 +46,7 @@ class EntityManager
     }
 
     template <typename T>
-    void AddComponent(unsigned int entityId, T component)
+    void AddComponent(unsigned int entityId, const T& component)
     {
         m_componentRegister->AddComponent<T>(entityId, component);
 

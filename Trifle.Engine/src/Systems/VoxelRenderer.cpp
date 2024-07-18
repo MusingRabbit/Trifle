@@ -6,6 +6,7 @@
 #include "../Systems/Renderer.h"
 #include "../Data/VoxelGrid.h"
 #include "../Resources/Resources.h"
+#include "../Threading/ThreadPool.h"
 
 #include <array>
 #include <format>
@@ -50,7 +51,7 @@ void VoxelRenderer::Init()
     //m_screenTexture->SetDataByColour(m_canvas.GetWidth(), m_canvas.GetHeight(), m_canvas.GetData());
 }
 
-void VoxelRenderer::Update(float dt)
+void VoxelRenderer::Update()
 {
 /*      if ((int)(round(10 * (int)m_totalElapsedTime) / 10) % 10 == 0)
     {
@@ -58,7 +59,7 @@ void VoxelRenderer::Update(float dt)
     } */
 
     //m_screenTexture->SubDataByColour(m_canvas.GetData());
-    m_raster->Clear();
+    //m_raster->Clear();
 }
 
 void VoxelRenderer::OnEntityAdded(unsigned int entityId)
@@ -129,8 +130,8 @@ void VoxelRenderer::CreateViewBoundingBox(const ViewData& viewData)
     glm::vec3 bottomLeft = glm::vec3{-farZ, -farZ, 0};
     glm::vec3 topRight = glm::vec3{farZ, farZ, farZ};
 
-    glm::vec3 lPos =  viewData.mtxInvViewProj * glm::vec4(bottomLeft, 1.0f);
-    glm::vec3 rPos =  viewData.mtxInvViewProj * glm::vec4(topRight, 1.0f);;
+    glm::vec3 lPos =  viewData.mtxView * glm::vec4(bottomLeft, 1.0f);
+    glm::vec3 rPos =  viewData.mtxView * glm::vec4(topRight, 1.0f);;
 
     lPos.x = fmax(lPos.x, 0);
     lPos.y = fmax(lPos.y, 0);
@@ -187,10 +188,13 @@ void VoxelRenderer::ProcessVoxelGrid_Debug_BoxRender(VoxelGrid<VoxelGridCell>& g
 
     ViewData vd = GetViewData(camera);
 
-    std::function<bool(VoxelGridCell*)> cellLitFilter = [this](VoxelGridCell* cell) -> bool { return this->IsCellLitFilter(cell); };
+/*     CreateViewBoundingBox(vd);
+    std::function<bool(VoxelGridCell*)> cellVisibleFilter = [this](VoxelGridCell* cell) -> bool { return this->IsCellVisibleFilter(cell); }; */
 
     unsigned int screenWidth = Context.gameWindow->GetWidth();
     unsigned int screenHeight = Context.gameWindow->GetHeight();
+    float cMaxX = screenWidth / 100;
+    float cMaxY = screenHeight / 100;
 
     std::vector<VoxelGridCell*> litCells = grid.GetPaintedCells();
 
@@ -203,7 +207,7 @@ void VoxelRenderer::ProcessVoxelGrid_Debug_BoxRender(VoxelGrid<VoxelGridCell>& g
         glm::vec4 vPos = vd.mtxView * wPos;                 // View position
         glm::vec4 cPos = VectorHelper::GetClipSpace(vPos, vd.zNear, vd.zFar, vd.viewPort.z, vd.viewPort.w);
 
-        if (cPos.w < 0.0f)
+        if (cPos.w - abs(cPos.x) < 0 || cPos.w - abs(cPos.y) < 0)
         {
             continue;
         }
@@ -211,19 +215,14 @@ void VoxelRenderer::ProcessVoxelGrid_Debug_BoxRender(VoxelGrid<VoxelGridCell>& g
         glm::vec4 nPos = VectorHelper::GetNormalisedDeviceCoords(cPos);
         glm::vec4 sPos = VectorHelper::GetScreenSpace(nPos, vd.viewPort.z, vd.viewPort.w, 0, 0);
 
-        bool isVisable = sPos.x > 0 && sPos.y > 0 && sPos.x < screenWidth && sPos.y < screenHeight;
+        VoxelDrawItem drawItem;
+        drawItem.screenPos = {sPos.x, sPos.y, vPos.z};
+        drawItem.scale.x =  screenWidth * (float)(1.0f / roundf(abs(vPos.z)));
+        drawItem.scale.y =  screenHeight * (float)(1.0f / roundf(abs(vPos.z)));
+        drawItem.colour = cell->GetColour();
 
-        if (isVisable)
-        {
-            VoxelDrawItem drawItem;
-            drawItem.screenPos = {sPos.x, sPos.y, vPos.z};
-            drawItem.scale.x =  screenWidth * (float)(1.0f / roundf(abs(vPos.z)));
-            drawItem.scale.y =  screenHeight * (float)(1.0f / roundf(abs(vPos.z)));
-            drawItem.colour = cell->GetColour();
-
-            // Send to the rasteriser....
-            m_raster->AddDrawItem(drawItem);
-        }
+        // Send to the rasteriser....
+        m_raster->AddDrawItem(drawItem);
     }
 }
 
@@ -246,7 +245,7 @@ void VoxelRenderer::SetActiveCamera(unsigned int entityId)
 
 void VoxelRenderer::Draw()
 {
-    m_raster->DrawNow();
+    ThreadPool::GetInstance()->QueueJob([this]{m_raster->DrawNow();});
 }
 
 void VoxelRenderer::Clear()

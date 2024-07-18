@@ -33,7 +33,7 @@ class Renderer : public System
 
     void EnableAlphaBlending();
 
-    void Update(float dt) override;
+    void Update() override;
 };
 } // namespace tfl
 

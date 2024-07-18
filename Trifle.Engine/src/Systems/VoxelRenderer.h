@@ -59,6 +59,10 @@ namespace tfl
       bool IsCellVisibleFilter(VoxelGridCell* cell);
       bool IsCellLitFilter(VoxelGridCell* cell);
 
+    protected:
+      void OnEntityAdded(unsigned int entityId) override;
+      void OnEntityRemoved(unsigned int entityId) override;
+      
     public:
       VoxelRenderer(unsigned int id, const SystemContext& context);
       ~VoxelRenderer();
@@ -66,9 +70,8 @@ namespace tfl
       //void SetImageSize(unsigned int width, unsigned int height);
 
       void Init() override;
-      void Update(float dt) override;
-      void OnEntityAdded(unsigned int entityId) override;
-      void OnEntityRemoved(unsigned int entityId) override;
+      void Update() override;
+
 
       //void UpdateScreenTexture();
 

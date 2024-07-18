@@ -11,6 +11,9 @@ VoxelEntity::VoxelEntity()
 
 VoxelEntity::VoxelEntity(const VoxelEntity& rhs) : Entity(rhs)
 {
+/*     OnPositionChanged = EventHandler(rhs.OnPositionChanged.GetEventId());
+    OnRotationChanged = EventHandler(rhs.OnRotationChanged.GetEventId());
+    OnSizeChanged = EventHandler(rhs.OnSizeChanged.GetEventId()); */
 }
 
 VoxelEntity::~VoxelEntity()
@@ -26,9 +29,9 @@ void VoxelEntity::Init()
 
     Transform& trans = GetComponent<Transform>();
 
-    std::function<void(EventArgs&)> func = [this](EventArgs& e) { this->OnTransformChangedCallback(e); };
+    //std::function<void(EventArgs&)> func = [this](EventArgs& e) { this->OnTransformChangedCallback(e); };
 
-    trans.OnPositionChanged.Subscribe(func);
+    //trans.OnPositionChanged.Subscribe(func);
 }
 
 void VoxelEntity::SetPosition(glm::vec3 position)
@@ -37,7 +40,7 @@ void VoxelEntity::SetPosition(glm::vec3 position)
     glm::vec3 oldRot = transform.GetPosition();
 
     transform.SetPosition(position);
-    NotifyPositionChanged(oldRot, position);
+    //NotifyPositionChanged(oldRot, position);
 }
 
 UIntPoint3 VoxelEntity::GetPoint()
@@ -61,7 +64,7 @@ void VoxelEntity::Move(const glm::vec3& moveVector)
    
     transform.Translate(moveVector);
 
-    NotifyPositionChanged(oldRot, transform.GetPosition());
+    //NotifyPositionChanged(oldRot, transform.GetPosition());
 }
 
 void VoxelEntity::Rotate(const glm::vec3& rotationVector)
@@ -89,10 +92,10 @@ unsigned int tfl::VoxelEntity::GetSize()
 {
     Transform& transform = GetComponent<Transform>();
     glm::vec3 scale = transform.GetScale();
-    return (scale.x + scale.y + scale.z) / 3;
+    return (scale.x + scale.y + scale.z) / 3.0f;
 }
 
-void VoxelEntity::OnTransformChangedCallback(EventArgs& e)
+/* void VoxelEntity::OnTransformChangedCallback(EventArgs& e)
 {
     TransformChangedArgs& args = e.GetData<TransformChangedArgs>();
 
@@ -110,10 +113,10 @@ void VoxelEntity::OnTransformChangedCallback(EventArgs& e)
             NotifyScaleChanged(args.oldValue, args.newValue);
         break;
     }
-}
+} */
 
 
-void VoxelEntity::NotifyPositionChanged(const glm::vec3& oldVal, const glm::vec3& newVal)
+/* void VoxelEntity::NotifyPositionChanged(const glm::vec3& oldVal, const glm::vec3& newVal)
 {
     OnPositionChangedArgs evtArgs;
     evtArgs.entityId = GetId();
@@ -140,4 +143,4 @@ void VoxelEntity::NotifyScaleChanged(const glm::vec3& oldSize, const glm::vec3& 
     evtArgs.oldSize = oldSize;
     evtArgs.newSize = newSize;
     OnSizeChanged.Invoke<OnSizeChangedArgs>(evtArgs);
-}
+} */

@@ -25,6 +25,18 @@ Collider::Collider(const Collider& rhs)
     m_recalculate = rhs.m_recalculate;
 }
 
+/* Collider::Collider(Collider&& rhs)
+{
+    m_max = rhs.m_max;
+    m_centre = rhs.m_centre;
+    m_min = rhs.m_min;
+    m_size = rhs.m_size;
+
+    m_isTrigger = rhs.m_isTrigger;
+    m_recalculate = rhs.m_recalculate;
+} */
+
+
 Collider::~Collider()
 {
 }

@@ -20,16 +20,11 @@ class EventRegister : public IEventRegister
   public:
     static unsigned int MAX_EVENTHANDLERS;
 
-    static IEventRegister& GetInstance()
-    {
-        static EventRegister instance;
-        return instance;
-    }
-
     EventRegister();
     ~EventRegister();
 
     EventId GetNewEventId();
+    void SwapEventListeners(EventId oldEventId, EventId newEventId);
     void ReleaseEventId(EventId eventId);
 
     void AddListener(EventId eventId, std::function<void(EventArgs&)> const& listener);

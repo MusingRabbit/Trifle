@@ -17,11 +17,11 @@ System::~System()
 {
 }
 
-void System::Update(float dt)
+void System::Update()
 {
 }
 
-void System::Draw(float dt)
+void System::Draw()
 {
     
 }
@@ -66,6 +66,14 @@ unsigned int System::GetUpdateOrder()
 std::set<unsigned int> System::GetEntityIds()
 {
     return m_entityIds;
+}
+
+void System::OnEntityAdded(unsigned int entityId)
+{
+}
+
+void System::OnEntityRemoved(unsigned int entityId)
+{
 }
 
 /* std::vector<std::shared_ptr<Entity>> System::GetEntities()

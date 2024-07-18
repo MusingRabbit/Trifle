@@ -15,6 +15,7 @@ class IEventRegister
     virtual void AddListener(EventId eventId, std::function<void(EventArgs&)> const& listener) = 0;
     virtual void SendEvent(EventArgs& args) = 0;
     virtual void SendEvent(EventId eventId) = 0;
+    virtual void SwapEventListeners(EventId oldEventId, EventId newEventId) = 0;
 };
 } // namespace tfl
 

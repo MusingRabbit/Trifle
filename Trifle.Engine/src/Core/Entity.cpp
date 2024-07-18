@@ -56,7 +56,7 @@ void Entity::Register()
     SetId(Entity::entityManager->CreateEntity());
 }
 
-unsigned int Entity::GetId()
+unsigned int Entity::GetId() const
 {
     return m_id;
 }

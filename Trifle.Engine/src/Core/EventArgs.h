@@ -17,7 +17,8 @@ class EventArgs
   public:
     EventArgs() = delete;
 
-    explicit EventArgs(EventId type) : m_eventId(type)
+    explicit EventArgs(EventId type) 
+    : m_eventId(type)
     {
         m_data = {};
     }

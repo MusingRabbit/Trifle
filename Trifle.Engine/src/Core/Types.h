@@ -9,7 +9,7 @@ using EventId = unsigned int;
 using ParamId = unsigned int;
 
 const unsigned int MAX_COMPONENTS = 32;
-const unsigned int MAX_ENTITIES = 10000;
+const unsigned int MAX_ENTITIES = 60000;
 
 using Signature = std::bitset<MAX_COMPONENTS>;
 

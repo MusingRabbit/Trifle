@@ -206,7 +206,7 @@ void Canvas::DrawCharacter(const Point2& point, char32_t charCode, unsigned int 
 
 bool Canvas::IsPixelSet(const Point2& point)
 {
-    return !IsValidPoint(point) || m_data[GetIndex(point)].a > 0.99f;
+    return IsValidPoint(point) == false || m_data[GetIndex(point)].a > 0.99f;
 }
 
 Colour& Canvas::GetPixel(const Point2& point)

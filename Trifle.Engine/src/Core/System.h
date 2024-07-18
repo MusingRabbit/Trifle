@@ -52,8 +52,8 @@ namespace tfl
       ~System();
 
       virtual void Init() = 0;
-      virtual void Update(float dt);
-      virtual void Draw(float dt);
+      virtual void Update();
+      virtual void Draw();
 
       void AddEntity(unsigned int entityId);
       void RemoveEntity(unsigned int entityId);

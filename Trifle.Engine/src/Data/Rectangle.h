@@ -48,32 +48,32 @@ struct Rectangle
         height = size;
     }
 
-    Point2 GetPosition()
+    Point2 GetPosition() const
     {
         return {(int)x, (int)y};
     }
 
-    Point2 TopLeft()
+    Point2 TopLeft() const
     {
         return {(int)x, (int)y};
     }
 
-    Point2 TopRight()
+    Point2 TopRight() const
     {
         return {(int)(x + width), (int)y};
     }
 
-    Point2 BottomLeft()
+    Point2 BottomLeft() const
     {
         return {(int)x, (int)(y + height)};
     }
 
-    Point2 BottomRight()
+    Point2 BottomRight() const
     {
         return GetMax();
     }
 
-    Point2 GetMax()
+    Point2 GetMax() const
     {
         Point2 result = {};
         result.x = (int)(x + width);
@@ -81,17 +81,17 @@ struct Rectangle
         return result;
     }
 
-    Point2 GetSize()
+    Point2 GetSize() const
     {
         return {(int)width, (int)height};
     }
 
-    bool IsEqual(const Rectangle& rhs)
+    bool IsEqual(const Rectangle& rhs) const
     {
         return x == rhs.x && y == rhs.y && height == rhs.height && width == rhs.width;
     }
 
-    bool Contains(const Point2& point)
+    bool Contains(const Point2& point) const
     {
         Point2 max = GetMax();
         return x < point.x && y < point.y && max.x > point.x && max.y > point.y;

@@ -36,9 +36,9 @@ class Transform
 
   public:
     /// @brief Events
-    EventHandler OnPositionChanged;
-    EventHandler OnRotationChanged;
-    EventHandler OnScaleChanged;
+/*     EventHandler OnPositionChanged = {};
+    EventHandler OnRotationChanged = {};
+    EventHandler OnScaleChanged = {}; */
 
     /// @brief Constructor.
     Transform();
@@ -46,6 +46,10 @@ class Transform
     /// @brief Copy Constructor.
     /// @param rhs Source Transform.
     Transform(const Transform& rhs);
+
+    /// @brief Move Constructor
+    /// @param rhs 
+    //Transform(Transform&& rhs);
 
     /// Destructor
     ~Transform();
@@ -152,6 +156,16 @@ class Transform
     /// @brief Gets the translation matrix
     /// @return translation matrix
     glm::mat4 GetTranslationMatrix();
+
+    /// @brief Sets the transforms event register (I wish there were a better way to do this...)
+    /// @param evtRegister 
+    //void SetEventRegister(std::shared_ptr<IEventRegister> evtRegister);
+
+    bool IsDirty();
+
+    void ResetIsDirtyFlag();
+
+    //void InitCallbacks();
 };
 } // namespace tfl
 

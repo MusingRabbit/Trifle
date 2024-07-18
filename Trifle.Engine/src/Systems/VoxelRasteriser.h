@@ -32,7 +32,7 @@ namespace tfl
 
         Canvas m_canvas;
 
-        Colour m_clearColour = Colour(0.0f, 0.0f, 0.0f, 1.0f);
+        Colour m_clearColour = Colour(0.0f, 0.0f, 0.0f, 0.0f);
         Colour m_emtpyColour = Colour(0.0f, 0.0f, 0.0f, 0.0f);
 
         Texture2D* m_screenTexture;
@@ -40,7 +40,7 @@ namespace tfl
         Entity m_screenEntity;
 
         void SetImageSize(unsigned int width, unsigned int height);
-        bool IsDrawn(Rectangle& rect);
+        bool IsDrawn(const Rectangle& rect);
 
         public:
         VoxelRasteriser(unsigned int id, const SystemContext& context);
@@ -48,7 +48,7 @@ namespace tfl
       
         void Init(unsigned int imgWidth, unsigned int imgHeight);
         void Init() override;
-        void Update(float dt) override;
+        void Update() override;
         void OnEntityAdded(unsigned int entityId) override;
         void OnEntityRemoved(unsigned int entityId) override;
 
@@ -56,7 +56,7 @@ namespace tfl
         void FillCanvas();
         void AddDrawItem(const VoxelDrawItem& drawItem);
 
-        void Draw(float dt) override;
+        void Draw() override;
         void DrawNow();
     };
 }

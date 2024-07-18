@@ -41,7 +41,7 @@ class SystemRegister
 
         assert(m_systems.find(typeName) == m_systems.end() && "Cannot register a system type more than once.");
 
-        auto system = std::make_shared<T>(m_systemCounter++, context);
+        std::shared_ptr<T> system = std::make_shared<T>(m_systemCounter++, context);
         m_systems.insert({typeName, system});
         return system;
     }

@@ -25,15 +25,17 @@ void Camera::Init(float width, float height, float nearPlane, float farPlane)
     AddComponent<Movement>();
     AddComponent<Target>();
 
-    std::function<void(EventArgs&)> func = [this](EventArgs& e) { this->OnTransformChangedCallback(e); };
+    //std::function<void(EventArgs&)> func = [this](EventArgs& e) { this->OnTransformChangedCallback(e); };
 
-    Transform& transform = GetComponent<Transform>();
+    //Transform& transform = GetComponent<Transform>();
 
-    transform.OnPositionChanged.UnSubscribe();
-    transform.OnRotationChanged.UnSubscribe();
+    //transform.InitCallbacks();
 
-    transform.OnPositionChanged.Subscribe(func);
-    transform.OnRotationChanged.Subscribe(func);
+    //transform.OnPositionChanged.UnSubscribe();
+    //transform.OnRotationChanged.UnSubscribe();
+
+    //transform.OnPositionChanged.Subscribe(func);
+    //transform.OnRotationChanged.Subscribe(func);
 }
 
 void Camera::SetPosition(glm::vec3 position)
@@ -126,10 +128,11 @@ glm::mat4 Camera::GetProjectionMatrix()
     return GetComponent<Projection>().GetMatrix();
 }
 
-void Camera::OnTransformChangedCallback(EventArgs& e)
+/* void Camera::OnTransformChangedCallback(EventArgs& e)
 {
     UpdateTargetPosition();
 }
+ */
 
 void Camera::UpdateTargetPosition()
 {
