@@ -10,90 +10,14 @@
 
 #include "../Util/Util.h"
 #include "../Components/Components.h"
-#include "UIntPoint3.h"
+#include "../Data/UIntPoint3.h"
+#include "../Voxel/VoxelGridCell.h"
 
 
 namespace tfl
 {
 
-class VoxelGridCell
-{
-  private:
-    unsigned int m_id;
-    UIntPoint3 m_pos;
-    Colour m_colour;
 
-  public:
-    unsigned int GetId()
-    {
-        return m_id;
-    }
-
-    void SetId(unsigned int value)
-    {
-        m_id = value;
-    }
-
-    UIntPoint3 GetPosition()
-    {
-        return m_pos;
-    }
-
-    void SetPosition(UIntPoint3 value)
-    {
-        m_pos = value;
-    }
-
-    Colour GetColour()
-    {
-        return m_colour;
-    }
-
-    Transform GetTransform()
-    {
-        Transform result = {};
-
-        result.SetPosition({(float)m_pos.x, (float)m_pos.y, (float)m_pos.z});
-        result.Scale(1.0f);
-
-        return result;
-    }
-
-    void SetColour(const Colour& value)
-    {
-        m_colour.r = value.r;
-        m_colour.g = value.g;
-        m_colour.b = value.b;
-        m_colour.a = value.a;
-    }
-
-    void AppendColour(const Colour& value)
-    {
-        m_colour.r += value.r;
-        m_colour.g += value.g;
-        m_colour.b += value.b;
-        m_colour.a += value.a;
-
-        m_colour.r = (m_colour.r < 0) ? 0 : m_colour.r;
-        m_colour.g = (m_colour.g < 0) ? 0 : m_colour.g;
-        m_colour.b = (m_colour.b < 0) ? 0 : m_colour.b;
-        m_colour.a = (m_colour.a < 0) ? 0 : m_colour.a;
-    }
-
-    VoxelGridCell()
-    {
-        m_id = 0;
-        m_pos = UIntPoint3{0, 0, 0};
-        m_colour = glm::vec4(0, 0, 0, 0);
-    }
-
-    VoxelGridCell(const VoxelGridCell& rhs)
-    {
-        m_id = rhs.m_id;
-        m_pos = rhs.m_pos;
-        m_colour = rhs.m_colour;
-    }
-};
 
 enum class CellSortOrder
 {
@@ -107,7 +31,6 @@ class VoxelGrid
 {
   private:
     unsigned int m_id;
-    UIntPoint3 m_position;
     unsigned int m_size;
 
     unsigned int m_width, m_height, m_depth;
@@ -157,6 +80,17 @@ class VoxelGrid
         }
     }
 
+    /// @brief Fills the voxel grid with the specified colour....
+    /// @param colour 
+    void Fill(glm::vec4 colour)
+    {
+        for (unsigned int i = 0; i < m_data.size(); i++)
+        {
+            VoxelGridCell* cell = (VoxelGridCell*)&m_data[i];
+            cell->SetColour(colour);
+        }
+    }
+
     /// @brief Checks to see if the grid contains a voxel for a given point
     /// @param point 
     /// @return Does the grid contain this point? (true/false)
@@ -177,6 +111,29 @@ class VoxelGrid
     bool ContainsLit(const UIntPoint3& point)
     {
         return m_litVoxels.contains(VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth));
+    }
+
+    /// @brief Itterates through the grid to determine which cells are visible
+    bool IsCellVisible(VoxelGridCell* cell)
+    {
+        UIntPoint3 pos = cell->GetPosition();
+        
+        VoxelGridCell* north = GetCell({pos.x, pos.y, pos.z + 1});
+        VoxelGridCell* south = GetCell({pos.x, pos.y, pos.z - 1});
+        VoxelGridCell* east = GetCell({pos.x + 1, pos.y, pos.z});
+        VoxelGridCell* west = GetCell({pos.x - 1, pos.y, pos.z});
+        VoxelGridCell* up = GetCell({pos.x, pos.y + 1, pos.x});
+        VoxelGridCell* down = GetCell({pos.x, pos.y - 1, pos.x});
+
+        bool isCovered = 
+        north == nullptr && 
+        south == nullptr && 
+        east == nullptr &&
+        west == nullptr && 
+        up == nullptr &&
+        down == nullptr;
+
+        return isCovered == false;
     }
     
     /// @brief Gets the voxel grid cell for the point provided.
@@ -291,7 +248,7 @@ class VoxelGrid
             unsigned int idx = *it;
             T* cell = GetCell(idx);
 
-            if (filter(cell))
+            if (cell->IsVisible() && filter(cell))
             {
                 result.push_back(cell);
             }
@@ -302,7 +259,7 @@ class VoxelGrid
 
     /// @brief Gets all voxels that have been 'lit' (Voxels with a colour whose alpha is > 0)
     /// @return A vector of all lit cells
-    std::vector<T*>  GetPaintedCells()
+    std::vector<T*>  GetVisibleCells()
     {
         std::set<unsigned int>::iterator it;
         std::vector<T*> result = {};
@@ -310,7 +267,13 @@ class VoxelGrid
         for (it = m_litVoxels.begin(); it != m_litVoxels.end(); it++)
         {
             unsigned int idx = *it;
-            result.push_back(GetCell(idx));
+
+            VoxelGridCell* cell = GetCell(idx);
+
+            if (IsCellVisible(cell))
+            {
+                result.push_back(cell);
+            }
         }
 
         return result;

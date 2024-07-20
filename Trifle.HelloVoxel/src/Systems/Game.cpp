@@ -28,7 +28,8 @@ void Game::Init()
     Context.entityManager->GetSystem<VoxelRenderer>()->SetActiveCamera(m_camera.GetId());
 
     m_voxelGrid = Context.entityManager->GetSystem<VoxelGridSystem>();
-    m_voxelGrid->Init(UIntPoint3{343, 343, 343});
+    
+    m_voxelGrid->Init(1, 343);
     
     VoxelEntity e;
     e.Init();
@@ -124,18 +125,18 @@ void Game::Update()
     if (isMoving)
     {
         m_camera.Move(moveVector);
-        OutputCameraPosition();
+        //OutputCameraPosition();
     }
 
     if (isRotating)
     {
         m_camera.Rotate(rotate);
-        OutputCameraTarget();
+        //OutputCameraTarget();
     }
 
     
     
-    //OutputFrameTime();
+    OutputFrameTime();
 }
 
 void Game::OnEntityAdded(unsigned int entityId)

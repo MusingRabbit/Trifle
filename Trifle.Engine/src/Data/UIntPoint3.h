@@ -34,6 +34,11 @@ struct UIntPoint3
     {
         return x + y + z;
     }
+
+    UIntPoint3 multiply(int rhs)
+    {
+        return UIntPoint3(x * rhs, y * rhs, z * rhs);
+    }
 };
 
 inline UIntPoint3& operator+=(UIntPoint3& lhs, const UIntPoint3& rhs) { lhs.x += rhs.x; lhs.y += rhs.y; lhs.z += rhs.z;  return lhs; }
@@ -41,8 +46,21 @@ inline UIntPoint3& operator-=(UIntPoint3& lhs, const UIntPoint3& rhs) { lhs.x -=
 inline UIntPoint3 operator+(const UIntPoint3& lhs, const UIntPoint3& rhs) {  return UIntPoint3(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z); }
 inline UIntPoint3 operator-(const UIntPoint3& lhs, const UIntPoint3& rhs) {  return UIntPoint3(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z); }
 inline UIntPoint3 operator*(const UIntPoint3& lhs, const UIntPoint3& rhs) {  return UIntPoint3(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z); }
+inline UIntPoint3 operator/(const UIntPoint3& lhs, const UIntPoint3& rhs) {  return UIntPoint3(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z); }
+
+inline bool operator<(const UIntPoint3& lhs, const UIntPoint3& rhs) {  return lhs.x < rhs.x && lhs.y < rhs.y && lhs.z < rhs.z; }
+inline bool operator>(const UIntPoint3& lhs, const UIntPoint3& rhs) {  return lhs.x > rhs.x && lhs.y > rhs.y && lhs.z > rhs.z; }
+inline bool operator<=(const UIntPoint3& lhs, const UIntPoint3& rhs) {  return lhs.x <= rhs.x && lhs.y <= rhs.y && lhs.z <= rhs.z; }
+inline bool operator>=(const UIntPoint3& lhs, const UIntPoint3& rhs) {  return lhs.x >= rhs.x && lhs.y >= rhs.y && lhs.z >= rhs.z; }
 inline bool operator==(const UIntPoint3& lhs, const UIntPoint3& rhs) {  return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z; }
 
+inline UIntPoint3 operator+(const UIntPoint3& lhs, int rhs) {  return UIntPoint3(lhs.x + rhs, lhs.y + rhs, lhs.z + rhs); }
+
+inline UIntPoint3 operator-(const UIntPoint3& lhs, int rhs) {  return UIntPoint3(lhs.x - rhs, lhs.y - rhs, lhs.z - rhs); }
+inline UIntPoint3 operator/(const UIntPoint3& lhs, int rhs) {  return UIntPoint3(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs); }
+
+inline UIntPoint3 operator*(const UIntPoint3& lhs, float rhs) {  return UIntPoint3(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs); }
+inline UIntPoint3 operator*(const UIntPoint3& lhs, double rhs) {  return UIntPoint3(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs); }
 }
 
 #endif // !UINT

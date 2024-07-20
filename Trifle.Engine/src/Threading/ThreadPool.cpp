@@ -1,10 +1,16 @@
 #include "ThreadPool.h"
 
+
 namespace tfl
 {
     ThreadPool::ThreadPool()
     {
         
+    }
+
+    ThreadPool::ThreadPool(unsigned int size)
+    {
+        m_threadCount = size;
     }
 
     ThreadPool::~ThreadPool()
@@ -14,7 +20,9 @@ namespace tfl
 
     void ThreadPool::Start()
     {
-        const uint32_t threadCount = std::thread::hardware_concurrency();   // Max # of threads the system supports
+        m_stop = false;
+
+        const uint32_t threadCount = m_threadCount < 1 ? std::thread::hardware_concurrency() : (unsigned int)m_threadCount;   // Max # of threads the system supports
         
         m_threads.reserve(threadCount);
 
@@ -24,7 +32,17 @@ namespace tfl
         }
     }
 
-    void ThreadPool::QueueTask(const std::function<void()>& task)
+    void ThreadPool::SetPoolSize(unsigned int size)
+    {
+        m_threadCount = (int)size;
+    }
+
+    unsigned int ThreadPool::GetPoolSize()
+    {
+        return m_threadCount;
+    }
+
+    void ThreadPool::QueueSimpleTask(const std::function<void()>& task)
     {
         {
             std::unique_lock<std::mutex> lock(m_queueMutex);

@@ -4,7 +4,6 @@
 #include "../Factory/EntityBuilder.h"
 #include "../Components/Components.h"
 #include "../Systems/Renderer.h"
-#include "../Data/VoxelGrid.h"
 #include "../Resources/Resources.h"
 #include "../Threading/ThreadPool.h"
 
@@ -24,15 +23,6 @@ VoxelRenderer::~VoxelRenderer()
 {
 }
 
-/* void VoxelRenderer::SetImageSize(unsigned int width, unsigned int height)
-{
-    m_imageWidth = width;
-    m_imageHeight = height;
-
-    m_canvas.Resize(m_imageWidth, m_imageHeight);
-    m_canvas.ClearColour(m_clearColour);
-} */
-
 void VoxelRenderer::Init()
 {
     m_raster = Context.entityManager->GetSystem<VoxelRasteriser>();
@@ -40,6 +30,8 @@ void VoxelRenderer::Init()
 
     m_raster->Init(Context.gameWindow->GetWidth(), Context.gameWindow->GetHeight());
 
+    m_screenWidth = Context.gameWindow->GetWidth();
+    m_screenHeight = Context.gameWindow->GetHeight();
     //m_canvas.SetAdditiveBlend(true);
     //SetImageSize(Context.gameWindow->GetWidth(), Context.gameWindow->GetHeight());
 
@@ -53,13 +45,7 @@ void VoxelRenderer::Init()
 
 void VoxelRenderer::Update()
 {
-/*      if ((int)(round(10 * (int)m_totalElapsedTime) / 10) % 10 == 0)
-    {
-         DoCommadore64LoadingScreen();
-    } */
 
-    //m_screenTexture->SubDataByColour(m_canvas.GetData());
-    //m_raster->Clear();
 }
 
 void VoxelRenderer::OnEntityAdded(unsigned int entityId)
@@ -70,26 +56,25 @@ void VoxelRenderer::OnEntityRemoved(unsigned int entityId)
 {
 }
 
-//void VoxelRenderer::UpdateScreenTexture()
-//{
-//    m_screenTexture->SubDataByColour(m_canvas.GetData());
-//}
 
-void VoxelRenderer::ProcessVoxelGrid(VoxelGrid<VoxelGridCell>& grid, RenderMethod method)
+
+void VoxelRenderer::ProcessVoxelChunk(VoxelChunk& chunk, RenderMethod method)
 {
+    UpdateViewData(m_camera);
+
     switch (method)
     {
         case (RENDER_NORM):
-            ProcessVoxelGrid(grid, m_camera);
+            ProcessVoxelChunk(chunk, m_camera);         // NOT IMPLEMENTED
             break;
 
         case (RENDER_DEBUG):
-            ProcessVoxelGrid_Debug_BoxRender(grid, m_camera);
+            ProcessVoxelChunk_Debug_BoxRender(chunk, m_camera);
             break;
     }
 }
 
-void VoxelRenderer::ProcessVoxelGrid(VoxelGrid<VoxelGridCell>& grid, Camera& camera)
+void VoxelRenderer::ProcessVoxelChunk(VoxelChunk& chunk, Camera& camera)
 {
     //m_canvas.ClearColour(m_emtpyColour);
 }
@@ -110,6 +95,7 @@ ViewData VoxelRenderer::GetViewData(Camera& camera)
 
     return
     {
+        camera.GetComponent<Transform>().GetPosition(),
         mtxView,
         mtxProj,
         mtxViewProj,
@@ -157,8 +143,7 @@ void VoxelRenderer::CreateViewBoundingBox(const ViewData& viewData)
 
 bool VoxelRenderer::IsCellVisibleFilter(VoxelGridCell* cell)
 {
-    auto cellPos = cell->GetPosition();
-    return m_viewBox.Contains({(float)cellPos.x,(float)cellPos.y,(float)cellPos.z});
+    return IsPointVisible(m_viewData, cell->GetPosition());
 }
 
 bool VoxelRenderer::IsCellLitFilter(VoxelGridCell* cell)
@@ -182,30 +167,64 @@ glm::vec3 GetWorldPosFromScreenPos(glm::mat4& mtxView, unsigned int x, unsigned 
     return {wPos.x, wPos.y, wPos.z};
 }
 
-void VoxelRenderer::ProcessVoxelGrid_Debug_BoxRender(VoxelGrid<VoxelGridCell>& grid, Camera& camera)
+/// @brief // Check to see if any of the given points within the chunk are visible (essentially all 6 corners of the cube, and the centre point)
+/// @param vd View data
+/// @param chunk Chunk to be eval'd
+/// @return (true/false) depending on whether chunk is visible
+bool VoxelRenderer::IsChunkVisible(const ViewData& vd, VoxelChunk& chunk)
 {
-    Clear();
+    return chunk.Contains({ (unsigned int)vd.viewPos.x, (unsigned int)vd.viewPos.y, (unsigned int)vd.viewPos.z }) || 
+    IsPointVisible(vd, chunk.GetPosition()) || 
+    IsPointVisible(vd, chunk.GetCentre())   ||
+    IsPointVisible(vd, chunk.GetPosPlusX()) || 
+    IsPointVisible(vd, chunk.GetPosPlusY()) || 
+    IsPointVisible(vd, chunk.GetPosPlusZ()) || 
+    IsPointVisible(vd, chunk.GetPosPlusSize());
+}
 
-    ViewData vd = GetViewData(camera);
+/// @brief Check to see if the given point is visible for provided view data
+/// @param vd View data
+/// @param point Point to be eval'd
+/// @return (true/false) depending on whether point is visible
+bool VoxelRenderer::IsPointVisible(const ViewData& vd, UIntPoint3 point)
+{
+    glm::vec4 wPos = glm::vec4(point.x,point.y,point.z, 1.0f);                                 // World position
+    glm::vec4 vPos = vd.mtxView * wPos;                                                                 // View position
+    glm::vec4 cPos = VectorHelper::GetClipSpace(vPos, vd.zNear, vd.zFar, vd.viewPort.z, vd.viewPort.w); // Clip position
+
+    return (cPos.w - abs(cPos.x) < 0 || cPos.w - abs(cPos.y) < 0) == false;
+}
+
+void VoxelRenderer::UpdateViewData(Camera& camera)
+{
+    m_viewData = GetViewData(camera);
+}
+
+void VoxelRenderer::ProcessVoxelChunk_Debug_BoxRender(VoxelChunk& chunk, Camera& camera)
+{
+    //Clear();
+ 
+    if (!IsChunkVisible(m_viewData, chunk))
+    {
+        return;
+    }
+
+    VoxelGrid<VoxelGridCell>* grid = chunk.GetGrid();
 
 /*     CreateViewBoundingBox(vd);
     std::function<bool(VoxelGridCell*)> cellVisibleFilter = [this](VoxelGridCell* cell) -> bool { return this->IsCellVisibleFilter(cell); }; */
 
-    unsigned int screenWidth = Context.gameWindow->GetWidth();
-    unsigned int screenHeight = Context.gameWindow->GetHeight();
-    float cMaxX = screenWidth / 100;
-    float cMaxY = screenHeight / 100;
 
-    std::vector<VoxelGridCell*> litCells = grid.GetPaintedCells();
+    std::vector<VoxelGridCell*> litCells = grid->GetVisibleCells();
 
     for (unsigned int i = 0; i < litCells.size(); i++)
     {
         VoxelGridCell* cell = litCells[i];
         Transform t = cell->GetTransform();
 
-        glm::vec4 wPos = glm::vec4(t.GetPosition(), 1.0f);  // World position
-        glm::vec4 vPos = vd.mtxView * wPos;                 // View position
-        glm::vec4 cPos = VectorHelper::GetClipSpace(vPos, vd.zNear, vd.zFar, vd.viewPort.z, vd.viewPort.w);
+        glm::vec4 wPos = glm::vec4(t.GetPosition(), 1.0f);          // World position
+        glm::vec4 vPos = m_viewData.mtxView * wPos;                 // View position
+        glm::vec4 cPos = VectorHelper::GetClipSpace(vPos, m_viewData.zNear, m_viewData.zFar, m_viewData.viewPort.z, m_viewData.viewPort.w);
 
         if (cPos.w - abs(cPos.x) < 0 || cPos.w - abs(cPos.y) < 0)
         {
@@ -213,12 +232,12 @@ void VoxelRenderer::ProcessVoxelGrid_Debug_BoxRender(VoxelGrid<VoxelGridCell>& g
         }
 
         glm::vec4 nPos = VectorHelper::GetNormalisedDeviceCoords(cPos);
-        glm::vec4 sPos = VectorHelper::GetScreenSpace(nPos, vd.viewPort.z, vd.viewPort.w, 0, 0);
+        glm::vec4 sPos = VectorHelper::GetScreenSpace(nPos, m_viewData.viewPort.z, m_viewData.viewPort.w, 0, 0);
 
         VoxelDrawItem drawItem;
         drawItem.screenPos = {sPos.x, sPos.y, vPos.z};
-        drawItem.scale.x =  screenWidth * (float)(1.0f / roundf(abs(vPos.z)));
-        drawItem.scale.y =  screenHeight * (float)(1.0f / roundf(abs(vPos.z)));
+        drawItem.scale.x =  m_screenWidth * (float)(1.0f / roundf(abs(vPos.z)));
+        drawItem.scale.y =  m_screenHeight * (float)(1.0f / roundf(abs(vPos.z)));
         drawItem.colour = cell->GetColour();
 
         // Send to the rasteriser....
@@ -236,39 +255,15 @@ void VoxelRenderer::SetActiveCamera(unsigned int entityId)
     m_camera.SetId(entityId);
 }
 
-//void VoxelRenderer::ForceDraw()
-//{
-   //std::shared_ptr<Renderer> r = Context.entityManager->GetSystem<Renderer>();
-   //UpdateScreenTexture();
-   //r->Update(0.0f); 
-//}
-
 void VoxelRenderer::Draw()
 {
-    ThreadPool::GetInstance()->QueueTask([this]{m_raster->DrawNow();});
+    m_raster->Clear();
+    m_raster->DrawNow();
 }
 
 void VoxelRenderer::Clear()
 {
     m_raster->Clear();
-    //m_canvas.ClearColour(m_emtpyColour);
 }
 
-//void VoxelRenderer::DoCommadore64LoadingScreen()
-//{
-/*     unsigned int maxX = m_canvas.GetWidth() - 1;
-    unsigned int height = m_canvas.GetHeight();
-    unsigned int rowHeight = height * 0.01;
-    unsigned int rows = (height / rowHeight);
-
-    for (int i = 0; i < rows; i++)
-    {
-        float rR = (float)(rand()) / (float)(RAND_MAX);
-        float rG = (float)(rand()) / (float)(RAND_MAX);
-        float rB = (float)(rand()) / (float)(RAND_MAX);
-
-        Colour c = Colour(rR, rG, rB, 1.0f);
-        m_canvas.DrawBox({0, (int)rowHeight * i}, maxX, rowHeight - 1, c, c);
-    } */
-//}
 } // namespace tfl

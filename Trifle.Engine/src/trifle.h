@@ -11,6 +11,7 @@
 #include "Util/Util.h"
 #include "Input/Input.h"
 #include "Threading/ThreadPool.h"
+#include "Voxel/Voxel.h"
 
 #include <glm/glm.hpp>
 #include <iostream>
@@ -24,6 +25,7 @@ class Trifle
     private:
     std::shared_ptr<EntityManager> m_entityManager;
     std::shared_ptr<GameWindow> m_gameWindow;
+    ThreadPool m_threadPool = ThreadPool(3);
 
     bool m_isInitialised = false;
 
@@ -74,7 +76,7 @@ class Trifle
     T CreateEntity()
     {
         static_assert(std::is_base_of<Entity, T>::value, "type parameter of this method must be of type <tfl::Entity>");
-        unsigned int entityId = Entity::entityManager->CreateEntity();
+        unsigned int entityId = m_entityManager->CreateEntity();
         Entity result(entityId);
         result.AddComponent<Transform>();
         return result;

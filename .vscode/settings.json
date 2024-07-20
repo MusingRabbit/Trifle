@@ -80,7 +80,14 @@
     "cmake.sourceDirectory": "D:/dev/Trifle",
     "editor.formatOnSave": true,
     "editor.formatOnPaste": true,
-    "C_Cpp.formatting": "clangFormat",
+    "editor.quickSuggestions": {
+        "other": "on",
+        "comments": "off",
+        "strings": "off"
+    },
+    "editor.suggestOnTriggerCharacters": true,
+    "C_Cpp.formatting": "default",
     "C_Cpp.clang_format_fallbackStyle": "{ PointerAlignment: Left}",
-    "C_Cpp.errorSquiggles": "disabled"
+    "C_Cpp.errorSquiggles": "disabled",
+    "C_Cpp.codeAnalysis.clangTidy.enabled": true
 }

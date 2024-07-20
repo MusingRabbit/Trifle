@@ -15,7 +15,10 @@ namespace tfl
     std::shared_ptr<GameWindow> gameWindow;
     std::shared_ptr<EntityManager> entityManager;
 
-    SystemContext(){}
+    SystemContext()
+    {
+      
+    }
 
     SystemContext(std::shared_ptr<GameWindow> window, std::shared_ptr<EntityManager> manager)
     {
@@ -39,7 +42,7 @@ namespace tfl
       std::set<unsigned int> m_entityIds;
 
     protected:
-      std::set<unsigned int> GetEntityIds();
+      std::set<unsigned int>& GetEntityIds();
       SystemContext Context;
 
       virtual void OnEntityAdded(unsigned int entityId) = 0;

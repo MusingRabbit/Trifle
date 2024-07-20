@@ -90,7 +90,7 @@ TEST(TrifleTest, GetPointByIndex_Test)
                 unsigned int index = VoxelGridUtil::GetIndexByUIntPoint3(point, width, height, depth);
                 UIntPoint3 newPoint = VoxelGridUtil::GetUIntPoint3ByIndex(index, width, height, depth);
 
-                bool isMatch = newPoint.IsEqual(point);
+                bool isMatch = newPoint == point;
 
                 if (!isMatch)
                 {

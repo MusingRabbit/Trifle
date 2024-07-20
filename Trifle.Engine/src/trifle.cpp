@@ -11,6 +11,7 @@ Trifle::Trifle()
 
 Trifle::~Trifle()
 {
+    m_threadPool.Stop();
 }
 
 void Trifle::Init()
@@ -45,7 +46,7 @@ void Trifle::Init()
 
     srand(time(0));
 
-    ThreadPool::GetInstance()->Start();
+    m_threadPool.Start();
 
     m_isInitialised = true;
 }
@@ -82,11 +83,9 @@ int Trifle::Run()
         const auto deltaTime = (float)std::chrono::duration_cast<std::chrono::milliseconds>(currTime - prevTime).count() / 1000;
         System::UpdateTime(deltaTime);
 
-        GameUpdateSystems();
+        GameUpdateSystems(); 
         RenderSystems();
     }
-
-    ThreadPool::GetInstance()->Stop();
 
     return 0;
 }

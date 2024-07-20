@@ -1,22 +1,25 @@
 #include "VoxelRasteriser.h"
 #include "Renderer.h"
 #include "../Factory/EntityBuilder.h"
+#include "../Threading/ThreadPool.h"
+#include <functional>
 
 namespace tfl
 {
     VoxelRasteriser::VoxelRasteriser(unsigned int id, const SystemContext& context)
         : System(id, context)
     {
-
     }
 
     VoxelRasteriser::~VoxelRasteriser()
     {
-
+        m_threadPool.Stop();
     }
 
     void VoxelRasteriser::Init(unsigned int imgWidth, unsigned int imgHeight)
     {
+        m_threadPool.Start();
+
         m_canvas.SetAdditiveBlend(false);
         SetImageSize(imgWidth, imgHeight);
 
@@ -43,25 +46,22 @@ namespace tfl
 
     void VoxelRasteriser::FillCanvas()
     {
+        auto f = [this](const int zDepth, const VoxelDrawSet& voxels) { DrawVoxels(zDepth, voxels); };
+
         for (auto kvp : m_drawMap)
         {
-            unsigned int key = kvp.first;
+            m_threadPool.QueueTask(f, kvp.first, kvp.second);
+        }
+    }
 
-            for (auto value : kvp.second)
-            {
-                int x = (int)roundf(value.screenPos.x);
-                int y = (int)roundf(value.screenPos.y);
+    void VoxelRasteriser::DrawVoxels(const int zDepth, const VoxelDrawSet& voxels)
+    {
+        for (auto value : voxels)
+        {
+            int x = (int)roundf(value.screenPos.x);
+            int y = (int)roundf(value.screenPos.y);
 
-/*
-                Rectangle rct = Rectangle(x, y, value.scale.x, value.scale.y);
-
-                 if (!IsDrawn(rct))
-                {
-                    m_canvas.DrawBox({x, y}, value.scale.x, value.scale.y, value.colour, value.colour); 
-                }
- */
-                m_canvas.DrawBox({x, y}, value.scale.x, value.scale.y, value.colour, value.colour); 
-            }
+            m_canvas.DrawBox({x, y}, value.scale.x, value.scale.y, value.colour, value.colour); 
         }
     }
 

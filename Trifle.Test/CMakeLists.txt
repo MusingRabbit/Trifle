@@ -1,5 +1,5 @@
 set(ENGINE_NAME ${NAME}.Engine)
-set(GAME_NAME ${NAME}.Game)
+set(GAME_NAME ${NAME}.HelloVoxel)
 set(TEST_NAME ${NAME}.Test)
 
 set(TEST_DIR "${PROJECT_SOURCE_DIR}/${TEST_NAME}")

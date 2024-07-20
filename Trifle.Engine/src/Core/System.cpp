@@ -63,7 +63,7 @@ unsigned int System::GetUpdateOrder()
     return m_orderNum;
 }
 
-std::set<unsigned int> System::GetEntityIds()
+std::set<unsigned int>& System::GetEntityIds()
 {
     return m_entityIds;
 }

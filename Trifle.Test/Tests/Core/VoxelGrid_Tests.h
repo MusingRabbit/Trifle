@@ -60,11 +60,11 @@ TEST(VoxelGrid, Grid_GetPaintedCells)
     grid.PaintCell({47, 100, 102}, {1, 1, 1, 1});
     grid.PaintCell({6, 54, 103}, {1, 1, 1, 1});
 
-    std::vector <VoxelGridCell*> cells = grid.GetPaintedCells();
+    std::vector <VoxelGridCell*> cells = grid.GetVisibleCells();
 
-    ASSERT_TRUE(cells[0]->GetPosition().IsEqual({60, 99, 104}));
-    ASSERT_TRUE(cells[1]->GetPosition().IsEqual({6, 54, 103}));
-    ASSERT_TRUE(cells[2]->GetPosition().IsEqual({47, 100, 102}));
-    ASSERT_TRUE(cells[3]->GetPosition().IsEqual({64, 140, 101}));
-    ASSERT_TRUE(cells[4]->GetPosition().IsEqual({46, 342, 100}));
+    ASSERT_TRUE(cells[0]->GetPosition() == UIntPoint3(60, 99, 104));
+    ASSERT_TRUE(cells[1]->GetPosition() == UIntPoint3(6, 54, 103));
+    ASSERT_TRUE(cells[2]->GetPosition() == UIntPoint3(47, 100, 102));
+    ASSERT_TRUE(cells[3]->GetPosition() == UIntPoint3(64, 140, 101));
+    ASSERT_TRUE(cells[4]->GetPosition() == UIntPoint3(46, 342, 100));
 }

@@ -119,7 +119,9 @@ TEST(EntityManager, RegisterEntityOnSystem_Test)
     EntityManager service;
     InitialiseService(service, 30);
 
-    service.RegisterSystem<Renderer>();
+    SystemContext ctx;
+
+    service.RegisterSystem<Renderer>(ctx);
 
     for (unsigned int i = 0; i < 30; i++)
     {
@@ -132,7 +134,9 @@ TEST(EntityManager, GetSystem_Test)
     EntityManager service;
     InitialiseService(service, 30);
 
-    service.RegisterSystem<Renderer>();
+    SystemContext ctx;
+
+    service.RegisterSystem<Renderer>(ctx);
 
     std::shared_ptr<Renderer> system = service.GetSystem<Renderer>();
 
@@ -149,7 +153,9 @@ TEST(EntityManager, RemoveEntityOnSystem_Test)
     EntityManager service;
     InitialiseService(service, 30);
 
-    service.RegisterSystem<Renderer>();
+    SystemContext ctx;
+
+    service.RegisterSystem<Renderer>(ctx);
 
     std::shared_ptr<Renderer> system = service.GetSystem<Renderer>();
 

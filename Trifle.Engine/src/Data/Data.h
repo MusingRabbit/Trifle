@@ -8,6 +8,5 @@
 #include "UIntPoint2.h"
 #include "UIntPoint3.h"
 #include "Vertex.h"
-#include "VoxelGrid.h"
 
 #endif // !DATA_H

@@ -65,5 +65,6 @@ link_directories(
 include_directories(${PROJECT_SOURCE_DIR}/includes)
 ]===]
 add_subdirectory(Trifle.Engine)
-add_subdirectory(Trifle.Game)
+add_subdirectory(Trifle.HelloVoxel)
+add_subdirectory(Trifle.HelloChunk)
 add_subdirectory(Trifle.Test)

@@ -6,12 +6,14 @@
 #include "../Core/Entity.h"
 #include "../Core/EntityManager.h"
 #include "../Data/Data.h"
+#include "../Threading/ThreadPool.h"
 
 #include "../Graphics/Graphics.h"
 #include "../Components/Components.h"
 
 #include <map>
 #include <vector>
+
 
 namespace tfl
 {
@@ -32,6 +34,8 @@ namespace tfl
 
         Canvas m_canvas;
 
+        ThreadPool m_threadPool = ThreadPool((unsigned int)5);
+
         Colour m_clearColour = Colour(0.0f, 0.0f, 0.0f, 0.0f);
         Colour m_emtpyColour = Colour(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -41,6 +45,7 @@ namespace tfl
 
         void SetImageSize(unsigned int width, unsigned int height);
         bool IsDrawn(const Rectangle& rect);
+        void DrawVoxels(const int zDepth, const VoxelDrawSet& voxels);
 
         public:
         VoxelRasteriser(unsigned int id, const SystemContext& context);
@@ -54,6 +59,7 @@ namespace tfl
 
         void Clear();
         void FillCanvas();
+
         void AddDrawItem(const VoxelDrawItem& drawItem);
 
         void Draw() override;
