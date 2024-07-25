@@ -8,7 +8,7 @@ using namespace tfl;
 class Game : public System
 {
   private:
-    std::shared_ptr<VoxelGridSystem> m_voxelGridSys;
+    std::shared_ptr<VoxelGridSystem> m_gridSys;
 
     Camera m_camera;
     GameTimer m_gameTimer;
@@ -16,9 +16,6 @@ class Game : public System
     void OutputCameraPosition();
     void OutputCameraTarget();
     void OutputFrameTime();
-
-    void SetupEntities(unsigned int count);
-
   public:
     Game(unsigned int id, const SystemContext& context);
     ~Game();

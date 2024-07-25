@@ -73,7 +73,15 @@ namespace tfl
     bool ThreadPool::IsBusy()
     {
         std::unique_lock<std::mutex> lock(m_queueMutex);
-        return m_tasks.empty();
+        return !m_tasks.empty();
+    }
+
+    void ThreadPool::Wait()
+    {
+        while (IsBusy())
+        {
+
+        }
     }
 
     void ThreadPool::ThreadLoop()

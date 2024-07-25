@@ -2,7 +2,6 @@
 
 #include <glm/glm.hpp>
 #include <string>
-#include <random>
 
 Game::Game(unsigned int id, const SystemContext& context) : System(id, context)
 {
@@ -20,38 +19,21 @@ void Game::Init()
     std::shared_ptr<CameraSystem> camSys = Context.entityManager->GetSystem<CameraSystem>();
     m_camera = camSys->CreateCamera((float)Context.gameWindow->GetWidth(), (float)Context.gameWindow->GetHeight(), 1.0f, 300);
 
-    m_camera.SetPosition(glm::vec3(115, 100, 0));
-    m_camera.SetTarget(glm::vec3(115, 100, 8));
+    m_camera.SetPosition(glm::vec3(0, 0, 100));
+    m_camera.SetTarget(glm::vec3(0, 0, 0));
 
     m_camera.GetComponent<Movement>().speed = 1.0f;
 
+    m_gridSys = Context.entityManager->GetSystem<VoxelGridSystem>();
     Context.entityManager->GetSystem<VoxelRenderer>()->SetActiveCamera(m_camera.GetId());
 
-    m_voxelGridSys = Context.entityManager->GetSystem<VoxelGridSystem>();
-    m_voxelGridSys->Init(1,16);
-    m_voxelGridSys->FillChunk({0,0,0}, glm::vec4{1.0f, 0.0f, 1.0f, 1.0f});
-}
+    m_gridSys->Init(3, 32);
+    
+    std::vector<VoxelChunk*> chunks = m_gridSys->GetChunksByRange({0,0,0}, 3);
 
-void Game::SetupEntities(unsigned int count)
-{
-    for (unsigned int i = 0; i < count; i++)
+    for (int i = 0; i < chunks.size(); i++)
     {
-        VoxelEntity e;
-        e.Init();
-
-        unsigned int x = (unsigned int)(rand() % 343);
-        unsigned int y = (unsigned int)(rand() % 343);
-        unsigned int z = (unsigned int)(rand() % 343);
-
-        e.SetPoint({x,y,z});
-
-        float r = (float)rand() / (float)RAND_MAX;
-        float g = (float)rand() / (float)RAND_MAX;
-        float b = (float)rand() / (float)RAND_MAX;
-        float a = 1.0f;
-        e.SetColour({r, g, b, a});
-        
-        m_voxelGridSys->AddEntity(e.GetId());
+        chunks[i]->Fill(glm::vec4 {Random::GetFloat(), Random::GetFloat(), Random::GetFloat(), 1.0f});
     }
 }
 
@@ -116,13 +98,13 @@ void Game::Update()
     if (isMoving)
     {
         m_camera.Move(moveVector);
-        //OutputCameraPosition();
+        OutputCameraPosition();
     }
 
     if (isRotating)
     {
         m_camera.Rotate(rotate);
-        //OutputCameraTarget();
+        OutputCameraTarget();
     }
 
     

@@ -38,7 +38,7 @@ void Game::Init()
     
     m_voxelGrid->AddEntity(e.GetId());
 
-    SetupEntities(50000);
+    SetupEntities(5000);
 }
 
 void Game::SetupEntities(unsigned int count)
@@ -48,9 +48,9 @@ void Game::SetupEntities(unsigned int count)
         VoxelEntity e;
         e.Init();
 
-        unsigned int x = (unsigned int)(rand() % 343);
-        unsigned int y = (unsigned int)(rand() % 343);
-        unsigned int z = (unsigned int)(rand() % 343);
+        int x = (int)(rand() % 343);
+        int y = (int)(rand() % 343);
+        int z = (int)(rand() % 343);
 
         e.SetPoint({x,y,z});
 

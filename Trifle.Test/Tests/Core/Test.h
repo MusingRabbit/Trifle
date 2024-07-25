@@ -6,4 +6,4 @@
 #include "VoxelGrid_Tests.h"
 #include "EventRegister_Tests.h"
 #include "Camera_Tests.h"
-#include "Projection_Tests.h"
+#include "VoxelChunkGrid_tests.h"

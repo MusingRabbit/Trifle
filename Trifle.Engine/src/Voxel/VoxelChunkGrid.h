@@ -14,7 +14,23 @@ namespace tfl
 
             unsigned int m_width, m_height, m_depth;
 
+            Point3 m_centre;
+            Point3 m_gCentre;
+            Point3 m_gOffset;
+
             std::vector<VoxelChunk> m_chunks;
+
+            /// @brief Checks to see if a voxel can be seen
+            /// @param chunk Chunk to be evaluated
+            /// @return voxel visible? (true/false)
+            bool IsChunkVisible(VoxelChunk* chunk);
+
+            /// <summary>
+            /// Gets the global offset
+            /// </summary>
+            /// <param name="negative"></param>
+            /// <returns></returns>
+            Point3 GetGlobalOffset(bool negative);
 
         public:
             VoxelChunkGrid() 
@@ -30,120 +46,52 @@ namespace tfl
             /// @brief Initialises the voxel chunk grid
             /// @param gridSize The size of the grid itself. E.g 16 will create a 16x16x16 grid of chunks
             /// @param chunkSize The size of each chunk (in voxels) - The resolution
-            void Init(unsigned int gridSize, unsigned int chunkSize)
-            {
-                m_width = gridSize;
-                m_height = gridSize;
-                m_depth = gridSize;
+            void Init(unsigned int gridSize, unsigned int chunkSize); 
 
-                m_chunkSize = chunkSize;
+            /// @brief Transforms local grid position to global (world) position
+            /// @param localPos Local position
+            /// @return World position
+            Point3 GetChunkGlobalPosition(const UIntPoint3& localPos);
 
-                unsigned int m_size = m_width * m_height * m_depth;
-
-                m_chunks.resize(m_size);
-
-                for (unsigned int i = 0; i < m_chunks.size(); i++)
-                {
-                    UIntPoint3 point = VoxelGridUtil::GetUIntPoint3ByIndex(i, m_width, m_height, m_depth);
-                    VoxelChunk* chunk = (VoxelChunk*)&m_chunks[i];
-                    chunk->Init(point, chunkSize);
-                }
-            }
-
-            unsigned int GetChunkSize()
-            {
-                return m_chunkSize;
-            }
-
-            unsigned int GetSize()
-            {
-                return (m_width + m_height + m_depth) / 3;
-            }
-
-            void Clear()
-            {
-                for (unsigned int i = 0; i < m_chunks.size(); i++)
-                {
-                    VoxelChunk* chunk = (VoxelChunk*)&m_chunks[i];
-                    chunk->GetGrid()->Clear();
-                }
-            }
-
-            void FillChunk(UIntPoint3 pos, glm::vec4 colour)
-            {
-                GetChunk(pos)->GetGrid()->Fill(colour);
-            }
+            /// @brief Gets the size of each chunk
+            /// @return Chunk size
+            unsigned int GetChunkSize();
             
-            VoxelChunk* FindChunkByGlobalPos(const UIntPoint3& globalPos)
-            {
-                UIntPoint3 pos = globalPos / UIntPoint3(m_width, m_height, m_depth);
-                return GetChunk(pos);
-            }
+            /// @brief Gets the overall size of the grid (wxhxd)
+            /// @return Grid size
+            unsigned int GetSize();
 
-            /// @brief Itterates through the grid to determine which cells are visible
-            bool IsChunkVisible(VoxelChunk* cell)
-            {
-                UIntPoint3 pos = cell->GetPosition();
-                
-                VoxelChunk* north = GetChunk({pos.x, pos.y, pos.z + 1});
-                VoxelChunk* south = GetChunk({pos.x, pos.y, pos.z - 1});
-                VoxelChunk* east = GetChunk({pos.x + 1, pos.y, pos.z});
-                VoxelChunk* west = GetChunk({pos.x - 1, pos.y, pos.z});
-                VoxelChunk* up = GetChunk({pos.x, pos.y + 1, pos.x});
-                VoxelChunk* down = GetChunk({pos.x, pos.y - 1, pos.x});
+            /// @brief Calls clear on every chunk within the grid.
+            void Clear();
 
-                bool isCovered = 
-                north == nullptr && 
-                south == nullptr && 
-                east == nullptr &&
-                west == nullptr && 
-                up == nullptr &&
-                down == nullptr;
+            /// @brief Gets all chunks within a specified range of the given position
+            /// @param globalPosition World position    
+            /// @param size Distance from centre (world position)
+            /// @param filterEmpty if true, will get only chunks containing one or more lit voxels.
+            /// @return A list of voxel chunks within range.
+            std::vector<VoxelChunk*> GetChunksByRange(Point3 globalPosition, unsigned int size, bool filterEmpty);
 
-                return isCovered == false;
-            }
+            /// @brief Gets all chunks within a specified range of the given position.
+            /// @param globalPosition 
+            /// @param size 
+            /// @return 
+            std::vector<VoxelChunk*> GetAllChunksByRange(Point3 globalPosition, unsigned int size);
 
-            std::vector<VoxelChunk*> GetVisibleChunks()
-            {
-                std::set<unsigned int>::iterator it;
-                std::vector<VoxelChunk*> result = {};
+            /// @brief Gets a chunk by global / world position
+            /// @param globalPos World position 
+            /// @return Ptr to voxel chunk
+            VoxelChunk* GetChunk(const Point3& globalPos);
 
-                for (unsigned int i = 0; i < m_chunks.size(); i++)
-                {
-                    VoxelChunk* chunk = GetChunk(i);
+            /// @brief Gets a voxel chunk for the local position specified
+            /// @param point Local (Grid) position
+            /// @return Ptr to voxel chunk
+            VoxelChunk* GetChunk(const UIntPoint3& point);
 
-                    if (IsChunkVisible(chunk))
-                    {
-                        result.push_back(chunk);
-                    }
-                }
-
-                return result;
-            }
-
-            /// @brief Gets the voxel grid cell for the point provided.
-            /// @param point 
-            /// @return A pointer to the grid cell.
-            VoxelChunk* GetChunk(const UIntPoint3& point)
-            {
-                if (point.x > m_width || point.y > m_height || point.z > m_depth)
-                {
-                    //throw std::out_of_range("point coordinates exceeded grid dimensions.");
-                    return nullptr;
-                }
-
-                return &m_chunks[VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth)];
-            }
-
-            VoxelChunk* GetChunk(unsigned int idx)
-            {
-                if (idx < 0 || idx > m_size)
-                {
-                    return nullptr;
-                }
-
-                return &m_chunks[idx];
-            }
+            /// @brief Gets a chunk by specified index
+            /// @param idx Grid index
+            /// @return Ptr to voxel chunk
+            VoxelChunk* GetChunk(unsigned int idx);
+            
         };
 }
 

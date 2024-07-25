@@ -6,13 +6,14 @@ namespace tfl
     {
     }
 
-    void VoxelChunk::Init(UIntPoint3 position, unsigned int size)
+    void VoxelChunk::Init(const UIntPoint3& position, const Point3& globalPosition, unsigned int size)
     {
-        m_position = position;
-        m_max = m_position + UIntPoint3(size, size, size);
+        m_pos = position;
+        m_gPos = globalPosition;
+        m_max = m_gPos + Point3(size, size, size);
         m_size = size;
         m_grid.Init(size, size, size);
-        m_grid.Fill({1.0f, 1.0f, 1.0f, 1.0f});
+        //m_grid.Fill({1.0f, 1.0f, 1.0f, 1.0f});
     }
 
     unsigned int VoxelChunk::GetSize()
@@ -25,39 +26,49 @@ namespace tfl
         return &m_grid;
     }
 
-    UIntPoint3 VoxelChunk::GetPosition()
+    UIntPoint3 VoxelChunk::GetLocalPosition()
     {
-        return m_position;
+        return m_pos;
     }
 
-    UIntPoint3 VoxelChunk::GetPosPlusX()
+    Point3 VoxelChunk::GetPosition()
     {
-        return {m_position.x + m_size, m_position.y, m_position.z};
+        return m_gPos;
     }
 
-    UIntPoint3 VoxelChunk::GetPosPlusY()
+    Point3 VoxelChunk::GetPosPlusX()
     {
-        return {m_position.x, m_position.y + m_size, m_position.z};
+        return {m_gPos.x + (int)m_size, m_gPos.y, m_gPos.z};
     }
 
-    UIntPoint3 VoxelChunk::GetPosPlusZ()
+    Point3 VoxelChunk::GetPosPlusY()
     {
-        return {m_position.x, m_position.y, m_position.z + m_size};
+        return {m_gPos.x, m_gPos.y + (int)m_size, m_gPos.z};
     }
 
-    UIntPoint3 VoxelChunk::GetPosPlusSize()
+    Point3 VoxelChunk::GetPosPlusZ()
     {
-        return m_position + m_size;
+        return {m_gPos.x, m_gPos.y, m_gPos.z + (int)m_size};
     }
 
-    UIntPoint3 VoxelChunk::GetCentre()
+    Point3 VoxelChunk::GetPosPlusSize()
     {
-        return (m_position + m_max) / (int)2;
+        return m_gPos + m_size;
     }
 
-    bool VoxelChunk::Contains(UIntPoint3 pos)
+    Point3 VoxelChunk::GetCentre()
     {
-        return pos > m_position && pos < m_max;
+        return (m_gPos + m_max) / (int)2;
+    }
+
+    bool VoxelChunk::Contains(Point3 pos)
+    {
+        return pos > m_gPos && pos < m_max;
+    }
+
+    void VoxelChunk::Fill(glm::vec4 colour)
+    {
+        GetGrid()->Fill(colour);
     }
 
 } // namespace tfl

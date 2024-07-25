@@ -49,7 +49,8 @@ namespace tfl
         if (target.targetType == TARGET_NONE)
         {
             Transform& transform = camera.GetComponent<Transform>();
-
+            glm::vec3 dPos = transform.GetPosition() - target.position;
+            
             // Update target offset
             glm::vec3 vRot = transform.GetRotaion();
             glm::mat4 mtxRot = MatrixHelper::CreateRotationX(vRot.x) * MatrixHelper::CreateRotationY(vRot.y);

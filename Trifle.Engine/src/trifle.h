@@ -13,6 +13,7 @@
 #include "Threading/ThreadPool.h"
 #include "Voxel/Voxel.h"
 
+
 #include <glm/glm.hpp>
 #include <iostream>
 #include <chrono>
@@ -25,7 +26,7 @@ class Trifle
     private:
     std::shared_ptr<EntityManager> m_entityManager;
     std::shared_ptr<GameWindow> m_gameWindow;
-    ThreadPool m_threadPool = ThreadPool(3);
+    //ThreadPool m_threadPool = ThreadPool(3);
 
     bool m_isInitialised = false;
 

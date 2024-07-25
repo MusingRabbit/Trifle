@@ -27,8 +27,8 @@ class VoxelEntity : public Entity
 
     void SetPosition(glm::vec3 position);
     
-    UIntPoint3 GetPoint();
-    void SetPoint(UIntPoint3 point);
+    Point3 GetPoint();
+    void SetPoint(Point3 point);
 
     void Move(const glm::vec3& moveVector);
     

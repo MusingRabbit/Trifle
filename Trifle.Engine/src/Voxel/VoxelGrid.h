@@ -10,7 +10,7 @@
 
 #include "../Util/Util.h"
 #include "../Components/Components.h"
-#include "../Data/UIntPoint3.h"
+#include "../Data/Data.h"
 #include "../Voxel/VoxelGridCell.h"
 
 
@@ -88,6 +88,11 @@ class VoxelGrid
         {
             VoxelGridCell* cell = (VoxelGridCell*)&m_data[i];
             cell->SetColour(colour);
+
+            if (colour.a > 0.0f)
+            {
+                m_litVoxels.insert(i);
+            }
         }
     }
 
@@ -118,36 +123,33 @@ class VoxelGrid
     {
         UIntPoint3 pos = cell->GetPosition();
         
-        VoxelGridCell* north = GetCell({pos.x, pos.y, pos.z + 1});
-        VoxelGridCell* south = GetCell({pos.x, pos.y, pos.z - 1});
-        VoxelGridCell* east = GetCell({pos.x + 1, pos.y, pos.z});
-        VoxelGridCell* west = GetCell({pos.x - 1, pos.y, pos.z});
-        VoxelGridCell* up = GetCell({pos.x, pos.y + 1, pos.x});
-        VoxelGridCell* down = GetCell({pos.x, pos.y - 1, pos.x});
+        VoxelGridCell* north =  GetLitCell({pos.x, pos.y, pos.z + 1});
+        VoxelGridCell* south =  GetLitCell({pos.x, pos.y, pos.z - 1});
+        VoxelGridCell* east =   GetLitCell({pos.x + 1, pos.y, pos.z});
+        VoxelGridCell* west =   GetLitCell({pos.x - 1, pos.y, pos.z});
+        VoxelGridCell* up =     GetLitCell({pos.x, pos.y + 1, pos.x});
+        VoxelGridCell* down =   GetLitCell({pos.x, pos.y - 1, pos.x});
 
         bool isCovered = 
-        north == nullptr && 
-        south == nullptr && 
-        east == nullptr &&
-        west == nullptr && 
-        up == nullptr &&
-        down == nullptr;
+        north != nullptr && 
+        south != nullptr && 
+        east != nullptr &&
+        west != nullptr && 
+        up != nullptr &&
+        down != nullptr;
 
         return isCovered == false;
     }
     
-    /// @brief Gets the voxel grid cell for the point provided.
-    /// @param point 
-    /// @return A pointer to the grid cell.
     T* GetCell(const UIntPoint3& point)
     {
-        if (point.x > m_width || point.y > m_height || point.z > m_depth)
+        if (point.x >= m_width || point.y >= m_height || point.z >= m_depth)
         {
             //throw std::out_of_range("point coordinates exceeded grid dimensions.");
             return nullptr;
         }
 
-        return &m_data[VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth)];
+        return &m_data[VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth)]; 
     }
 
     T* GetCell(unsigned int idx)
@@ -158,6 +160,28 @@ class VoxelGrid
         }
 
         return &m_data[idx];
+    }
+
+    
+    /// @brief Gets the voxel grid cell for the point provided.
+    /// @param point 
+    /// @return A pointer to the grid cell.
+    T* GetLitCell(const UIntPoint3& point)
+    {
+        if (point.x >= m_width || point.y >= m_height || point.z >= m_depth)
+        {
+            //throw std::out_of_range("point coordinates exceeded grid dimensions.");
+            return nullptr;
+        }
+
+        T* result = &m_data[VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth)];
+
+        if (((VoxelGridCell*)result)->GetColour().a > 0.0f)
+        {
+            return result;
+        }
+
+        return nullptr;
     }
 
     std::vector<T*> GetCellsByRange(const glm::vec3& start, const glm::vec3& end, std::function<bool(T*)> filter)
@@ -195,6 +219,36 @@ class VoxelGrid
                 break;
             }
         }
+        return result;
+    }
+
+    std::vector<T*> GetCells(CellSortOrder sortOrder)
+    {
+        std::vector<T*> result;
+
+        typename std::vector<T>::iterator it{};
+        typename std::vector<T>::reverse_iterator rIt{};
+
+        switch (sortOrder)
+        {
+        case CellSortOrder::ZAscending:
+        case CellSortOrder::None:
+            for (it = m_data.begin(); it != m_data.end(); it++)
+            {
+                T* cell = GetCell((unsigned int)(it - m_data.begin()));
+                result.push_back(cell);
+            }
+            break;
+
+        case CellSortOrder::ZDescending:
+            for (rIt = m_data.rbegin(); rIt != m_data.rend(); rIt++)
+            {
+                T* cell = GetCell((unsigned int)(rIt - m_data.rbegin()));
+                result.push_back(cell);
+            }
+            break;
+        }
+
         return result;
     }
 
@@ -333,6 +387,11 @@ class VoxelGrid
                 }
             }
         }
+    }
+
+    bool HasPaintedCells()
+    {
+        return m_litVoxels.size() > 0;
     }
 
     void Clear()

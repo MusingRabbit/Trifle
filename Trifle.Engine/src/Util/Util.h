@@ -8,5 +8,6 @@
 #include "String/StringHelper.h"
 #include "ShaderUtil.h"
 #include "SysUtil.h"
+#include "Math/Random.h"
 
 #endif // !UTIL_H

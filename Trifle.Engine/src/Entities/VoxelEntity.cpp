@@ -43,14 +43,14 @@ void VoxelEntity::SetPosition(glm::vec3 position)
     //NotifyPositionChanged(oldRot, position);
 }
 
-UIntPoint3 VoxelEntity::GetPoint()
+Point3 VoxelEntity::GetPoint()
 {
     Transform& transform = GetComponent<Transform>();
     glm::vec3 pos = transform.GetPosition();
-    return {(unsigned int)pos.x, (unsigned int)pos.y, (unsigned int)pos.z};
+    return {(int)pos.x, (int)pos.y, (int)pos.z};
 }
 
-void VoxelEntity::SetPoint(UIntPoint3 point)
+void VoxelEntity::SetPoint(Point3 point)
 {
     Transform& transform = GetComponent<Transform>();
     glm::vec3 pos = {point.x, point.y, point.z};

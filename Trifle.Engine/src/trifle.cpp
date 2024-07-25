@@ -11,7 +11,7 @@ Trifle::Trifle()
 
 Trifle::~Trifle()
 {
-    m_threadPool.Stop();
+    //m_threadPool.Stop();
 }
 
 void Trifle::Init()
@@ -44,9 +44,9 @@ void Trifle::Init()
     RegisterSystems();
     InitSystems();
 
-    srand(time(0));
+    Random::Seed(time(0));
 
-    m_threadPool.Start();
+    //m_threadPool.Start();
 
     m_isInitialised = true;
 }
@@ -104,11 +104,14 @@ void Trifle::RegisterComponents()
 void Trifle::RegisterSystems()
 {
     m_entityManager->RegisterSystem<CameraSystem>({m_gameWindow, m_entityManager});
+    
+    
+    m_entityManager->RegisterSystem<VoxelGridSystem>({m_gameWindow, m_entityManager});
+    
+
     m_entityManager->RegisterSystem<Renderer>({m_gameWindow, m_entityManager});
     m_entityManager->RegisterSystem<VoxelRenderer>({m_gameWindow, m_entityManager});
-    m_entityManager->RegisterSystem<VoxelGridSystem>({m_gameWindow, m_entityManager});
-    m_entityManager->RegisterSystem<VoxelRasteriser>({m_gameWindow, m_entityManager});
-   
+    m_entityManager->RegisterSystem<VoxelRasteriser>({m_gameWindow, m_entityManager});   
 }
 
 void Trifle::InitSystems()
@@ -119,9 +122,6 @@ void Trifle::InitSystems()
     {
         system->Init();
     }
-
-/*     std::shared_ptr<VoxelRenderer> vRenderer = m_entityManager->GetSystem<VoxelRenderer>();
-    vRenderer->SetImageSize(m_gameWindow->GetWidth(), m_gameWindow->GetHeight()); */
 }
 
 void Trifle::GameUpdateSystems()

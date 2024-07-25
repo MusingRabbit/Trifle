@@ -24,6 +24,13 @@ namespace tfl
         Colour colour;
     };
 
+    struct TextDrawItem
+    {
+        glm::vec2 screenPos;
+        std::string text;
+        Colour colour;
+    };
+
     typedef std::vector<VoxelDrawItem> VoxelDrawSet;
 
     class VoxelRasteriser : public System
@@ -31,6 +38,7 @@ namespace tfl
         private:
         unsigned int m_imgHeight, m_imgWidth;
         std::map<int, VoxelDrawSet> m_drawMap;
+        std::vector<TextDrawItem> m_textItems;
 
         Canvas m_canvas;
 
@@ -61,6 +69,8 @@ namespace tfl
         void FillCanvas();
 
         void AddDrawItem(const VoxelDrawItem& drawItem);
+
+        void AddDrawItem(const TextDrawItem& drawItem);
 
         void Draw() override;
         void DrawNow();

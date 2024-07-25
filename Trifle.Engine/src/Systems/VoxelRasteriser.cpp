@@ -52,6 +52,14 @@ namespace tfl
         {
             m_threadPool.QueueTask(f, kvp.first, kvp.second);
         }
+
+        m_threadPool.Wait();
+
+        //for (auto item : m_textItems)
+        //{
+        //    m_canvas.DrawString(Point2(roundf(item.screenPos.x), roundf(item.screenPos.y)), item.text, 8, item.colour);
+        //}
+
     }
 
     void VoxelRasteriser::DrawVoxels(const int zDepth, const VoxelDrawSet& voxels)
@@ -102,6 +110,7 @@ namespace tfl
     {
         m_canvas.ClearColour(m_clearColour);
         m_drawMap.clear();
+        m_textItems.clear();
     }
 
     void VoxelRasteriser::AddDrawItem(const VoxelDrawItem& drawItem)
@@ -115,4 +124,11 @@ namespace tfl
 
         m_drawMap[key].push_back(drawItem);
     }
+
+    void VoxelRasteriser::AddDrawItem(const TextDrawItem& drawItem)
+    {
+        m_textItems.push_back(drawItem);
+    }
+
+
 } // namespace tfl

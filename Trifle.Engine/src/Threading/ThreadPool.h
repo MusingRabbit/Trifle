@@ -32,6 +32,7 @@ namespace tfl
             void QueueSimpleTask(const std::function<void()>& job);
             void Stop();
             bool IsBusy();
+            void Wait();
 
             /// @brief Is it ironic? Using a singleton threadpool. Use on main thread only...
             /// @return Thread pool

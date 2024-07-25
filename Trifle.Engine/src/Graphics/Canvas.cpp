@@ -134,8 +134,10 @@ void Canvas::DrawLine(const Point2& pointA, const Point2& pointB, const Colour& 
     for (;;)
     {
         SetPixel(currPoint, color);
-        if (currPoint.IsEqual(pointB))
+        
+        if (currPoint == pointB)
             break;
+
         e2 = err;
         if (e2 > -dx)
         {

@@ -11,6 +11,7 @@
 #include <format>
 #include <limits>
 #include <string>
+#include <sstream>
 
 namespace tfl
 {
@@ -56,6 +57,18 @@ void VoxelRenderer::OnEntityRemoved(unsigned int entityId)
 {
 }
 
+void VoxelRenderer::ProcessVoxelChunkGrid(VoxelChunkGrid& grid, unsigned int viewDistance)
+{
+    UpdateViewData(m_camera);
+    Point3 camPos = Point3((int)m_viewData.viewPos.x, (int)m_viewData.viewPos.y, (int)m_viewData.viewPos.z);
+
+    std::vector<VoxelChunk*> chunks = grid.GetChunksByRange(camPos, viewDistance, true);
+
+    for (unsigned int i = 0; i < chunks.size(); i++)
+    {
+        ProcessVoxelChunk_Debug_BoxRender(*chunks[i]);
+    }
+}
 
 
 void VoxelRenderer::ProcessVoxelChunk(VoxelChunk& chunk, RenderMethod method)
@@ -65,16 +78,16 @@ void VoxelRenderer::ProcessVoxelChunk(VoxelChunk& chunk, RenderMethod method)
     switch (method)
     {
         case (RENDER_NORM):
-            ProcessVoxelChunk(chunk, m_camera);         // NOT IMPLEMENTED
+            ProcessVoxelChunk(chunk);         // NOT IMPLEMENTED
             break;
 
         case (RENDER_DEBUG):
-            ProcessVoxelChunk_Debug_BoxRender(chunk, m_camera);
+            ProcessVoxelChunk_Debug_BoxRender(chunk);
             break;
     }
 }
 
-void VoxelRenderer::ProcessVoxelChunk(VoxelChunk& chunk, Camera& camera)
+void VoxelRenderer::ProcessVoxelChunk(VoxelChunk& chunk)
 {
     //m_canvas.ClearColour(m_emtpyColour);
 }
@@ -141,16 +154,6 @@ void VoxelRenderer::CreateViewBoundingBox(const ViewData& viewData)
     }
 }
 
-bool VoxelRenderer::IsCellVisibleFilter(VoxelGridCell* cell)
-{
-    return IsPointVisible(m_viewData, cell->GetPosition());
-}
-
-bool VoxelRenderer::IsCellLitFilter(VoxelGridCell* cell)
-{
-    return cell->GetColour().a > 0.0f;
-}
-
 glm::vec3 GetWorldPosFromScreenPos(glm::mat4& mtxView, unsigned int x, unsigned int y, unsigned int z)
 {
     glm::mat4 mtxViewInv = glm::inverse(mtxView); // The cameras' view matrix. Translates from World position to view, and vice versa.
@@ -173,7 +176,7 @@ glm::vec3 GetWorldPosFromScreenPos(glm::mat4& mtxView, unsigned int x, unsigned 
 /// @return (true/false) depending on whether chunk is visible
 bool VoxelRenderer::IsChunkVisible(const ViewData& vd, VoxelChunk& chunk)
 {
-    return chunk.Contains({ (unsigned int)vd.viewPos.x, (unsigned int)vd.viewPos.y, (unsigned int)vd.viewPos.z }) || 
+    return chunk.Contains({ (int)vd.viewPos.x, (int)vd.viewPos.y, (int)vd.viewPos.z }) || 
     IsPointVisible(vd, chunk.GetPosition()) || 
     IsPointVisible(vd, chunk.GetCentre())   ||
     IsPointVisible(vd, chunk.GetPosPlusX()) || 
@@ -186,9 +189,9 @@ bool VoxelRenderer::IsChunkVisible(const ViewData& vd, VoxelChunk& chunk)
 /// @param vd View data
 /// @param point Point to be eval'd
 /// @return (true/false) depending on whether point is visible
-bool VoxelRenderer::IsPointVisible(const ViewData& vd, UIntPoint3 point)
+bool VoxelRenderer::IsPointVisible(const ViewData& vd, Point3 point)
 {
-    glm::vec4 wPos = glm::vec4(point.x,point.y,point.z, 1.0f);                                 // World position
+    glm::vec4 wPos = glm::vec4(point.x, point.y, point.z, 1.0f);                                 // World position
     glm::vec4 vPos = vd.mtxView * wPos;                                                                 // View position
     glm::vec4 cPos = VectorHelper::GetClipSpace(vPos, vd.zNear, vd.zFar, vd.viewPort.z, vd.viewPort.w); // Clip position
 
@@ -200,14 +203,16 @@ void VoxelRenderer::UpdateViewData(Camera& camera)
     m_viewData = GetViewData(camera);
 }
 
-void VoxelRenderer::ProcessVoxelChunk_Debug_BoxRender(VoxelChunk& chunk, Camera& camera)
+void VoxelRenderer::ProcessVoxelChunk_Debug_BoxRender(VoxelChunk& chunk)
 {
-    //Clear();
+    Clear();
  
     if (!IsChunkVisible(m_viewData, chunk))
     {
         return;
     }
+
+    glm::vec3 chunkPos = Convert::ToGlmVec3(chunk.GetPosition());
 
     VoxelGrid<VoxelGridCell>* grid = chunk.GetGrid();
 
@@ -221,8 +226,9 @@ void VoxelRenderer::ProcessVoxelChunk_Debug_BoxRender(VoxelChunk& chunk, Camera&
     {
         VoxelGridCell* cell = litCells[i];
         Transform t = cell->GetTransform();
+        glm::vec4 wPos = glm::vec4(t.GetPosition() + chunkPos, 1.0f);   // World position
 
-        glm::vec4 wPos = glm::vec4(t.GetPosition(), 1.0f);          // World position
+        //glm::vec4 wPos = glm::vec4(t.GetPosition(), 1.0f);          
         glm::vec4 vPos = m_viewData.mtxView * wPos;                 // View position
         glm::vec4 cPos = VectorHelper::GetClipSpace(vPos, m_viewData.zNear, m_viewData.zFar, m_viewData.viewPort.z, m_viewData.viewPort.w);
 
@@ -242,6 +248,15 @@ void VoxelRenderer::ProcessVoxelChunk_Debug_BoxRender(VoxelChunk& chunk, Camera&
 
         // Send to the rasteriser....
         m_raster->AddDrawItem(drawItem);
+
+        TextDrawItem drawItem2;
+        drawItem2.screenPos = {sPos.x, sPos.y};
+        drawItem2.colour = {1.0f, 0.0f, 0.0f, 1.0f};
+
+        std::stringstream ss("");
+        ss << "CHUNK : {  " << chunkPos.x << ", " << chunkPos.y << ", " << chunkPos.z << "}";
+        drawItem2.text = ss.str();
+        m_raster->AddDrawItem(drawItem2);
     }
 }
 
@@ -257,7 +272,6 @@ void VoxelRenderer::SetActiveCamera(unsigned int entityId)
 
 void VoxelRenderer::Draw()
 {
-    m_raster->Clear();
     m_raster->DrawNow();
 }
 

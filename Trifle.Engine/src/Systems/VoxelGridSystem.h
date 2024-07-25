@@ -33,13 +33,14 @@ class VoxelGridSystem : public System
   protected:
     void OnEntityAdded(unsigned int entityId) override;
     void OnEntityRemoved(unsigned int entityId) override;
-    UIntPoint3 GetLocalPoisition(UIntPoint3 globalPosition);
+    UIntPoint3 GetLocalPoisition(const Point3& globalPosition);
   public:
     VoxelGridSystem(unsigned int id, const SystemContext& context);
     ~VoxelGridSystem();
 
     void Init(unsigned int chunkCount, unsigned int voxelCount);
-    void FillChunk(const UIntPoint3& position, glm::vec4 colour);
+    std::vector<VoxelChunk*> GetChunksByRange(const Point3 position, unsigned int size);
+    void FillChunk(const Point3& position, glm::vec4 colour);
 
     void Init() override;
     void Update() override;
@@ -48,7 +49,6 @@ class VoxelGridSystem : public System
     //void DrawVoxels(const UIntPoint3& position, unsigned int brushSize, const Colour& fillColour);
     //void DrawVoxel(const UIntPoint3& position, const Colour& colour);
     void Clear();
-    
 };
 } // namespace tfl
 

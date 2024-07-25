@@ -11,7 +11,7 @@
 #include "../Graphics/Graphics.h"
 
 #include "VoxelRasteriser.h"
-#include "../Voxel/Voxel.h"
+#include "../Voxel/VoxelChunkGrid.h"
 
 namespace tfl
 {
@@ -60,21 +60,19 @@ namespace tfl
       ViewData GetViewData(Camera& camera);
       void CreateViewBoundingBox(const ViewData& viewData);
 
-      bool IsCellVisibleFilter(VoxelGridCell* cell);
-      bool IsCellLitFilter(VoxelGridCell* cell);
-
       bool IsChunkVisible(const ViewData& vd, VoxelChunk& chunk);
-      bool IsPointVisible(const ViewData& vd, UIntPoint3 point);
+      bool IsPointVisible(const ViewData& vd, Point3 point);
       void UpdateViewData(Camera& camera);
 
-      void ProcessVoxelChunk(VoxelChunk& chunk, Camera& camera);
-      void ProcessVoxelChunk_Debug_BoxRender(VoxelChunk& grid, Camera& camera);
-
+      void ProcessVoxelChunk(VoxelChunk& chunk);
+      void ProcessVoxelChunk_Debug_BoxRender(VoxelChunk& grid);
     protected:
       void OnEntityAdded(unsigned int entityId) override;
       void OnEntityRemoved(unsigned int entityId) override;
+
       
 
+      
 
     public:
       VoxelRenderer(unsigned int id, const SystemContext& context);
@@ -86,7 +84,7 @@ namespace tfl
       void Update() override;
 
       void ProcessVoxelChunk(VoxelChunk& chunk, RenderMethod method);
-      //void UpdateScreenTexture();
+      void ProcessVoxelChunkGrid(VoxelChunkGrid& grid, unsigned int viewDistance);
 
       void SetActiveCamera(unsigned int entityId);
 
