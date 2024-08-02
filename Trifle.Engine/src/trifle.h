@@ -4,6 +4,7 @@
 #include "Components/Components.h"
 #include "Core/Core.h"
 #include "Data/Data.h"
+
 #include "Entities/Entities.h"
 #include "Factory/Factory.h"
 #include "Graphics/Graphics.h"
@@ -12,6 +13,8 @@
 #include "Input/Input.h"
 #include "Threading/ThreadPool.h"
 #include "Voxel/Voxel.h"
+
+#include "DataStructures/DataStrictures.h"
 
 
 #include <glm/glm.hpp>

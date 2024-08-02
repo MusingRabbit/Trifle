@@ -13,6 +13,8 @@
 #define COUT_GTEST ANSI_TXT_GRN << GTEST_BOX // You could add the Default
 #define COUT_GTEST_MGT COUT_GTEST << ANSI_TXT_MGT
 
+using namespace tfl;
+
 class GTestHelper
 {
   public:
@@ -34,6 +36,29 @@ class GTestHelper
         entityManager->RegisterComponent<Target>();
 
         return entityManager;
+    }
+};
+
+class KDTreeTestHelper
+{
+    public:
+    static KDTree CreateTree(int distanceType = 2)
+    {
+        std::vector<KDNode> nodes;
+
+        nodes.push_back(KDNode({1, 1}));
+        nodes.push_back(KDNode({2, 1}));
+        nodes.push_back(KDNode({1, 2}));
+        nodes.push_back(KDNode({2, 4}));
+        nodes.push_back(KDNode({3, 4}));
+        nodes.push_back(KDNode({7, 2}));
+        nodes.push_back(KDNode({8, 3}));
+        nodes.push_back(KDNode({8, 5}));
+        nodes.push_back(KDNode({7, 3}));
+        nodes.push_back(KDNode({7, 3}));
+
+        KDTree tree(nodes, distanceType);
+        return tree;
     }
 };
 

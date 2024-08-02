@@ -1,4 +1,5 @@
-#//include "ComponentArray_Tests.h"
+//#include "ComponentArray_Tests.h"
+#include "KDTree_Tests.h"
 #include "ComponentManager_Tests.h"
 #include "EntityManager_Tests.h"
 #include "EntityRegister_Tests.h"
