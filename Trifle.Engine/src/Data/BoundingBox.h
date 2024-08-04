@@ -6,30 +6,36 @@ namespace tfl
 {
 struct BoundingBox
 {
-    glm::vec3 m_min;
-    glm::vec3 m_max;
+    glm::vec3 min;
+    glm::vec3 max;
 
     BoundingBox()
     {
-        m_min = {};
-        m_max = {};
+        min = {};
+        max = {};
     }
 
-    BoundingBox(const glm::vec3& min, const glm::vec3& max)
+    BoundingBox(const glm::vec3& minV, const glm::vec3& maxV)
     {
-        m_min.x = min.x;
-        m_min.y = min.y;
-        m_min.z = min.z;
+        min.x = minV.x;
+        min.y = minV.y;
+        min.z = minV.z;
 
-        m_max.x = max.x;
-        m_max.y = max.y;
-        m_max.z = max.z;
+        max.x = maxV.x;
+        max.y = maxV.y;
+        max.z = maxV.z;
     }
 
     BoundingBox(const BoundingBox& rhs)
     {
-        m_min = rhs.m_min;
-        m_max = rhs.m_max;
+        min = rhs.min;
+        max = rhs.max;
+    }
+
+    glm::vec3 GetCentre() const
+    {
+        glm::vec3 total = (min + max);
+        return {total.x / 2, total.y / 2, total.z / 2};
     }
 
     ~BoundingBox()
@@ -37,24 +43,29 @@ struct BoundingBox
 
     }
 
-    void SetMax(const glm::vec3& max)
-    {
-        m_max.x = max.x;
-        m_max.y = max.y;
-        m_max.z = max.z;
-    }
+    //void SetMax(const glm::vec3& max)
+    //{
+    //    max.x = max.x;
+    //    max.y = max.y;
+    //    max.z = max.z;
+    //}
+//
+    //void SetMin(const glm::vec3& min)
+    //{
+    //    min.x = min.x;
+    //    min.y = min.y;
+    //    min.z = min.z;
+    //}
 
-    void SetMin(const glm::vec3& min)
+    bool Contains(const BoundingBox& rhs)
     {
-        m_min.x = min.x;
-        m_min.y = min.y;
-        m_min.z = min.z;
+        return (Contains(rhs.min) && Contains(rhs.max));
     }
 
     bool Contains(const glm::vec3 point)
     {
-        bool lessThanMax = m_max.x > point.x && m_max.y > point.y && m_max.z > point.z;
-        bool greaterthanMin = m_min.x < point.x && m_min.y < point.y && m_min.z < point.z;
+        bool lessThanMax = max.x > point.x && max.y > point.y && max.z > point.z;
+        bool greaterthanMin = min.x < point.x && min.y < point.y && min.z < point.z;
         return lessThanMax && greaterthanMin;
     }
 };

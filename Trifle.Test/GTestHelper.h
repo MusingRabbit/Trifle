@@ -57,7 +57,8 @@ class KDTreeTestHelper
         nodes.push_back(KDNode({7, 3}));
         nodes.push_back(KDNode({7, 3}));
 
-        KDTree tree(nodes, distanceType);
+        KDTree tree;
+        tree.Init(nodes, distanceType);
         return tree;
     }
 };

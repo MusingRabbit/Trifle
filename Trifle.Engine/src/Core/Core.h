@@ -9,6 +9,7 @@
 #include "EventHandler.h"
 #include "EventRegister.h"
 #include "GameTimer.h"
+#include "Stopwatch.h"
 #include "ResourceManager.h"
 #include "System.h"
 #include "SystemRegister.h"

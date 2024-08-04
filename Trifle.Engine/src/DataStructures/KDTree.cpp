@@ -5,33 +5,9 @@
 
 namespace tfl
 {
-    KDTree::KDTree(const std::vector<KDNode>& nodes, int distanceType)
+    KDTree::KDTree()
     {
-        size_t i,j; 
-        double val;
-
-        m_dimension = nodes.begin()->pos.size();         // Set the dimension to the number of points a vector has. 2D, 3D, 4D etc...
-        m_allNodes = nodes;
-
-        // Initialise instance values
-        m_distance = nullptr;
-        m_distanceType = distanceType;
-
-        SetDistance(m_distanceType, {});
-        m_loBound = m_allNodes.begin()->pos;              // Initialise the hi and low bound to the first nodes' point / position.
-        m_hiBound = m_allNodes.begin()->pos;
-
-        for (i = 1; i < m_allNodes.size(); i++)             // For every node
-        {
-            for (j = 0; j < m_dimension; j ++)              // For every dimension
-            {
-                val = m_allNodes[i].pos[j];               // Set 'val' to that of the point of the current node at the current dimension.
-                m_loBound[j] = (m_loBound[j] > val) ? val : m_loBound[j];   // If the low bound is greater than 'val' - set the lowbound to val
-                m_hiBound[j] = (m_hiBound[j] < val) ? val : m_hiBound[j];   // If the hi bound is less than 'val' - set the hibound to val.
-            }
-        }
-
-        m_root = BuildTree(0, 0, m_allNodes.size());
+        m_root = nullptr;
     }
 
     KDTree::KDTree(const KDTree& rhs)
@@ -75,6 +51,40 @@ namespace tfl
             m_distance = (DistanceMeasure*)new DistanceL2(weights);
             break;
         }
+    }
+
+    void KDTree::Init(const std::vector<KDNode>& nodes, int distanceType)
+    {
+        size_t i,j; 
+        double val;
+
+        if (nodes.size() == 0)
+        {
+            return;
+        }
+
+        m_dimension = nodes.begin()->pos.size();         // Set the dimension to the number of points a vector has. 2D, 3D, 4D etc...
+        m_allNodes = nodes;
+
+        // Initialise instance values
+        m_distance = nullptr;
+        m_distanceType = distanceType;
+
+        SetDistance(m_distanceType, {});
+        m_loBound = m_allNodes.begin()->pos;              // Initialise the hi and low bound to the first nodes' point / position.
+        m_hiBound = m_allNodes.begin()->pos;
+
+        for (i = 1; i < m_allNodes.size(); i++)             // For every node
+        {
+            for (j = 0; j < m_dimension; j ++)              // For every dimension
+            {
+                val = m_allNodes[i].pos[j];               // Set 'val' to that of the point of the current node at the current dimension.
+                m_loBound[j] = (m_loBound[j] > val) ? val : m_loBound[j];   // If the low bound is greater than 'val' - set the lowbound to val
+                m_hiBound[j] = (m_hiBound[j] < val) ? val : m_hiBound[j];   // If the hi bound is less than 'val' - set the hibound to val.
+            }
+        }
+
+        m_root = BuildTree(0, 0, m_allNodes.size());
     }
 
     std::vector<KDNode> KDTree::KNearestNeighbours(const CoordPos& pos, size_t k, KDNodePredicate* predicate)
@@ -203,6 +213,17 @@ namespace tfl
         }
 
         return node;                                                     // return the completed node...
+    }
+
+    void KDTree::Clear()
+    {
+        m_allNodes.clear();
+
+        if (m_root != nullptr)
+        {
+            delete m_root;
+            m_root = nullptr;
+        }
     }
 
     bool KDTree::NeighbourSearch(const CoordPos& pos, KDTreeNode* node, size_t k, SearchQueue* neighbourHeap)

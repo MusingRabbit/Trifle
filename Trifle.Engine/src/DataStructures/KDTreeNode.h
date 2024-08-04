@@ -36,7 +36,7 @@ namespace tfl
             {
                 delete childLo;
             }
-
+            
             if (childHi != nullptr) 
             { 
                 delete childHi; 

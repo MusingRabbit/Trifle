@@ -19,7 +19,7 @@ void Game::Init()
     std::shared_ptr<CameraSystem> camSys = Context.entityManager->GetSystem<CameraSystem>();
     m_camera = camSys->CreateCamera((float)Context.gameWindow->GetWidth(), (float)Context.gameWindow->GetHeight(), 1.0f, 300);
 
-    m_camera.SetPosition(glm::vec3(0, 0, 100));
+    m_camera.SetPosition(glm::vec3(0, 0, -100));
     m_camera.SetTarget(glm::vec3(0, 0, 0));
 
     m_camera.GetComponent<Movement>().speed = 1.0f;
@@ -98,13 +98,13 @@ void Game::Update()
     if (isMoving)
     {
         m_camera.Move(moveVector);
-        OutputCameraPosition();
+       // OutputCameraPosition();
     }
 
     if (isRotating)
     {
         m_camera.Rotate(rotate);
-        OutputCameraTarget();
+       // OutputCameraTarget();
     }
 
     

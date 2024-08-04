@@ -39,9 +39,13 @@ namespace tfl
         m_canvas.ClearColour(m_clearColour);
     }
 
-    bool VoxelRasteriser::IsDrawn(const Rectangle& rect)
+    bool VoxelRasteriser::IsDrawn(const BoundingBox& box)
     {
-        return m_canvas.IsPixelSet(rect.TopLeft()) || m_canvas.IsPixelSet(rect.TopRight()) || m_canvas.IsPixelSet(rect.BottomLeft()) || m_canvas.IsPixelSet(rect.BottomRight());
+        glm::vec3 min = box.min;
+        glm::vec3 max = box.max;
+        glm::vec3 centre = box.GetCentre();
+        return 
+        m_canvas.IsPixelSet({(int)roundf(centre.x), (int)roundf(centre.y)});
     }
 
     void VoxelRasteriser::FillCanvas()
@@ -53,28 +57,24 @@ namespace tfl
             m_threadPool.QueueTask(f, kvp.first, kvp.second);
         }
 
-        m_threadPool.Wait();
-
-        //for (auto item : m_textItems)
-        //{
-        //    m_canvas.DrawString(Point2(roundf(item.screenPos.x), roundf(item.screenPos.y)), item.text, 8, item.colour);
-        //}
-
+        //m_threadPool.Wait();
     }
 
     void VoxelRasteriser::DrawVoxels(const int zDepth, const VoxelDrawSet& voxels)
     {
         for (auto value : voxels)
         {
-            int x = (int)roundf(value.screenPos.x);
-            int y = (int)roundf(value.screenPos.y);
-
-            m_canvas.DrawBox({x, y}, value.scale.x, value.scale.y, value.colour, value.colour); 
+            if (!IsDrawn(value.box))
+            {
+                m_canvas.DrawBox(value.box, value.colour, value.colour); 
+            }
         }
     }
 
     void VoxelRasteriser::Init()
     {
+        m_canvas.SetOverwriteExisting(false);
+        //m_treeNodes.clear();
     }
 
     void VoxelRasteriser::Update()
@@ -92,18 +92,22 @@ namespace tfl
 
     void VoxelRasteriser::Draw()
     {
+        //m_drawTree.Init(m_treeNodes);
         FillCanvas();
         std::shared_ptr<Renderer> r = Context.entityManager->GetSystem<Renderer>();
         m_screenTexture->SubDataByColour(m_canvas.GetData());
         r->Update(); 
+        //m_drawTree.Clear();
     }
 
     void VoxelRasteriser::DrawNow()
     {
+        //m_drawTree.Init(m_treeNodes);
         FillCanvas();
         std::shared_ptr<Renderer> r = Context.entityManager->GetSystem<Renderer>();
         m_screenTexture->SubDataByColour(m_canvas.GetData());
         r->Update(); 
+        //m_drawTree.Clear();
     }
 
     void VoxelRasteriser::Clear()
@@ -111,11 +115,12 @@ namespace tfl
         m_canvas.ClearColour(m_clearColour);
         m_drawMap.clear();
         m_textItems.clear();
+        //m_drawTree.Clear();
     }
 
     void VoxelRasteriser::AddDrawItem(const VoxelDrawItem& drawItem)
     {
-        int key = (int)roundf(-drawItem.screenPos.z);
+        int key = (int)roundf(drawItem.box.min.z);
 
         if (m_drawMap.find(key) == m_drawMap.end())
         {
@@ -123,6 +128,12 @@ namespace tfl
         }
 
         m_drawMap[key].push_back(drawItem);
+
+
+        //KDNode node;
+        //node.data = drawItem;
+        //node.pos = {drawItem.box.min.x, drawItem.box.min.y, drawItem.box.min.z};
+        //m_treeNodes.push_back(node);
     }
 
     void VoxelRasteriser::AddDrawItem(const TextDrawItem& drawItem)

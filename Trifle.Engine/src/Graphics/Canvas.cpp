@@ -237,13 +237,16 @@ void Canvas::Clear()
     std::fill(m_data.begin(), m_data.end(), Colour(0, 0, 0, 1.0f));
 }
 
-void Canvas::DrawBox(const Point2& pos, unsigned int width, unsigned int height, const Colour& fill, const Colour& stroke)
+void Canvas::DrawBox(const BoundingBox& box, const Colour& fill, const Colour& stroke)
 {
-    int minX = pos.x < 0 ? 0 : pos.x;
-    int minY = pos.y < 0 ? 0 : pos.y;
+    int minX = (int)roundf(box.min.x);
+    int minY = (int)roundf(box.min.y);
 
-    int maxX = pos.x + width;
-    int maxY = pos.y + height;
+    minX = minX < 0 ? 0 : minX;
+    minY = minY < 0 ? 0 : minY;
+
+    int maxX = (int)roundf(box.max.x);
+    int maxY = (int)roundf(box.max.y);
     maxX = maxX > m_width ? m_width : maxX;
     maxY = maxY > m_height ? m_height : maxY;
 
@@ -260,7 +263,7 @@ void Canvas::DrawBox(const Point2& pos, unsigned int width, unsigned int height,
     {
         for (int x = minX; x <= maxX; x++)
         {
-            if (hasStroke && (x == minX || x == maxX || y == minY || y == maxY))
+            if (hasStroke && (minX == x || x == maxX || minY == y || y == maxY))
             {
                 SetPixel({x, y}, stroke);
             }

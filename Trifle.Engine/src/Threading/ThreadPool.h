@@ -27,15 +27,12 @@ namespace tfl
             ~ThreadPool();                           //Dtor
 
             void Start();
-            void SetPoolSize(unsigned int size);
             unsigned int GetPoolSize();
             void QueueSimpleTask(const std::function<void()>& job);
             void Stop();
             bool IsBusy();
             void Wait();
 
-            /// @brief Is it ironic? Using a singleton threadpool. Use on main thread only...
-            /// @return Thread pool
             static ThreadPool* GetInstance()
             {
                 static ThreadPool instance;

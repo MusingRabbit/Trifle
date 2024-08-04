@@ -27,7 +27,7 @@ class VoxelGridSystem : public System
     //VoxelGrid<VoxelGridCell> m_grid;
     VoxelChunkGrid m_grid;
 
-    ThreadPool m_threadPool = ThreadPool((unsigned int)1);
+    ThreadPool m_threadPool = ThreadPool((unsigned int)2);
     //std::queue<VoxelDrawArgs> m_drawQueue;
 
   protected:
@@ -44,6 +44,7 @@ class VoxelGridSystem : public System
 
     void Init() override;
     void Update() override;
+    void UpdateEntities();
     void Draw() override;
 
     //void DrawVoxels(const UIntPoint3& position, unsigned int brushSize, const Colour& fillColour);

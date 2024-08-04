@@ -59,7 +59,7 @@ class Canvas
 
     void DrawString(const Point2& point, std::string content, unsigned int fontSize, const Colour& colour = {1, 1, 1, 1});
 
-    void DrawBox(const Point2& pos, unsigned int width, unsigned int height, const Colour& fill, const Colour& stroke);
+    void DrawBox(const BoundingBox& box, const Colour& fill, const Colour& stroke);
 
     void DrawCharacter(const Point2& point, char32_t charCode, unsigned int fontSize, const Colour& colour = {1, 1, 1, 1});
 

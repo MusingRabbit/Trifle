@@ -25,7 +25,7 @@ class GameWindow
     unsigned int GetHeight();
     void SetSize(unsigned int width, unsigned int height);
 
-    void SetActive(bool active);
+    void SetActive();
 
     bool IsActive();
 

@@ -22,19 +22,14 @@ namespace tfl
     {
         m_stop = false;
 
-        const uint32_t threadCount = m_threadCount < 1 ? std::thread::hardware_concurrency() : (unsigned int)m_threadCount;   // Max # of threads the system supports
+        m_threadCount = m_threadCount < 1 ? std::thread::hardware_concurrency() : (unsigned int)m_threadCount;   // Max # of threads the system supports
         
-        m_threads.reserve(threadCount);
+        m_threads.reserve(m_threadCount);
 
-        for (uint32_t i = 0; i < threadCount; i++)
+        for (uint32_t i = 0; i < m_threadCount; i++)
         {
             m_threads.emplace_back(std::thread(&ThreadPool::ThreadLoop, this));
         }
-    }
-
-    void ThreadPool::SetPoolSize(unsigned int size)
-    {
-        m_threadCount = (int)size;
     }
 
     unsigned int ThreadPool::GetPoolSize()
@@ -91,9 +86,7 @@ namespace tfl
             std::function<void()> task;
             
             std::unique_lock<std::mutex> lock(m_queueMutex);
-            m_mutexCondition.wait(lock, [this] { 
-                return !m_tasks.empty() || m_stop; 
-            });
+            m_mutexCondition.wait(lock, [this] { return !m_tasks.empty() || m_stop; });
 
             if (m_stop)
             {

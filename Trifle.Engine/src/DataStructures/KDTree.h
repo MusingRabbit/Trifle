@@ -64,6 +64,7 @@ namespace tfl
 
         // Recursive tree build
         KDTreeNode* BuildTree(size_t depth, size_t a, size_t b);
+        
         bool NeighbourSearch(const CoordPos& pos, KDTreeNode* node, size_t k, SearchQueue* neighbourHeap);
         void RangeSearch(const CoordPos& pos, KDTreeNode* node, double r, std::vector<size_t>* rangeResult);
         bool BoundsOverlapBall(const CoordPos& pos, double distance, KDTreeNode* node);
@@ -77,10 +78,13 @@ namespace tfl
         KDTreeNode* m_root;
 
         public:
-        KDTree(const std::vector<KDNode>& nodes, int distanceType = 2);
+        KDTree();
         KDTree(const KDTree& rhs);
         ~KDTree();
 
+
+        void Clear();
+        void Init(const std::vector<KDNode>& nodes, int distanceType = 2);
         void SetDistance(int distanceType, const std::vector<double>& weights);
         std::vector<KDNode> KNearestNeighbours(const CoordPos& pos, size_t k, KDNodePredicate* predicate = nullptr);
         std::vector<KDNode> RangeNearestNeighbours(const CoordPos& pos, double r);

@@ -80,6 +80,12 @@ namespace tfl
 
     void VoxelGridSystem::Update()
     {
+        auto f = [this]() { UpdateEntities(); };
+        m_threadPool.QueueTask(f);
+    }
+
+    void VoxelGridSystem::UpdateEntities()
+    {
         auto entityIds = GetEntityIds();
 
         for (unsigned int id : entityIds)

@@ -36,6 +36,7 @@ namespace tfl
   class VoxelRenderer : public System
   {
     private:
+      size_t m_drawItemCounter;
       unsigned int m_screenWidth, m_screenHeight;
       //Entity m_screenEntity;
       //Canvas m_canvas;
@@ -43,10 +44,10 @@ namespace tfl
       std::shared_ptr<VoxelRasteriser> m_raster;
       
       BoundingBox m_viewBox;
-
       Camera m_camera;
-
       ViewData m_viewData;
+      Stopwatch m_debugStopwatch;
+      ThreadPool m_threadPool = ThreadPool(8);
 
       //Colour m_clearColour = Colour(1.0f, 0.0f, 1.0f, 1.0f);
       //Colour m_emtpyColour = Colour(0.0f, 0.0f, 0.0f, 0.0f);
@@ -60,12 +61,14 @@ namespace tfl
       ViewData GetViewData(Camera& camera);
       void CreateViewBoundingBox(const ViewData& viewData);
 
-      bool IsChunkVisible(const ViewData& vd, VoxelChunk& chunk);
+      bool IsChunkVisible(const ViewData& vd, VoxelChunk* chunk);
       bool IsPointVisible(const ViewData& vd, Point3 point);
       void UpdateViewData(Camera& camera);
 
+      void ProcessVoxelChunk_Debug_BoxRender(VoxelChunk* chunk);
+
       void ProcessVoxelChunk(VoxelChunk& chunk);
-      void ProcessVoxelChunk_Debug_BoxRender(VoxelChunk& grid);
+      //void ProcessVoxelChunk_Debug_BoxRender(VoxelChunk& grid);
     protected:
       void OnEntityAdded(unsigned int entityId) override;
       void OnEntityRemoved(unsigned int entityId) override;

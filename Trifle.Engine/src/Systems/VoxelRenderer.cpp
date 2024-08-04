@@ -26,6 +26,8 @@ VoxelRenderer::~VoxelRenderer()
 
 void VoxelRenderer::Init()
 {
+    m_threadPool.Start();
+
     m_raster = Context.entityManager->GetSystem<VoxelRasteriser>();
    // TextUtil::LoadFont();
 
@@ -59,15 +61,28 @@ void VoxelRenderer::OnEntityRemoved(unsigned int entityId)
 
 void VoxelRenderer::ProcessVoxelChunkGrid(VoxelChunkGrid& grid, unsigned int viewDistance)
 {
+    Clear();
+    m_debugStopwatch.Start();
     UpdateViewData(m_camera);
     Point3 camPos = Point3((int)m_viewData.viewPos.x, (int)m_viewData.viewPos.y, (int)m_viewData.viewPos.z);
 
     std::vector<VoxelChunk*> chunks = grid.GetChunksByRange(camPos, viewDistance, true);
+     auto f = [this](VoxelChunk* c) { ProcessVoxelChunk_Debug_BoxRender(c); };
 
     for (unsigned int i = 0; i < chunks.size(); i++)
     {
-        ProcessVoxelChunk_Debug_BoxRender(*chunks[i]);
+        
+        m_threadPool.QueueTask(f, chunks[i]);
+       
+
+        
+        //ProcessVoxelChunk_Debug_BoxRender(*chunks[i]);
     }
+
+    m_threadPool.Wait();
+
+     m_debugStopwatch.Stop();
+     std::cout << "VoxelRenderer.ProcessVoxelChunkGrid() took " << m_debugStopwatch.GetMilliseconds() << "ms." << std::endl;
 }
 
 
@@ -82,7 +97,7 @@ void VoxelRenderer::ProcessVoxelChunk(VoxelChunk& chunk, RenderMethod method)
             break;
 
         case (RENDER_DEBUG):
-            ProcessVoxelChunk_Debug_BoxRender(chunk);
+            ProcessVoxelChunk_Debug_BoxRender(&chunk);
             break;
     }
 }
@@ -144,13 +159,13 @@ void VoxelRenderer::CreateViewBoundingBox(const ViewData& viewData)
 
     if (lPosSmaller)
     {
-        m_viewBox.SetMax(rPos);
-        m_viewBox.SetMin({ lPos.x, lPos.y, lPos.z });
+        m_viewBox.max = rPos;
+        m_viewBox.min = { lPos.x, lPos.y, lPos.z };
     }
     else 
     {
-        m_viewBox.SetMax(lPos);
-        m_viewBox.SetMin({ rPos.x, rPos.y, rPos.z });
+        m_viewBox.max = lPos;
+        m_viewBox.min = { rPos.x, rPos.y, rPos.z };
     }
 }
 
@@ -174,15 +189,15 @@ glm::vec3 GetWorldPosFromScreenPos(glm::mat4& mtxView, unsigned int x, unsigned 
 /// @param vd View data
 /// @param chunk Chunk to be eval'd
 /// @return (true/false) depending on whether chunk is visible
-bool VoxelRenderer::IsChunkVisible(const ViewData& vd, VoxelChunk& chunk)
+bool VoxelRenderer::IsChunkVisible(const ViewData& vd, VoxelChunk* chunk)
 {
-    return chunk.Contains({ (int)vd.viewPos.x, (int)vd.viewPos.y, (int)vd.viewPos.z }) || 
-    IsPointVisible(vd, chunk.GetPosition()) || 
-    IsPointVisible(vd, chunk.GetCentre())   ||
-    IsPointVisible(vd, chunk.GetPosPlusX()) || 
-    IsPointVisible(vd, chunk.GetPosPlusY()) || 
-    IsPointVisible(vd, chunk.GetPosPlusZ()) || 
-    IsPointVisible(vd, chunk.GetPosPlusSize());
+    return chunk->Contains({ (int)vd.viewPos.x, (int)vd.viewPos.y, (int)vd.viewPos.z }) || 
+    IsPointVisible(vd, chunk->GetPosition()) || 
+    IsPointVisible(vd, chunk->GetCentre())   ||
+    IsPointVisible(vd, chunk->GetPosPlusX()) || 
+    IsPointVisible(vd, chunk->GetPosPlusY()) || 
+    IsPointVisible(vd, chunk->GetPosPlusZ()) || 
+    IsPointVisible(vd, chunk->GetPosPlusSize());
 }
 
 /// @brief Check to see if the given point is visible for provided view data
@@ -203,23 +218,19 @@ void VoxelRenderer::UpdateViewData(Camera& camera)
     m_viewData = GetViewData(camera);
 }
 
-void VoxelRenderer::ProcessVoxelChunk_Debug_BoxRender(VoxelChunk& chunk)
+void VoxelRenderer::ProcessVoxelChunk_Debug_BoxRender( VoxelChunk* chunk)
 {
-    Clear();
+    //m_debugStopwatch.Start();
+    
  
     if (!IsChunkVisible(m_viewData, chunk))
     {
         return;
     }
 
-    glm::vec3 chunkPos = Convert::ToGlmVec3(chunk.GetPosition());
+    glm::vec3 chunkPos = Convert::ToGlmVec3(chunk->GetPosition());
 
-    VoxelGrid<VoxelGridCell>* grid = chunk.GetGrid();
-
-/*     CreateViewBoundingBox(vd);
-    std::function<bool(VoxelGridCell*)> cellVisibleFilter = [this](VoxelGridCell* cell) -> bool { return this->IsCellVisibleFilter(cell); }; */
-
-
+    VoxelGrid<VoxelGridCell>* grid = chunk->GetGrid();
     std::vector<VoxelGridCell*> litCells = grid->GetVisibleCells();
 
     for (unsigned int i = 0; i < litCells.size(); i++)
@@ -232,7 +243,7 @@ void VoxelRenderer::ProcessVoxelChunk_Debug_BoxRender(VoxelChunk& chunk)
         glm::vec4 vPos = m_viewData.mtxView * wPos;                 // View position
         glm::vec4 cPos = VectorHelper::GetClipSpace(vPos, m_viewData.zNear, m_viewData.zFar, m_viewData.viewPort.z, m_viewData.viewPort.w);
 
-        if (cPos.w - abs(cPos.x) < 0 || cPos.w - abs(cPos.y) < 0)
+        if (cPos.w - abs(cPos.x) < 0 || cPos.w - abs(cPos.y) < 0)       // If the cell is not on screen - skip ahead.
         {
             continue;
         }
@@ -240,15 +251,20 @@ void VoxelRenderer::ProcessVoxelChunk_Debug_BoxRender(VoxelChunk& chunk)
         glm::vec4 nPos = VectorHelper::GetNormalisedDeviceCoords(cPos);
         glm::vec4 sPos = VectorHelper::GetScreenSpace(nPos, m_viewData.viewPort.z, m_viewData.viewPort.w, 0, 0);
 
+        float scaleX =  m_screenWidth * (float)(1.0f / roundf(abs(vPos.z)));
+        float scaleY =  m_screenHeight * (float)(1.0f / roundf(abs(vPos.z)));
+
         VoxelDrawItem drawItem;
-        drawItem.screenPos = {sPos.x, sPos.y, vPos.z};
-        drawItem.scale.x =  m_screenWidth * (float)(1.0f / roundf(abs(vPos.z)));
-        drawItem.scale.y =  m_screenHeight * (float)(1.0f / roundf(abs(vPos.z)));
+        m_drawItemCounter = m_drawItemCounter >= UINT64_MAX ? 0 : m_drawItemCounter++;
+        drawItem.id = m_drawItemCounter;
+        drawItem.SetScreenPos({sPos.x, sPos.y, vPos.z});
+        drawItem.SetScale({scaleX, scaleY});
         drawItem.colour = cell->GetColour();
 
         // Send to the rasteriser....
         m_raster->AddDrawItem(drawItem);
 
+        /*      
         TextDrawItem drawItem2;
         drawItem2.screenPos = {sPos.x, sPos.y};
         drawItem2.colour = {1.0f, 0.0f, 0.0f, 1.0f};
@@ -256,8 +272,13 @@ void VoxelRenderer::ProcessVoxelChunk_Debug_BoxRender(VoxelChunk& chunk)
         std::stringstream ss("");
         ss << "CHUNK : {  " << chunkPos.x << ", " << chunkPos.y << ", " << chunkPos.z << "}";
         drawItem2.text = ss.str();
-        m_raster->AddDrawItem(drawItem2);
+        m_raster->AddDrawItem(drawItem2); 
+        */
     }
+
+     //m_debugStopwatch.Stop();
+
+     //std::cout << "ProcessVoxelChunk_Debug_BoxRender() took " << m_debugStopwatch.GetMilliseconds() << "ms." << std::endl;
 }
 
 void VoxelRenderer::DrawDebugInfo(std::string strContent)

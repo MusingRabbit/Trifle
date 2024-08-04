@@ -137,7 +137,7 @@ void Camera::UpdateTargetPosition()
         glm::vec3 vRot = transform.GetRotaion();
         glm::mat4 mtxRot = MatrixHelper::CreateRotationX(vRot.x) * MatrixHelper::CreateRotationY(vRot.y);
         glm::quat qRot = QuatHelper::CreateFromRotationMatrix(mtxRot);
-        glm::vec3 offset = VectorHelper::Transform(glm::vec3(0, 0, 1), qRot);
+        glm::vec3 offset = VectorHelper::Transform(glm::vec3(0, 0, 10), qRot);
         target.position = transform.GetPosition() + offset;
     }
 }

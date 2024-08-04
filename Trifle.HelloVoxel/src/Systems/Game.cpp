@@ -21,9 +21,9 @@ void Game::Init()
     m_camera = camSys->CreateCamera((float)Context.gameWindow->GetWidth(), (float)Context.gameWindow->GetHeight(), 1.0f, 300);
 
     m_camera.SetPosition(glm::vec3(115, 100, 0));
-    m_camera.SetTarget(glm::vec3(115, 100, 8));
+    m_camera.SetTarget(glm::vec3(115, 100, 500));
 
-    m_camera.GetComponent<Movement>().speed = 1.0f;
+    m_camera.GetComponent<Movement>().speed = 0.5f;
 
     Context.entityManager->GetSystem<VoxelRenderer>()->SetActiveCamera(m_camera.GetId());
 
@@ -38,7 +38,7 @@ void Game::Init()
     
     m_voxelGrid->AddEntity(e.GetId());
 
-    SetupEntities(5000);
+    SetupEntities(50000);
 }
 
 void Game::SetupEntities(unsigned int count)

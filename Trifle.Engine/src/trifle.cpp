@@ -32,7 +32,7 @@ void Trifle::Init()
 
 /*     std::function<void(EventArgs&)> resizedFunc = [this](EventArgs& e) { this->GameWindow_OnResized(e); };
     m_gameWindow->OnWindowResized.Subscribe(resizedFunc); */
-    m_gameWindow->SetActive(true);
+    m_gameWindow->SetActive();
 
     std::cout << "Initialising ECS" << std::endl;
     m_entityManager = std::make_shared<EntityManager>();
@@ -103,15 +103,11 @@ void Trifle::RegisterComponents()
 
 void Trifle::RegisterSystems()
 {
-    m_entityManager->RegisterSystem<CameraSystem>({m_gameWindow, m_entityManager});
-    
-    
     m_entityManager->RegisterSystem<VoxelGridSystem>({m_gameWindow, m_entityManager});
-    
-
     m_entityManager->RegisterSystem<Renderer>({m_gameWindow, m_entityManager});
     m_entityManager->RegisterSystem<VoxelRenderer>({m_gameWindow, m_entityManager});
     m_entityManager->RegisterSystem<VoxelRasteriser>({m_gameWindow, m_entityManager});   
+    m_entityManager->RegisterSystem<CameraSystem>({m_gameWindow, m_entityManager});
 }
 
 void Trifle::InitSystems()

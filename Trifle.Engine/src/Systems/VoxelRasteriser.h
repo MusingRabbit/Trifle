@@ -5,11 +5,14 @@
 #include "../Core/System.h"
 #include "../Core/Entity.h"
 #include "../Core/EntityManager.h"
+#include "../Core/Stopwatch.h"
 #include "../Data/Data.h"
 #include "../Threading/ThreadPool.h"
+#include "../DataStructures/KDTree.h"
 
 #include "../Graphics/Graphics.h"
 #include "../Components/Components.h"
+
 
 #include <map>
 #include <vector>
@@ -19,9 +22,19 @@ namespace tfl
 {
     struct VoxelDrawItem
     {
-        glm::vec3 screenPos;
-        glm::vec2 scale;
+        size_t id;
+        BoundingBox box;
         Colour colour;
+
+        void SetScreenPos(glm::vec3 pos)
+        {
+            box.min = pos;
+        }
+
+        void SetScale(glm::vec2 scale)
+        {
+            box.max = {box.min.x + scale.x, box.min.y + scale.y, box.min.z};
+        }
     };
 
     struct TextDrawItem
@@ -33,16 +46,34 @@ namespace tfl
 
     typedef std::vector<VoxelDrawItem> VoxelDrawSet;
 
+    struct ZDepthPredicate : KDNodePredicate
+    {
+        std::vector<double> pos;
+
+        ZDepthPredicate(std::vector<double> p)
+        {
+            pos = p;
+        }
+
+        bool operator()(const KDNode& rhs) const{
+            return pos[2] < rhs.pos[2];
+        }
+    };
+
     class VoxelRasteriser : public System
     {
         private:
+        size_t m_drawItemCounter;
         unsigned int m_imgHeight, m_imgWidth;
         std::map<int, VoxelDrawSet> m_drawMap;
         std::vector<TextDrawItem> m_textItems;
 
+        //KDTree m_drawTree;
+        //std::vector<KDNode> m_treeNodes;
+
         Canvas m_canvas;
 
-        ThreadPool m_threadPool = ThreadPool((unsigned int)5);
+        ThreadPool m_threadPool = ThreadPool((unsigned int)8);
 
         Colour m_clearColour = Colour(0.0f, 0.0f, 0.0f, 0.0f);
         Colour m_emtpyColour = Colour(0.0f, 0.0f, 0.0f, 0.0f);
@@ -52,10 +83,10 @@ namespace tfl
         Entity m_screenEntity;
 
         void SetImageSize(unsigned int width, unsigned int height);
-        bool IsDrawn(const Rectangle& rect);
+        bool IsDrawn(const BoundingBox& box);
         void DrawVoxels(const int zDepth, const VoxelDrawSet& voxels);
 
-        public:
+      public:
         VoxelRasteriser(unsigned int id, const SystemContext& context);
         ~VoxelRasteriser();
       

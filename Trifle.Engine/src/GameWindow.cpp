@@ -49,7 +49,7 @@ unsigned int GameWindow::GetHeight()
     return m_height;
 }
 
-void GameWindow::SetActive(bool active = true)
+void GameWindow::SetActive()
 {
     glfwMakeContextCurrent(m_window);
 }
