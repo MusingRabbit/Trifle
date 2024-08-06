@@ -77,6 +77,19 @@ namespace tfl
         return isCovered == false;
     }
 
+    std::vector<VoxelChunk*> VoxelChunkGrid::GetAllChunks()
+    {
+        std::vector<VoxelChunk*> result = {};
+
+        for (unsigned int i = 0; i < m_chunks.size(); i++)
+        {
+            VoxelChunk* chunk = this->GetChunk(i);
+            result.push_back(chunk);
+        }
+
+        return result;
+    }
+
     std::vector<VoxelChunk*> VoxelChunkGrid::GetAllChunksByRange(Point3 globalPosition, unsigned int size)
     {
         return GetChunksByRange(globalPosition, size, false);

@@ -39,6 +39,8 @@ class VoxelGrid
 
     std::set<unsigned int> m_litVoxels;
 
+    std::vector<T*> m_getVisableCellsResultCache;
+
   protected:
   public:
     /// @brief Constructor
@@ -123,12 +125,12 @@ class VoxelGrid
     {
         UIntPoint3 pos = cell->GetPosition();
         
-        VoxelGridCell* north =  GetLitCell({pos.x, pos.y, pos.z + 1});
-        VoxelGridCell* south =  GetLitCell({pos.x, pos.y, pos.z - 1});
-        VoxelGridCell* east =   GetLitCell({pos.x + 1, pos.y, pos.z});
-        VoxelGridCell* west =   GetLitCell({pos.x - 1, pos.y, pos.z});
-        VoxelGridCell* up =     GetLitCell({pos.x, pos.y + 1, pos.x});
-        VoxelGridCell* down =   GetLitCell({pos.x, pos.y - 1, pos.x});
+        VoxelGridCell* north =  GetSolidlyLitCell({pos.x, pos.y, pos.z + 1});
+        VoxelGridCell* south =  GetSolidlyLitCell({pos.x, pos.y, pos.z - 1});
+        VoxelGridCell* east =   GetSolidlyLitCell({pos.x + 1, pos.y, pos.z});
+        VoxelGridCell* west =   GetSolidlyLitCell({pos.x - 1, pos.y, pos.z});
+        VoxelGridCell* up =     GetSolidlyLitCell({pos.x, pos.y + 1, pos.x});
+        VoxelGridCell* down =   GetSolidlyLitCell({pos.x, pos.y - 1, pos.x});
 
         bool isCovered = 
         north != nullptr && 
@@ -166,7 +168,7 @@ class VoxelGrid
     /// @brief Gets the voxel grid cell for the point provided.
     /// @param point 
     /// @return A pointer to the grid cell.
-    T* GetLitCell(const UIntPoint3& point)
+    T* GetSolidlyLitCell(const UIntPoint3& point)
     {
         if (point.x >= m_width || point.y >= m_height || point.z >= m_depth)
         {
@@ -176,7 +178,7 @@ class VoxelGrid
 
         T* result = &m_data[VoxelGridUtil::GetIndexByUIntPoint3(point, m_width, m_height, m_depth)];
 
-        if (((VoxelGridCell*)result)->GetColour().a > 0.0f)
+        if (((VoxelGridCell*)result)->GetColour().a > 0.9f)
         {
             return result;
         }
@@ -315,6 +317,11 @@ class VoxelGrid
     /// @return A vector of all lit cells
     std::vector<T*>  GetVisibleCells()
     {
+        if (m_getVisableCellsResultCache.size() > 0)        //This is jank. FML
+        {
+            return m_getVisableCellsResultCache;
+        }
+
         std::set<unsigned int>::iterator it;
         std::vector<T*> result = {};
 
@@ -329,6 +336,8 @@ class VoxelGrid
                 result.push_back(cell);
             }
         }
+
+        m_getVisableCellsResultCache = result;
 
         return result;
     }
@@ -359,10 +368,12 @@ class VoxelGrid
         if (colour.a > 0.0f)
         {
             m_litVoxels.insert(idx);
+            m_getVisableCellsResultCache.clear();
         }
         else 
         {
             m_litVoxels.erase(idx);
+            m_getVisableCellsResultCache.clear();
         }
 
         m_data[idx].SetColour(colour);

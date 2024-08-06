@@ -67,6 +67,7 @@ namespace tfl
         unsigned int m_imgHeight, m_imgWidth;
         std::map<int, VoxelDrawSet> m_drawMap;
         std::vector<TextDrawItem> m_textItems;
+        Stopwatch m_debugStopwatch;
 
         //KDTree m_drawTree;
         //std::vector<KDNode> m_treeNodes;

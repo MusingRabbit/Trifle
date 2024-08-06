@@ -39,6 +39,7 @@ class VoxelGridSystem : public System
     ~VoxelGridSystem();
 
     void Init(unsigned int chunkCount, unsigned int voxelCount);
+    std::vector<VoxelChunk*> GetAllChunks();
     std::vector<VoxelChunk*> GetChunksByRange(const Point3 position, unsigned int size);
     void FillChunk(const Point3& position, glm::vec4 colour);
 

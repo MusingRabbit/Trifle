@@ -47,7 +47,7 @@ namespace tfl
       Camera m_camera;
       ViewData m_viewData;
       Stopwatch m_debugStopwatch;
-      ThreadPool m_threadPool = ThreadPool(8);
+      ThreadPool m_threadPool = ThreadPool(16);
 
       //Colour m_clearColour = Colour(1.0f, 0.0f, 1.0f, 1.0f);
       //Colour m_emtpyColour = Colour(0.0f, 0.0f, 0.0f, 0.0f);

@@ -29,7 +29,7 @@ void Game::Init()
 
     m_gridSys->Init(3, 32);
     
-    std::vector<VoxelChunk*> chunks = m_gridSys->GetChunksByRange({0,0,0}, 3);
+    std::vector<VoxelChunk*> chunks = m_gridSys->GetAllChunks();
 
     for (int i = 0; i < chunks.size(); i++)
     {

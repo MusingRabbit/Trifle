@@ -25,6 +25,8 @@ namespace tfl
             /// @return voxel visible? (true/false)
             bool IsChunkVisible(VoxelChunk* chunk);
 
+           
+
             /// <summary>
             /// Gets the global offset
             /// </summary>
@@ -76,6 +78,10 @@ namespace tfl
             /// @param size 
             /// @return 
             std::vector<VoxelChunk*> GetAllChunksByRange(Point3 globalPosition, unsigned int size);
+
+            /// @brief Gets all chunks within the grid
+            /// @return 
+            std::vector<VoxelChunk*> GetAllChunks();
 
             /// @brief Gets a chunk by global / world position
             /// @param globalPos World position 

@@ -44,12 +44,17 @@ namespace tfl
         glm::vec3 min = box.min;
         glm::vec3 max = box.max;
         glm::vec3 centre = box.GetCentre();
-        return 
-        m_canvas.IsPixelSet({(int)roundf(centre.x), (int)roundf(centre.y)});
+
+        bool minSet = m_canvas.IsPixelSet({(int)roundf(min.x), (int)roundf(min.y)});
+        bool maxSet = m_canvas.IsPixelSet({(int)roundf(max.x), (int)roundf(max.y)});
+        bool centreSet = m_canvas.IsPixelSet({(int)roundf(centre.x), (int)roundf(centre.y)});
+
+        return minSet && maxSet && centreSet;
     }
 
     void VoxelRasteriser::FillCanvas()
     {
+        m_debugStopwatch.Start();
         auto f = [this](const int zDepth, const VoxelDrawSet& voxels) { DrawVoxels(zDepth, voxels); };
 
         for (auto kvp : m_drawMap)
@@ -57,7 +62,9 @@ namespace tfl
             m_threadPool.QueueTask(f, kvp.first, kvp.second);
         }
 
-        //m_threadPool.Wait();
+        m_threadPool.Wait();
+        m_debugStopwatch.Stop();
+        std::cout << "VoxelRasteriser.FillCanvas() took " << m_debugStopwatch.GetMilliseconds() << "ms." << std::endl;
     }
 
     void VoxelRasteriser::DrawVoxels(const int zDepth, const VoxelDrawSet& voxels)

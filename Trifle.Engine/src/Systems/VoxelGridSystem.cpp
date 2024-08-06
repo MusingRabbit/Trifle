@@ -29,6 +29,11 @@ namespace tfl
         m_grid.Init(chunkCount, voxelCount);
     }
 
+    std::vector<VoxelChunk*> VoxelGridSystem::GetAllChunks()
+    {
+        return m_grid.GetAllChunks();
+    }
+
     std::vector<VoxelChunk*> VoxelGridSystem::GetChunksByRange(const Point3 position, unsigned int size)
     {
         return m_grid.GetAllChunksByRange(position, size);

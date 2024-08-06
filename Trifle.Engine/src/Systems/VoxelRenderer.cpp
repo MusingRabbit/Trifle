@@ -218,7 +218,7 @@ void VoxelRenderer::UpdateViewData(Camera& camera)
     m_viewData = GetViewData(camera);
 }
 
-void VoxelRenderer::ProcessVoxelChunk_Debug_BoxRender( VoxelChunk* chunk)
+void VoxelRenderer::ProcessVoxelChunk_Debug_BoxRender(VoxelChunk* chunk)
 {
     //m_debugStopwatch.Start();
     
@@ -293,7 +293,7 @@ void VoxelRenderer::SetActiveCamera(unsigned int entityId)
 
 void VoxelRenderer::Draw()
 {
-    m_raster->DrawNow();
+    //m_raster->DrawNow();
 }
 
 void VoxelRenderer::Clear()
